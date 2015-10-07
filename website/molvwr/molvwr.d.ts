@@ -1,14 +1,4 @@
 ﻿declare module Molvwr {
-    interface IMolvwrConfig {
-        renderer: string;
-        scale: number;
-        atomScaleFactor: number;
-        sphereSegments: number;
-    }
-    var defaultConfig: IMolvwrConfig;
-}
-
-declare module Molvwr {
     class BabylonContext {
         engine: BABYLON.Engine;
         scene: BABYLON.Scene;
@@ -19,6 +9,19 @@ declare module Molvwr {
         createScene(): void;
         testScene(): void;
     }
+}
+
+declare module Molvwr {
+    interface IMolvwrConfig {
+        renderer: string;
+        scale: number;
+        atomScaleFactor: number;
+        sphereSegments: number;
+    }
+    var defaultConfig: IMolvwrConfig;
+}
+
+declare module Molvwr {
     class Viewer {
         element: HTMLElement;
         canvas: HTMLCanvasElement;

@@ -2,5 +2,5 @@
 	'use strict';
 	var root = document.getElementById("molvwr-container");
 	var viewer = new Molvwr.Viewer(root);
-	viewer.loadContentFromUrl("molsamples/xyz/testosterone.xyz", "xyz");
+	viewer.loadContentFromUrl("molsamples/xyz/dna.xyz", "xyz");
 })();

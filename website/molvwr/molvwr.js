@@ -1,15 +1,5 @@
 ﻿var Molvwr;
 (function (Molvwr) {
-    Molvwr.defaultConfig = {
-        renderer: 'Sphere',
-        scale: 1.5,
-        atomScaleFactor: 3,
-        sphereSegments: 12
-    };
-})(Molvwr || (Molvwr = {}));
-
-var Molvwr;
-(function (Molvwr) {
     var BabylonContext = (function () {
         function BabylonContext(canvas) {
             var _this = this;
@@ -60,6 +50,20 @@ var Molvwr;
         return BabylonContext;
     })();
     Molvwr.BabylonContext = BabylonContext;
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
+    Molvwr.defaultConfig = {
+        renderer: 'Sphere',
+        scale: 1.5,
+        atomScaleFactor: 3,
+        sphereSegments: 12
+    };
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
     var Viewer = (function () {
         function Viewer(element, config) {
             if (!element)
@@ -68,7 +72,7 @@ var Molvwr;
             this.element = element;
             this.canvas = document.createElement("CANVAS");
             this.element.appendChild(this.canvas);
-            this.context = new BabylonContext(this.canvas);
+            this.context = new Molvwr.BabylonContext(this.canvas);
             this.context.createScene();
         }
         Viewer.prototype.loadContentFromString = function (content, contentFormat) {
