@@ -19,13 +19,13 @@
             if (atomKind) {
                 var atomMat = new BABYLON.StandardMaterial('materialFor' + atomsymbol, this.scene);
                 atomMat.diffuseColor = new BABYLON.Color3(atomKind.color[0], atomKind.color[1], atomKind.color[2]);
-                atomMat.specularColor = new BABYLON.Color3(0.15, 0.15, 0.15);
-                atomMat.emissiveColor = new BABYLON.Color3(0.1, 0.1, 0.1);
+                atomMat.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
+                atomMat.emissiveColor = new BABYLON.Color3(0.15, 0.15, 0.15);
                 atomMat.bumpTexture = new BABYLON.Texture('bump.png', this.scene);
-                // atomMat.bumpTexture.uScale = 1;
-                // atomMat.bumpTexture.vScale = 1;
-                // atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
-                // atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
+                atomMat.bumpTexture.uScale = 6;
+                atomMat.bumpTexture.vScale = 6;
+                atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
+                atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
                 this.atomsMaterials[atomsymbol] = atomMat;
                 return atomMat;
             }
@@ -371,7 +371,6 @@ var Molvwr;
                     molecule.atoms.forEach(function (atom, index) {
                         meshes.push(_this.renderAtom(atom, index));
                     });
-                    BABYLON.Mesh.MergeMeshes(meshes, true);
                 }
             };
             Sphere.prototype.renderAtom = function (atom, index) {

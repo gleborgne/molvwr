@@ -19,9 +19,10 @@ module Molvwr.Renderer {
 				molecule.atoms.forEach((atom, index) => {
 					meshes.push(this.renderAtom(atom, index));
 				});
-				 BABYLON.Mesh.MergeMeshes(meshes, true);
+				//BABYLON.Mesh.MergeMeshes(meshes, true);
 			}
 		}
+		
 		
 		renderAtom(atom, index){
 			var cfg= this.config;
