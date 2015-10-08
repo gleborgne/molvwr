@@ -2,6 +2,7 @@ module Molvwr {
 	export class BabylonContext {
 		engine: BABYLON.Engine;
 		scene: BABYLON.Scene;
+		camera: BABYLON.Camera;
 		canvas: HTMLCanvasElement;
 		atomsMaterials: any;
 
@@ -24,8 +25,14 @@ module Molvwr {
 			if (atomKind){
 				var atomMat = new BABYLON.StandardMaterial('materialFor' + atomsymbol, this.scene);
 				atomMat.diffuseColor = new BABYLON.Color3(atomKind.color[0], atomKind.color[1], atomKind.color[2]);
-				atomMat.specularColor = new BABYLON.Color3(0.2,0.2,0.2);
-				atomMat.diffuseTexture = new BABYLON.Texture('noise.png', this.scene);
+				atomMat.specularColor = new BABYLON.Color3(0.15,0.15,0.15);
+				atomMat.emissiveColor = new BABYLON.Color3(0.1,0.1,0.1);
+				atomMat.bumpTexture   = new BABYLON.Texture('bump.png', this.scene);
+				// atomMat.bumpTexture.uScale = 1;
+				// atomMat.bumpTexture.vScale = 1;
+				// atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
+				// atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
+
 				this.atomsMaterials[atomsymbol] = atomMat;
 				return atomMat;
 			}
@@ -39,16 +46,46 @@ module Molvwr {
 			
 			var scene = new BABYLON.Scene(this.engine);
 			scene.clearColor = new BABYLON.Color3(100, 100, 100);
+			scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
+			scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
+    		scene.fogDensity = 0.01;
 			
 			var camera = new BABYLON.ArcRotateCamera('Camera', 1, .8, 10, new BABYLON.Vector3(0, 0, 0), scene);
 			camera.wheelPrecision = 10;
 			camera.setTarget(BABYLON.Vector3.Zero());
 			camera.attachControl(this.canvas, true);
+			this.camera = camera;
 		
 			var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 20, 0), scene);
 			light.intensity = 0.8;			
 
+			
+
+			
+			
 			this.scene = scene;
+		}
+		
+		useAmbientOcclusion(){
+			var ssao = new BABYLON.SSAORenderingPipeline('ssaopipeline', this.scene, 0.75);
+			this.scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("ssaopipeline", this.camera);
+			//this.scene.postProcessRenderPipelineManager.detachCamerasFromRenderPipeline("ssaopipeline", this.camera);
+		}
+		
+		useHDR(){
+			var hdr = new BABYLON.HDRRenderingPipeline("hdr", this.scene, 1.0, null, [this.camera]);
+			// About gaussian blur : http://homepages.inf.ed.ac.uk/rbf/HIPR2/gsmooth.htm
+			hdr.brightThreshold = 1.2; // Minimum luminance needed to compute HDR
+			hdr.gaussCoeff = 0.3; // Gaussian coefficient = gaussCoeff * theEffectOutput;
+			hdr.gaussMean = 1; // The Gaussian blur mean
+			hdr.gaussStandDev = 0.8; // Standard Deviation of the gaussian blur.
+			hdr.exposure = 1.0; // Controls the overall intensity of the pipeline
+			hdr.minimumLuminance = 0.5; // Minimum luminance that the post-process can output. Luminance is >= 0
+			hdr.maximumLuminance = 1e20; //Maximum luminance that the post-process can output. Must be suprerior to minimumLuminance 
+			hdr.luminanceDecreaseRate = 0.5; // Decrease rate: white to dark
+			hdr.luminanceIncreaserate = 0.5; // Increase rate: dark to white
+			this.scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("hdr", [this.camera]);
+			//this.scene.postProcessRenderPipelineManager.detachCamerasFromRenderPipeline("hdr", [this.camera]);
 		}
 
 		testScene() {

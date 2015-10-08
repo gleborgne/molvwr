@@ -2,11 +2,14 @@
     class BabylonContext {
         engine: BABYLON.Engine;
         scene: BABYLON.Scene;
+        camera: BABYLON.Camera;
         canvas: HTMLCanvasElement;
         atomsMaterials: any;
         constructor(canvas: any);
         getMaterial(atomsymbol: string): any;
         createScene(): void;
+        useAmbientOcclusion(): void;
+        useHDR(): void;
         testScene(): void;
     }
 }
@@ -66,8 +69,10 @@ declare module Molvwr.Renderer {
     class Sphere {
         ctx: Molvwr.BabylonContext;
         config: Molvwr.IMolvwrConfig;
-        constructor(ctx: Molvwr.BabylonContext, config: Molvwr.IMolvwrConfig);
+        viewer: Molvwr.Viewer;
+        meshes: {};
+        constructor(viewer: Molvwr.Viewer, ctx: Molvwr.BabylonContext, config: Molvwr.IMolvwrConfig);
         render(molecule: any): void;
-        renderAtom(atom: any, index: any): void;
+        renderAtom(atom: any, index: any): any;
     }
 }

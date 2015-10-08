@@ -24,7 +24,7 @@ module Molvwr {
 				if (molecule) {
 					var rendererClass = Molvwr.Renderer[this.config.renderer];
 					if (rendererClass) {
-						var renderer = new rendererClass(this.context, this.config);
+						var renderer = new rendererClass(this, this.context, this.config);
 						renderer.render(molecule);
 					} else {
 						console.warn("no renderer for " + this.config.renderer);

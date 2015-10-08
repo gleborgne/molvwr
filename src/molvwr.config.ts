@@ -10,6 +10,6 @@ module Molvwr {
 		renderer : 'Sphere',
 		scale : 1.5,
 		atomScaleFactor: 3,
-		sphereSegments : 12
+		sphereSegments : 16
 	};
 }
