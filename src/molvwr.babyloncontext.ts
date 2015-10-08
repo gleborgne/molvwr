@@ -16,6 +16,10 @@ module Molvwr {
 			});
 		}
 		
+		dispose(){
+			this.engine.dispose();
+		}
+		
 		getMaterial(atomsymbol:string){
 			var existing = this.atomsMaterials[atomsymbol];
 			if (existing)
@@ -45,6 +49,7 @@ module Molvwr {
 			console.log("create babylon scene");
 			
 			var scene = new BABYLON.Scene(this.engine);
+			this.scene = scene;
 			scene.clearColor = new BABYLON.Color3(100, 100, 100);
 			scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
 			scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
@@ -57,13 +62,9 @@ module Molvwr {
 			this.camera = camera;
 		
 			var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 20, 0), scene);
-			light.intensity = 0.8;			
+			light.intensity = 0.6;			
 
-			
-
-			
-			
-			this.scene = scene;
+			//this.useAmbientOcclusion();
 		}
 		
 		useAmbientOcclusion(){

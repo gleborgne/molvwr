@@ -11,6 +11,9 @@
                     _this.scene.render();
             });
         }
+        BabylonContext.prototype.dispose = function () {
+            this.engine.dispose();
+        };
         BabylonContext.prototype.getMaterial = function (atomsymbol) {
             var existing = this.atomsMaterials[atomsymbol];
             if (existing)
@@ -35,6 +38,7 @@
                 this.scene.dispose();
             console.log("create babylon scene");
             var scene = new BABYLON.Scene(this.engine);
+            this.scene = scene;
             scene.clearColor = new BABYLON.Color3(100, 100, 100);
             scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
             scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
@@ -45,8 +49,8 @@
             camera.attachControl(this.canvas, true);
             this.camera = camera;
             var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 20, 0), scene);
-            light.intensity = 0.8;
-            this.scene = scene;
+            light.intensity = 0.6;
+            //this.useAmbientOcclusion();
         };
         BabylonContext.prototype.useAmbientOcclusion = function () {
             var ssao = new BABYLON.SSAORenderingPipeline('ssaopipeline', this.scene, 0.75);
@@ -102,9 +106,8 @@ var Molvwr;
             this.canvas = document.createElement("CANVAS");
             this.element.appendChild(this.canvas);
             this.context = new Molvwr.BabylonContext(this.canvas);
-            this.context.createScene();
         }
-        Viewer.prototype.loadContentFromString = function (content, contentFormat) {
+        Viewer.prototype._loadContentFromString = function (content, contentFormat) {
             var parser = Molvwr.Parser[contentFormat];
             if (parser) {
                 var molecule = parser.parse(content);
@@ -126,14 +129,25 @@ var Molvwr;
                 console.warn("no parser for " + contentFormat);
             }
         };
+        Viewer.prototype.createContext = function () {
+            if (this.context)
+                this.context.dispose();
+            this.context = new Molvwr.BabylonContext(this.canvas);
+            this.context.createScene();
+        };
+        Viewer.prototype.loadContentFromString = function (content, contentFormat) {
+            this.createContext();
+            this._loadContentFromString(content, contentFormat);
+        };
         Viewer.prototype.loadContentFromUrl = function (url, contentFormat) {
             var _this = this;
+            this.createContext();
             try {
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == 4) {
                         if (xhr.status == 200) {
-                            _this.loadContentFromString(xhr.responseText, contentFormat);
+                            _this._loadContentFromString(xhr.responseText, contentFormat);
                         }
                         else {
                             console.warn("cannot get content from " + url + " " + xhr.status + " " + xhr.statusText);

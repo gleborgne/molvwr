@@ -6,6 +6,7 @@
         canvas: HTMLCanvasElement;
         atomsMaterials: any;
         constructor(canvas: any);
+        dispose(): void;
         getMaterial(atomsymbol: string): any;
         createScene(): void;
         useAmbientOcclusion(): void;
@@ -31,6 +32,8 @@ declare module Molvwr {
         config: IMolvwrConfig;
         context: BabylonContext;
         constructor(element: HTMLElement, config?: IMolvwrConfig);
+        private _loadContentFromString(content, contentFormat);
+        createContext(): void;
         loadContentFromString(content: string, contentFormat: string): void;
         loadContentFromUrl(url: string, contentFormat: string): void;
     }
