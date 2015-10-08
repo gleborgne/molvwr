@@ -10,6 +10,8 @@
 		{ name : "Gold structure", url: "molsamples/xyz/Au.txt", format: "xyz"},
 		{ name : "Gold thiol complex", url: "molsamples/xyz/au_thiol.txt", format: "xyz"},
 		{ name : "DNA fragment", url: "molsamples/xyz/dna.txt", format: "xyz"},
+		{ name : "Aspirin", url: "molsamples/mol/aspirin.txt", format: "mol"},
+		{ name : "Morphine", url: "molsamples/mol/morphine.txt", format: "mol"},
 	];
 
 	function ChoicePanel(element, titleElement, viewer, samples){

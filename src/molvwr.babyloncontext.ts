@@ -65,6 +65,7 @@ module Molvwr {
 			light.intensity = 0.6;			
 
 			//this.useAmbientOcclusion();
+			//this.useHDR();
 		}
 		
 		useAmbientOcclusion(){
@@ -80,9 +81,9 @@ module Molvwr {
 			hdr.gaussCoeff = 0.3; // Gaussian coefficient = gaussCoeff * theEffectOutput;
 			hdr.gaussMean = 1; // The Gaussian blur mean
 			hdr.gaussStandDev = 0.8; // Standard Deviation of the gaussian blur.
-			hdr.exposure = 1.0; // Controls the overall intensity of the pipeline
+			hdr.exposure = 1; // Controls the overall intensity of the pipeline
 			hdr.minimumLuminance = 0.5; // Minimum luminance that the post-process can output. Luminance is >= 0
-			hdr.maximumLuminance = 1e20; //Maximum luminance that the post-process can output. Must be suprerior to minimumLuminance 
+			hdr.maximumLuminance = 1e10; //Maximum luminance that the post-process can output. Must be suprerior to minimumLuminance 
 			hdr.luminanceDecreaseRate = 0.5; // Decrease rate: white to dark
 			hdr.luminanceIncreaserate = 0.5; // Increase rate: dark to white
 			this.scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("hdr", [this.camera]);

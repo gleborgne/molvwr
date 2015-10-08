@@ -51,25 +51,25 @@ gulp.task('compile-molvwr', function () {
 		'src/**/*.ts',
     ], { base: '.' })
 	.pipe(plumber({ errorHandler: onError }))
-	.pipe(sourcemaps.init())
+	//.pipe(sourcemaps.init())
 	.pipe(ts(tsMolvwrProject));
 
     return merge([
         tsResult.dts.pipe(flatten()).pipe(concat('molvwr.d.ts')).pipe(bom()).pipe(gulp.dest('website/molvwr')),
         tsResult.js
             .pipe(concat('molvwr.js'))
-        	.pipe(sourcemaps.write(".",{
-        	    sourceRoot: function (file) {
-        	        var sources = [];
-        	        file.sourceMap.sources.forEach(function (s) {
-        	            var filename = s.substr(s.lastIndexOf('/') + 1);
-        	            //console.log(filename)
-        	            sources.push("../../src/" + [filename]);
-        	        });
-        	        file.sourceMap.sources = sources;
-                    return ' ';
-                }
-            }))
+        	//.pipe(sourcemaps.write(".",{
+        	//    sourceRoot: function (file) {
+        	//        var sources = [];
+        	//        file.sourceMap.sources.forEach(function (s) {
+        	//            var filename = s.substr(s.lastIndexOf('/') + 1);
+        	//            //console.log(filename)
+        	//            sources.push("../../src/" + [filename]);
+        	//        });
+        	//        file.sourceMap.sources = sources;
+            //        return ' ';
+            //    }
+            //}))
             .pipe(bom())
         	.pipe(gulp.dest('website/molvwr'))
     ]);

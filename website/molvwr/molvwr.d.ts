@@ -55,7 +55,10 @@ declare module Molvwr.Elements {
 
 declare module Molvwr.Parser {
     var mol: {
-        parse: (content: string) => void;
+        parse: (content: string) => {
+            atoms: any[];
+            title: any;
+        };
     };
 }
 

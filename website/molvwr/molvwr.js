@@ -51,6 +51,7 @@
             var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 20, 0), scene);
             light.intensity = 0.6;
             //this.useAmbientOcclusion();
+            //this.useHDR();
         };
         BabylonContext.prototype.useAmbientOcclusion = function () {
             var ssao = new BABYLON.SSAORenderingPipeline('ssaopipeline', this.scene, 0.75);
@@ -64,9 +65,9 @@
             hdr.gaussCoeff = 0.3; // Gaussian coefficient = gaussCoeff * theEffectOutput;
             hdr.gaussMean = 1; // The Gaussian blur mean
             hdr.gaussStandDev = 0.8; // Standard Deviation of the gaussian blur.
-            hdr.exposure = 1.0; // Controls the overall intensity of the pipeline
+            hdr.exposure = 1; // Controls the overall intensity of the pipeline
             hdr.minimumLuminance = 0.5; // Minimum luminance that the post-process can output. Luminance is >= 0
-            hdr.maximumLuminance = 1e20; //Maximum luminance that the post-process can output. Must be suprerior to minimumLuminance 
+            hdr.maximumLuminance = 1e10; //Maximum luminance that the post-process can output. Must be suprerior to minimumLuminance 
             hdr.luminanceDecreaseRate = 0.5; // Decrease rate: white to dark
             hdr.luminanceIncreaserate = 0.5; // Increase rate: dark to white
             this.scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("hdr", [this.camera]);
@@ -91,7 +92,7 @@ var Molvwr;
         renderer: 'Sphere',
         scale: 1.5,
         atomScaleFactor: 3,
-        sphereSegments: 16
+        sphereSegments: 32
     };
 })(Molvwr || (Molvwr = {}));
 
@@ -306,8 +307,50 @@ var Molvwr;
 (function (Molvwr) {
     var Parser;
     (function (Parser) {
+        function getFloat(s) {
+            if (!s)
+                return 0;
+            return parseFloat(s.trim());
+        }
         Parser.mol = {
             parse: function (content) {
+                console.log("parsing mol content");
+                //console.log(content);
+                var molecule = {
+                    atoms: [],
+                    title: null
+                };
+                var lines = content.split('\n');
+                molecule.title = lines[1];
+                for (var i = 4, l = lines.length; i < l; i++) {
+                    var lineElements = lines[i].split(" ").filter(function (s) {
+                        var tmp = s.trim();
+                        if (tmp && tmp.length)
+                            return true;
+                        else
+                            return false;
+                    });
+                    if (lineElements.length && lineElements.length >= 4) {
+                        var symbol = lineElements[3].trim();
+                        var x = getFloat(lineElements[0]);
+                        var y = getFloat(lineElements[1]);
+                        var z = getFloat(lineElements[2]);
+                        var atomKind = Molvwr.Elements.elementsBySymbol[symbol];
+                        if (atomKind) {
+                            console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
+                            molecule.atoms.push({
+                                symbol: atomKind.symbol,
+                                number: atomKind.number,
+                                x: x,
+                                y: y,
+                                z: z,
+                                bonds: []
+                            });
+                        }
+                    }
+                }
+                console.log("found " + molecule.title + " " + molecule.atoms.length);
+                return molecule;
             }
         };
     })(Parser = Molvwr.Parser || (Molvwr.Parser = {}));
@@ -412,5 +455,3 @@ var Molvwr;
         Renderer.Sphere = Sphere;
     })(Renderer = Molvwr.Renderer || (Molvwr.Renderer = {}));
 })(Molvwr || (Molvwr = {}));
-
-//# sourceMappingURL=molvwr.js.map
