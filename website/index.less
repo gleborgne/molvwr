@@ -21,18 +21,37 @@ html, body{
 		height: 100%;
 	}
 }
-#moleculetitle{
+
+#pagetitle{
 	position: absolute;
 	left: 0;	
 	top: 0;
 	right : 0;
-	text-transform : uppercase;
-	font-size : 18pt;
-	padding : 10px 20px 20px 20px;
-	color: white;
-	font-weight: 700;
-	cursor : pointer;
-	background: linear-gradient(to bottom, rgba(0,0,0,0.5),rgba(0,0,0,0))	
+	text-transform : uppercase;	
+	
+	color: black;	
+	
+	#about{
+		background-color: black;
+		color: white;
+		display: inline-block;
+		padding : 5px 10px;
+		font-size : 10pt;
+		float: right;		
+		cursor : pointer;
+		opacity: 0.5;
+	}
+
+	#moleculetitle{
+		background-color: black;
+		color: white;
+		display: inline-block;
+		margin-top: 20px;
+		padding : 10px 20px 10px 40px;
+		font-weight: 700;
+		font-size : 18pt;
+		cursor : pointer;
+	}
 }
 
 #molecule-choice-panel{
@@ -46,7 +65,7 @@ html, body{
 	overflow-x: hidden;	
 	overflow-y: auto;
 
-	background-color: rgba(0,0,0,0.4);
+	background-color: rgba(0,0,0,0.6);
 	-webkit-transform: translate3d(-100%, 0, 0);
 	-moz-transform: translate3d(-100%, 0, 0);
 	transform: translate3d(-100%, 0, 0);
@@ -70,5 +89,45 @@ html, body{
 			font-size : 14pt;
 			cursor : pointer;
 		}
+	}
+}
+
+#about-panel{
+	position: absolute;
+	right: 0;	
+	top: 0;
+	bottom : 0;
+	width: 400px;
+	max-width: 100%;
+	padding : 70px 40px 40px 40px;
+	overflow-x: hidden;	
+	overflow-y: auto;
+	color: white;
+	background-color: rgba(0,0,0,0.6);
+	-webkit-transform: translate3d(100%, 0, 0);
+	-moz-transform: translate3d(100%, 0, 0);
+	transform: translate3d(100%, 0, 0);
+
+	-webkit-transition: transform 200ms ease-out;
+	-moz-transition: transform 200ms ease-out;
+	transition: transform 200ms ease-out;
+
+	&.visible{
+		-webkit-transform: translate3d(0, 0, 0);
+		-moz-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
+	}
+}
+
+#overlay{
+	position: absolute;
+	left: 0;
+	right: 0;	
+	top: 0;
+	bottom : 0;
+	display: none;
+
+	&.visible{
+		display: block;
 	}
 }
