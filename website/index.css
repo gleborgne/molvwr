@@ -62,4 +62,5 @@ body {
 #molecule-choice-panel .items .sample-item {
   padding: 10px 0;
   font-size: 14pt;
+  cursor: pointer;
 }
