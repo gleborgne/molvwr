@@ -3,7 +3,7 @@ module Molvwr.Renderer {
 		ctx: Molvwr.BabylonContext;
 		config:Molvwr.IMolvwrConfig;
 		viewer : Molvwr.Viewer;
-		meshes : {};
+		meshes : any = {};
 		
 		constructor(viewer : Molvwr.Viewer, ctx: Molvwr.BabylonContext, config:Molvwr.IMolvwrConfig){
 			this.ctx = ctx;
@@ -19,7 +19,7 @@ module Molvwr.Renderer {
 				molecule.atoms.forEach((atom, index) => {
 					meshes.push(this.renderAtom(atom, index));
 				});
-				// BABYLON.Mesh.MergeMeshes(meshes, true);
+				 BABYLON.Mesh.MergeMeshes(meshes, true);
 			}
 		}
 		
@@ -27,13 +27,18 @@ module Molvwr.Renderer {
 			var cfg= this.config;
 			var atomKind = Molvwr.Elements.elementsBySymbol[atom.symbol];
 			var mesh = this.meshes[atom.symbol];
+			var sphere : any = null;
 			if (mesh){
-				var sphere = mesh.createInstance("sphere" + index);
+				sphere = mesh.createInstance("sphere" + index);
 			}else{
-				var sphere = BABYLON.Mesh.CreateSphere("sphere" + index, cfg.sphereSegments, atomKind.radius * cfg.scale * cfg.atomScaleFactor, this.ctx.scene);
+				sphere = BABYLON.Mesh.CreateSphere("sphere" + index, cfg.sphereSegments, atomKind.radius * cfg.scale * cfg.atomScaleFactor, this.ctx.scene);
 				sphere.material = this.ctx.getMaterial(atom.symbol);
 				this.meshes[atom.symbol] = sphere;
 			}
+			
+			// sphere = BABYLON.Mesh.CreateSphere("sphere" + index, cfg.sphereSegments, atomKind.radius * cfg.scale * cfg.atomScaleFactor, this.ctx.scene);
+			// sphere.material = this.ctx.getMaterial(atom.symbol);
+				
 			sphere.position.x = atom.x * cfg.scale;
 			sphere.position.y = atom.y * cfg.scale;
 			sphere.position.z = atom.z * cfg.scale;

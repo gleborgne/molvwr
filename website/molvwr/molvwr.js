@@ -358,6 +358,7 @@ var Molvwr;
     (function (Renderer) {
         var Sphere = (function () {
             function Sphere(viewer, ctx, config) {
+                this.meshes = {};
                 this.ctx = ctx;
                 this.config = config;
                 this.viewer = viewer;
@@ -370,16 +371,27 @@ var Molvwr;
                     molecule.atoms.forEach(function (atom, index) {
                         meshes.push(_this.renderAtom(atom, index));
                     });
+                    BABYLON.Mesh.MergeMeshes(meshes, true);
                 }
             };
             Sphere.prototype.renderAtom = function (atom, index) {
                 var cfg = this.config;
                 var atomKind = Molvwr.Elements.elementsBySymbol[atom.symbol];
-                var sphere = BABYLON.Mesh.CreateSphere("sphere" + index, cfg.sphereSegments, atomKind.radius * cfg.scale * cfg.atomScaleFactor, this.ctx.scene);
+                var mesh = this.meshes[atom.symbol];
+                var sphere = null;
+                if (mesh) {
+                    sphere = mesh.createInstance("sphere" + index);
+                }
+                else {
+                    sphere = BABYLON.Mesh.CreateSphere("sphere" + index, cfg.sphereSegments, atomKind.radius * cfg.scale * cfg.atomScaleFactor, this.ctx.scene);
+                    sphere.material = this.ctx.getMaterial(atom.symbol);
+                    this.meshes[atom.symbol] = sphere;
+                }
+                // sphere = BABYLON.Mesh.CreateSphere("sphere" + index, cfg.sphereSegments, atomKind.radius * cfg.scale * cfg.atomScaleFactor, this.ctx.scene);
+                // sphere.material = this.ctx.getMaterial(atom.symbol);
                 sphere.position.x = atom.x * cfg.scale;
                 sphere.position.y = atom.y * cfg.scale;
                 sphere.position.z = atom.z * cfg.scale;
-                sphere.material = this.ctx.getMaterial(atom.symbol);
                 return sphere;
             };
             return Sphere;

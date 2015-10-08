@@ -70,7 +70,7 @@ declare module Molvwr.Renderer {
         ctx: Molvwr.BabylonContext;
         config: Molvwr.IMolvwrConfig;
         viewer: Molvwr.Viewer;
-        meshes: {};
+        meshes: any;
         constructor(viewer: Molvwr.Viewer, ctx: Molvwr.BabylonContext, config: Molvwr.IMolvwrConfig);
         render(molecule: any): void;
         renderAtom(atom: any, index: any): any;
