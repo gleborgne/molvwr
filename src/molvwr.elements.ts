@@ -140,5 +140,13 @@ module Molvwr.Elements {
 	
 	elements.forEach(function(e){
 		elementsByNumber[e.number] = e;
-	})
+	});
+	
+	export var MIN_ATOM_RADIUS = Infinity;
+	export var MAX_ATOM_RADIUS = -Infinity;
+	
+	elements.forEach(function(e){
+		MIN_ATOM_RADIUS = Math.min(MIN_ATOM_RADIUS, e.radius);
+		MAX_ATOM_RADIUS = Math.max(MAX_ATOM_RADIUS, e.radius);
+	});
 }

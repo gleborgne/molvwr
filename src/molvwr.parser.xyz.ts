@@ -38,8 +38,7 @@ module Molvwr.Parser {
 					if (atomKind) {
 						console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
 						molecule.atoms.push({
-							symbol: atomKind.symbol,
-							number: atomKind.number,
+							kind : atomKind,							
 							x: x,
 							y: y,
 							z: z,

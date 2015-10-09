@@ -63,10 +63,10 @@
 	var titleelement = document.getElementById("moleculetitle");
 	var overlay = document.getElementById("overlay");
 	var root = document.getElementById("molvwr-container");
-	var viewer = new Molvwr.Viewer(root);
+	var viewer = new Molvwr.Viewer(root, Molvwr.Config.sphereAndLineBonds());
 	
 	var panel = new ChoicePanel(samplespanel, titleelement, viewer, samples);
-	panel.setSelected(samples[samples.length-1]);
+	panel.setSelected(samples[5]);
 	
 	function hideAbout(){
 		overlay.classList.remove("visible");

@@ -1,15 +1,31 @@
-module Molvwr {
+module Molvwr.Config {
 	export interface IMolvwrConfig{
-		renderer : string;
-		scale: number;
+		renderers : string[];
 		atomScaleFactor : number;
 		sphereSegments : number;
 	}
 	
-	export var defaultConfig : IMolvwrConfig = {
-		renderer : 'Sphere',
-		scale : 1.5,
-		atomScaleFactor: 3,
-		sphereSegments : 16
-	};
+	export function defaultConfig() : IMolvwrConfig { 
+		return {
+			renderers : ['Sphere'],
+			atomScaleFactor: 3,
+			sphereSegments : 16
+		};
+	}
+	
+	export function sphere() : IMolvwrConfig { 
+		return {
+			renderers : ['Sphere'],
+			atomScaleFactor: 3,
+			sphereSegments : 16
+		};
+	}
+	
+	export function sphereAndLineBonds() : IMolvwrConfig { 
+		return {
+			renderers : ['BondsLines', 'Sphere'],
+			atomScaleFactor: 1,
+			sphereSegments : 16
+		};
+	}
 }

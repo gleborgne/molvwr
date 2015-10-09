@@ -88,12 +88,33 @@
 
 var Molvwr;
 (function (Molvwr) {
-    Molvwr.defaultConfig = {
-        renderer: 'Sphere',
-        scale: 1.5,
-        atomScaleFactor: 3,
-        sphereSegments: 16
-    };
+    var Config;
+    (function (Config) {
+        function defaultConfig() {
+            return {
+                renderers: ['Sphere'],
+                atomScaleFactor: 3,
+                sphereSegments: 16
+            };
+        }
+        Config.defaultConfig = defaultConfig;
+        function sphere() {
+            return {
+                renderers: ['Sphere'],
+                atomScaleFactor: 3,
+                sphereSegments: 16
+            };
+        }
+        Config.sphere = sphere;
+        function sphereAndLineBonds() {
+            return {
+                renderers: ['BondsLines', 'Sphere'],
+                atomScaleFactor: 1,
+                sphereSegments: 16
+            };
+        }
+        Config.sphereAndLineBonds = sphereAndLineBonds;
+    })(Config = Molvwr.Config || (Molvwr.Config = {}));
 })(Molvwr || (Molvwr = {}));
 
 var Molvwr;
@@ -102,24 +123,31 @@ var Molvwr;
         function Viewer(element, config) {
             if (!element)
                 throw new Error("you must provide an element to host the viewer");
-            this.config = config || Molvwr.defaultConfig;
+            this.config = config || Molvwr.Config.defaultConfig();
             this.element = element;
             this.canvas = document.createElement("CANVAS");
             this.element.appendChild(this.canvas);
             this.context = new Molvwr.BabylonContext(this.canvas);
         }
         Viewer.prototype._loadContentFromString = function (content, contentFormat) {
+            var _this = this;
             var parser = Molvwr.Parser[contentFormat];
             if (parser) {
                 var molecule = parser.parse(content);
                 if (molecule) {
-                    var rendererClass = Molvwr.Renderer[this.config.renderer];
-                    if (rendererClass) {
-                        var renderer = new rendererClass(this, this.context, this.config);
-                        renderer.render(molecule);
-                    }
-                    else {
-                        console.warn("no renderer for " + this.config.renderer);
+                    this._postProcessMolecule(molecule);
+                    this.molecule = molecule;
+                    if (this.config.renderers) {
+                        this.config.renderers.forEach(function (rendererName) {
+                            var rendererClass = Molvwr.Renderer[rendererName];
+                            if (rendererClass) {
+                                var renderer = new rendererClass(_this, _this.context, _this.config);
+                                renderer.render(molecule);
+                            }
+                            else {
+                                console.warn("no renderer for " + rendererName);
+                            }
+                        });
                     }
                 }
                 else {
@@ -161,6 +189,57 @@ var Molvwr;
             catch (e) {
                 console.error(e);
             }
+        };
+        Viewer.prototype._postProcessMolecule = function (molecule) {
+            //this._center(molecule);
+            this._calculateAtomsBonds(molecule);
+        };
+        Viewer.prototype._calculateAtomsBonds = function (molecule) {
+            console.time("check bounds");
+            var bonds = [];
+            var nbatoms = molecule.atoms.length;
+            molecule.atoms.forEach(function (atom, index) {
+                for (var i = index + 1; i < nbatoms; i++) {
+                    var siblingAtom = molecule.atoms[i];
+                    var l = new BABYLON.Vector3(atom.x, atom.y, atom.z);
+                    var m = new BABYLON.Vector3(siblingAtom.x, siblingAtom.y, siblingAtom.z);
+                    var d = BABYLON.Vector3.Distance(l, m);
+                    if (d < 1.1 * (atom.kind.radius + siblingAtom.kind.radius)) {
+                        bonds.push({
+                            d: d,
+                            atomA: atom,
+                            atomB: siblingAtom,
+                            cutoff: d / (atom.kind.radius + siblingAtom.kind.radius)
+                        });
+                    }
+                }
+            });
+            molecule.bonds = bonds;
+            console.timeEnd("check bounds");
+            console.log("found " + bonds.length + " bonds");
+        };
+        Viewer.prototype._getCentroid = function (s) {
+            var xsum = 0;
+            var ysum = 0;
+            var zsum = 0;
+            for (var i = 0; i < s.atoms.length; i++) {
+                xsum += s.atoms[i].x;
+                ysum += s.atoms[i].y;
+                zsum += s.atoms[i].z;
+            }
+            return {
+                x: xsum / s.atoms.length,
+                y: ysum / s.atoms.length,
+                z: zsum / s.atoms.length
+            };
+        };
+        Viewer.prototype._center = function (molecule) {
+            var shift = this._getCentroid(molecule);
+            molecule.atoms.forEach(function (atom) {
+                atom.x -= shift.x;
+                atom.y -= shift.y;
+                atom.z -= shift.z;
+            });
         };
         return Viewer;
     })();
@@ -300,6 +379,12 @@ var Molvwr;
         Elements.elements.forEach(function (e) {
             Elements.elementsByNumber[e.number] = e;
         });
+        Elements.MIN_ATOM_RADIUS = Infinity;
+        Elements.MAX_ATOM_RADIUS = -Infinity;
+        Elements.elements.forEach(function (e) {
+            Elements.MIN_ATOM_RADIUS = Math.min(Elements.MIN_ATOM_RADIUS, e.radius);
+            Elements.MAX_ATOM_RADIUS = Math.max(Elements.MAX_ATOM_RADIUS, e.radius);
+        });
     })(Elements = Molvwr.Elements || (Molvwr.Elements = {}));
 })(Molvwr || (Molvwr = {}));
 
@@ -339,8 +424,7 @@ var Molvwr;
                         if (atomKind) {
                             console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
                             molecule.atoms.push({
-                                symbol: atomKind.symbol,
-                                number: atomKind.number,
+                                kind: atomKind,
                                 x: x,
                                 y: y,
                                 z: z,
@@ -392,8 +476,7 @@ var Molvwr;
                         if (atomKind) {
                             console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
                             molecule.atoms.push({
-                                symbol: atomKind.symbol,
-                                number: atomKind.number,
+                                kind: atomKind,
                                 x: x,
                                 y: y,
                                 z: z,
@@ -407,6 +490,37 @@ var Molvwr;
             }
         };
     })(Parser = Molvwr.Parser || (Molvwr.Parser = {}));
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
+    var Renderer;
+    (function (Renderer) {
+        var BondsLines = (function () {
+            function BondsLines(viewer, ctx, config) {
+                this.meshes = {};
+                this.ctx = ctx;
+                this.config = config;
+                this.viewer = viewer;
+            }
+            BondsLines.prototype.render = function (molecule) {
+                var _this = this;
+                var cfg = this.config;
+                var meshes = [];
+                console.log("rendering bonds as lines");
+                molecule.bonds.forEach(function (b, index) {
+                    var line = BABYLON.Mesh.CreateLines("bond-" + index, [
+                        new BABYLON.Vector3(b.atomA.x, b.atomA.y, b.atomA.z),
+                        new BABYLON.Vector3(b.atomB.x, b.atomB.y, b.atomB.z),
+                    ], _this.ctx.scene, false);
+                    line.color = new BABYLON.Color3(0.5, 0.5, 0.5);
+                    meshes.push(line);
+                });
+            };
+            return BondsLines;
+        })();
+        Renderer.BondsLines = BondsLines;
+    })(Renderer = Molvwr.Renderer || (Molvwr.Renderer = {}));
 })(Molvwr || (Molvwr = {}));
 
 var Molvwr;
@@ -432,23 +546,22 @@ var Molvwr;
             };
             Sphere.prototype.renderAtom = function (atom, index) {
                 var cfg = this.config;
-                var atomKind = Molvwr.Elements.elementsBySymbol[atom.symbol];
                 var mesh = this.meshes[atom.symbol];
                 var sphere = null;
                 if (mesh) {
                     sphere = mesh.createInstance("sphere" + index);
                 }
                 else {
-                    sphere = BABYLON.Mesh.CreateSphere("sphere" + index, cfg.sphereSegments, atomKind.radius * cfg.scale * cfg.atomScaleFactor, this.ctx.scene);
-                    sphere.material = this.ctx.getMaterial(atom.symbol);
-                    this.meshes[atom.symbol] = sphere;
+                    sphere = BABYLON.Mesh.CreateSphere("sphere" + index, cfg.sphereSegments, atom.kind.radius * cfg.atomScaleFactor, this.ctx.scene);
+                    sphere.material = this.ctx.getMaterial(atom.kind.symbol);
+                    this.meshes[atom.kind.symbol] = sphere;
                 }
                 // sphere = BABYLON.Mesh.CreateSphere("sphere" + index, cfg.sphereSegments, atomKind.radius * cfg.scale * cfg.atomScaleFactor, this.ctx.scene);
                 // sphere.material = this.ctx.getMaterial(atom.symbol);
                 sphere.pickable = false;
-                sphere.position.x = atom.x * cfg.scale;
-                sphere.position.y = atom.y * cfg.scale;
-                sphere.position.z = atom.z * cfg.scale;
+                sphere.position.x = atom.x;
+                sphere.position.y = atom.y;
+                sphere.position.z = atom.z;
                 return sphere;
             };
             return Sphere;
