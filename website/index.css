@@ -38,6 +38,7 @@ body {
   float: right;
   cursor: pointer;
   opacity: 0.5;
+  touch-action: manipulation;
 }
 #pagetitle #moleculetitle {
   background-color: black;
@@ -48,6 +49,7 @@ body {
   font-weight: 700;
   font-size: 18pt;
   cursor: pointer;
+  touch-action: manipulation;
 }
 #molecule-choice-panel {
   position: absolute;
@@ -55,10 +57,12 @@ body {
   top: 0;
   bottom: 0;
   width: 400px;
-  max-width: 100%;
+  max-width: 80%;
   padding: 90px 40px 20px 40px;
   overflow-x: hidden;
   overflow-y: auto;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
   background-color: rgba(0, 0, 0, 0.6);
   -webkit-transform: translate3d(-100%, 0, 0);
   -moz-transform: translate3d(-100%, 0, 0);
@@ -77,9 +81,10 @@ body {
   color: white;
 }
 #molecule-choice-panel .items .sample-item {
-  padding: 10px 0;
+  padding: 6px 0;
   font-size: 14pt;
   cursor: pointer;
+  touch-action: manipulation;
 }
 #about-panel {
   position: absolute;
@@ -87,11 +92,13 @@ body {
   top: 0;
   bottom: 0;
   width: 400px;
-  max-width: 100%;
+  max-width: 80%;
   padding: 70px 40px 40px 40px;
   overflow-x: hidden;
   overflow-y: auto;
   color: white;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
   background-color: rgba(0, 0, 0, 0.6);
   -webkit-transform: translate3d(100%, 0, 0);
   -moz-transform: translate3d(100%, 0, 0);
@@ -112,7 +119,19 @@ body {
   top: 0;
   bottom: 0;
   display: none;
+  touch-action: manipulation;
 }
 #overlay.visible {
   display: block;
+}
+@media screen and (max-width: 800px) {
+  #pagetitle #about {
+    font-size: 9pt;
+  }
+  #pagetitle #moleculetitle {
+    font-size: 14pt;
+  }
+  #molecule-choice-panel .items .sample-item {
+    font-size: 12pt;
+  }
 }

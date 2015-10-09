@@ -30,7 +30,7 @@ module Molvwr {
 				var atomMat = new BABYLON.StandardMaterial('materialFor' + atomsymbol, this.scene);
 				atomMat.diffuseColor = new BABYLON.Color3(atomKind.color[0], atomKind.color[1], atomKind.color[2]);
 				atomMat.specularColor = new BABYLON.Color3(0.1,0.1,0.1);
-				atomMat.emissiveColor = new BABYLON.Color3(0.15,0.15,0.15);
+				atomMat.emissiveColor = new BABYLON.Color3(0.2,0.2,0.2);
 				atomMat.bumpTexture   = new BABYLON.Texture('bump.png', this.scene);
 				(<any>atomMat.bumpTexture).uScale = 6;
 				(<any>atomMat.bumpTexture).vScale = 6;
@@ -55,13 +55,13 @@ module Molvwr {
 			scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
     		scene.fogDensity = 0.01;
 			
-			var camera = new BABYLON.ArcRotateCamera('Camera', 1, .8, 10, new BABYLON.Vector3(0, 0, 0), scene);
+			var camera = new BABYLON.ArcRotateCamera('Camera', 1, .8, 28, new BABYLON.Vector3(0, 0, 0), scene);
 			camera.wheelPrecision = 10;
 			camera.setTarget(BABYLON.Vector3.Zero());
 			camera.attachControl(this.canvas, true);
 			this.camera = camera;
 		
-			var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 20, 0), scene);
+			var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(40, 40, 40), scene);
 			light.intensity = 0.6;			
 
 			//this.useAmbientOcclusion();

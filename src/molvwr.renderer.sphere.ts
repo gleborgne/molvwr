@@ -39,7 +39,7 @@ module Molvwr.Renderer {
 			
 			// sphere = BABYLON.Mesh.CreateSphere("sphere" + index, cfg.sphereSegments, atomKind.radius * cfg.scale * cfg.atomScaleFactor, this.ctx.scene);
 			// sphere.material = this.ctx.getMaterial(atom.symbol);
-				
+			sphere.pickable = false;
 			sphere.position.x = atom.x * cfg.scale;
 			sphere.position.y = atom.y * cfg.scale;
 			sphere.position.z = atom.z * cfg.scale;
