@@ -4,7 +4,7 @@ module Molvwr {
 		canvas: HTMLCanvasElement;
 		config: Molvwr.Config.IMolvwrConfig;
 		context: BabylonContext;
-		molecule : any;
+		molecule: any;
 
 		constructor(element: HTMLElement, config?: Molvwr.Config.IMolvwrConfig) {
 			if (!element)
@@ -12,6 +12,7 @@ module Molvwr {
 			this.config = config || Molvwr.Config.defaultConfig();
 			this.element = element;
 			this.canvas = <HTMLCanvasElement>document.createElement("CANVAS");
+			this.canvas.setAttribute("touch-action", "manipulation");
 			this.element.appendChild(this.canvas);
 			this.context = new BabylonContext(this.canvas);
 
@@ -23,23 +24,38 @@ module Molvwr {
 				var molecule = parser.parse(content);
 				if (molecule) {
 					this._postProcessMolecule(molecule);
-					this.molecule = molecule;
-					if (this.config.renderers) {
-						this.config.renderers.forEach((rendererName) => {
-							var rendererClass = Molvwr.Renderer[rendererName];
-							if (rendererClass) {
-								var renderer = new rendererClass(this, this.context, this.config);
-								renderer.render(molecule);
-							} else {
-								console.warn("no renderer for " + rendererName);
-							}
-						});
-					}
+
+					this.renderMolecule(molecule);
 				} else {
 					console.warn("no molecule from parser " + contentFormat);
 				}
 			} else {
 				console.warn("no parser for " + contentFormat);
+			}
+		}
+
+		renderMolecule(molecule) {
+			this.molecule = molecule;
+			this.createContext();
+			setTimeout(() => {
+				if (this.config.renderers) {
+					this.config.renderers.forEach((rendererName) => {
+						var rendererClass = Molvwr.Renderer[rendererName];
+						if (rendererClass) {
+							var renderer = new rendererClass(this, this.context, this.config);
+							renderer.render(this.molecule);
+						} else {
+							console.warn("no renderer for " + rendererName);
+						}
+					});
+				}
+			}, 50);
+		}
+
+		setOptions(options) {
+			this.config = options;
+			if (this.molecule) {
+				this.renderMolecule(this.molecule);
 			}
 		}
 
@@ -94,7 +110,7 @@ module Molvwr {
 					var m = new BABYLON.Vector3(siblingAtom.x, siblingAtom.y, siblingAtom.z);
 					var d = BABYLON.Vector3.Distance(l, m);
 
-					if (d < 1.1 * (atom.kind.radius + siblingAtom.kind.radius)) {
+					if (d < 1.2 * (atom.kind.radius + siblingAtom.kind.radius)) {
 						bonds.push({
 							d: d,
 							atomA: atom,

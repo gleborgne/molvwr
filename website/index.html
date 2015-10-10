@@ -5,14 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">    
     <link href='https://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="index.css" />
-	  <script src="lib/babylon.2.2.js"></script>
+	  <script src="lib/hand.js"></script>
+    <script src="lib/babylon.2.2.js"></script>
     <script src="molvwr/molvwr.js"></script>
   </head>
   <body>
 	   <div id="molvwr-container"></div>
-     <div id="overlay"></div>
-     <div id="molecule-choice-panel"></div>
-     <div id="about-panel">
+     <div id="overlay" class="panel"></div>
+     <div id="molecule-choice-panel" class="panel itemspanel"></div>
+     <div id="viewmode-choice-panel" class="panel itemspanel"></div>
+     <div id="about-panel" class="panel">
        <h1>Molvwr</h1>
        <p>Molvwr is a simple molecule viewer for the web, made with Babylon.js.</p>
        <p>If you want to know more, request feature, or file a bug, visit our <a target="_blank" href="https://www.github.com/gleborgne/molvwr">github page</a>.</p>
@@ -20,7 +22,10 @@
      </div>
      <div id="pagetitle">
           <div id="about">About...</div>
-          <div id="moleculetitle"></div>
+          <div id="titleribbon">
+            <div id="moleculetitle"></div>
+            <div id="viewmodetitle"></div>
+          </div>
      </div>
      <script src="index.js"></script>
   </body>

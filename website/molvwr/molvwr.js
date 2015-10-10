@@ -22,7 +22,7 @@
             if (atomKind) {
                 var atomMat = new BABYLON.StandardMaterial('materialFor' + atomsymbol, this.scene);
                 atomMat.diffuseColor = new BABYLON.Color3(atomKind.color[0], atomKind.color[1], atomKind.color[2]);
-                atomMat.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
+                atomMat.specularColor = new BABYLON.Color3(0.2, 0.2, 0.2);
                 atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
                 atomMat.bumpTexture = new BABYLON.Texture('bump.png', this.scene);
                 atomMat.bumpTexture.uScale = 6;
@@ -94,26 +94,29 @@ var Molvwr;
             return {
                 renderers: ['Sphere'],
                 atomScaleFactor: 3,
+                cylinderScale: 0.6,
                 sphereSegments: 16
             };
         }
         Config.defaultConfig = defaultConfig;
-        function sphere() {
+        function spheres() {
             return {
                 renderers: ['Sphere'],
                 atomScaleFactor: 3,
+                cylinderScale: 0.6,
                 sphereSegments: 16
             };
         }
-        Config.sphere = sphere;
-        function sphereAndLineBonds() {
+        Config.spheres = spheres;
+        function ballsAndSticks() {
             return {
-                renderers: ['BondsLines', 'Sphere'],
-                atomScaleFactor: 1,
+                renderers: ['BondsCylinder', 'Sphere'],
+                atomScaleFactor: 1.6,
+                cylinderScale: 0.6,
                 sphereSegments: 16
             };
         }
-        Config.sphereAndLineBonds = sphereAndLineBonds;
+        Config.ballsAndSticks = ballsAndSticks;
     })(Config = Molvwr.Config || (Molvwr.Config = {}));
 })(Molvwr || (Molvwr = {}));
 
@@ -126,29 +129,17 @@ var Molvwr;
             this.config = config || Molvwr.Config.defaultConfig();
             this.element = element;
             this.canvas = document.createElement("CANVAS");
+            this.canvas.setAttribute("touch-action", "manipulation");
             this.element.appendChild(this.canvas);
             this.context = new Molvwr.BabylonContext(this.canvas);
         }
         Viewer.prototype._loadContentFromString = function (content, contentFormat) {
-            var _this = this;
             var parser = Molvwr.Parser[contentFormat];
             if (parser) {
                 var molecule = parser.parse(content);
                 if (molecule) {
                     this._postProcessMolecule(molecule);
-                    this.molecule = molecule;
-                    if (this.config.renderers) {
-                        this.config.renderers.forEach(function (rendererName) {
-                            var rendererClass = Molvwr.Renderer[rendererName];
-                            if (rendererClass) {
-                                var renderer = new rendererClass(_this, _this.context, _this.config);
-                                renderer.render(molecule);
-                            }
-                            else {
-                                console.warn("no renderer for " + rendererName);
-                            }
-                        });
-                    }
+                    this.renderMolecule(molecule);
                 }
                 else {
                     console.warn("no molecule from parser " + contentFormat);
@@ -156,6 +147,31 @@ var Molvwr;
             }
             else {
                 console.warn("no parser for " + contentFormat);
+            }
+        };
+        Viewer.prototype.renderMolecule = function (molecule) {
+            var _this = this;
+            this.molecule = molecule;
+            this.createContext();
+            setTimeout(function () {
+                if (_this.config.renderers) {
+                    _this.config.renderers.forEach(function (rendererName) {
+                        var rendererClass = Molvwr.Renderer[rendererName];
+                        if (rendererClass) {
+                            var renderer = new rendererClass(_this, _this.context, _this.config);
+                            renderer.render(_this.molecule);
+                        }
+                        else {
+                            console.warn("no renderer for " + rendererName);
+                        }
+                    });
+                }
+            }, 50);
+        };
+        Viewer.prototype.setOptions = function (options) {
+            this.config = options;
+            if (this.molecule) {
+                this.renderMolecule(this.molecule);
             }
         };
         Viewer.prototype.createContext = function () {
@@ -204,7 +220,7 @@ var Molvwr;
                     var l = new BABYLON.Vector3(atom.x, atom.y, atom.z);
                     var m = new BABYLON.Vector3(siblingAtom.x, siblingAtom.y, siblingAtom.z);
                     var d = BABYLON.Vector3.Distance(l, m);
-                    if (d < 1.1 * (atom.kind.radius + siblingAtom.kind.radius)) {
+                    if (d < 1.2 * (atom.kind.radius + siblingAtom.kind.radius)) {
                         bonds.push({
                             d: d,
                             atomA: atom,
@@ -496,6 +512,96 @@ var Molvwr;
 (function (Molvwr) {
     var Renderer;
     (function (Renderer) {
+        var BondsCylinder = (function () {
+            function BondsCylinder(viewer, ctx, config) {
+                this.meshes = {};
+                this.ctx = ctx;
+                this.config = config;
+                this.viewer = viewer;
+            }
+            BondsCylinder.prototype.render = function (molecule) {
+                var _this = this;
+                var cfg = this.config;
+                var meshes = [];
+                console.log("rendering bonds as lines");
+                var diameter = Molvwr.Elements.MIN_ATOM_RADIUS * this.config.cylinderScale * this.config.atomScaleFactor;
+                molecule.bonds.forEach(function (b, index) {
+                    var cylinder = _this.getCylinderForBinding(diameter, b, index);
+                    cylinder.pickable = false;
+                    _this.alignCylinderToBinding(b, cylinder);
+                });
+            };
+            BondsCylinder.prototype.getCylinderForBinding = function (diameter, binding, index) {
+                var key = binding.atomA.kind.symbol + "#" + binding.atomB.kind.symbol;
+                if (this.meshes[key])
+                    return this.meshes[key].createInstance("bond" + index);
+                var cylinder = BABYLON.Mesh.CreateCylinder("bond" + index, binding.d, diameter, diameter, this.config.sphereSegments, 1, this.ctx.scene, false);
+                this.meshes[key] = cylinder;
+                var atomMat = new BABYLON.StandardMaterial('materialFor' + key, this.ctx.scene);
+                atomMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
+                atomMat.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
+                atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+                atomMat.bumpTexture = new BABYLON.Texture('bump.png', this.ctx.scene);
+                atomMat.bumpTexture.uScale = 6;
+                atomMat.bumpTexture.vScale = 6;
+                atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
+                atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
+                cylinder.material = atomMat;
+                return cylinder;
+            };
+            BondsCylinder.prototype.alignCylinderToBinding = function (b, cylinder) {
+                var pointA = new BABYLON.Vector3(b.atomA.x, b.atomA.y, b.atomA.z);
+                var pointB = new BABYLON.Vector3(b.atomB.x, b.atomB.y, b.atomB.z);
+                // First of all we have to set the pivot not in the center of the cylinder:
+                cylinder.setPivotMatrix(BABYLON.Matrix.Translation(0, -b.d / 2, 0));
+                // Then move the cylinder to red sphere
+                cylinder.position = pointB;
+                // Then find the vector between spheres
+                var v1 = pointB.subtract(pointA);
+                v1.normalize();
+                var v2 = new BABYLON.Vector3(0, 1, 0);
+                // Using cross we will have a vector perpendicular to both vectors
+                var axis = BABYLON.Vector3.Cross(v2, v1);
+                axis.normalize();
+                // Angle between vectors
+                var angle = BABYLON.Vector3.Dot(v1, v2);
+                angle = Math.acos(angle);
+                // Then using axis rotation the result is obvious
+                cylinder.rotationQuaternion = BABYLON.Quaternion.RotationAxis(axis, angle);
+                if (this.vectorEqualsCloseEnough(v1, v2.negate())) {
+                    cylinder.position = pointA;
+                }
+                return cylinder;
+            };
+            BondsCylinder.prototype.vectorEqualsCloseEnough = function (v1, v2, tolerance) {
+                if (tolerance === void 0) { tolerance = 0.00002; }
+                if (typeof (v2) !== 'object') {
+                    throw ("v2 is supposed to be an object");
+                }
+                if (typeof (v1) !== 'object') {
+                    throw ("v1 is supposed to be an object");
+                }
+                if (v1.x < v2.x - tolerance || v1.x > v2.x + tolerance) {
+                    return false;
+                }
+                if (v1.y < v2.y - tolerance || v1.y > v2.y + tolerance) {
+                    return false;
+                }
+                if (v1.z < v2.z - tolerance || v1.z > v2.z + tolerance) {
+                    return false;
+                }
+                return true;
+            };
+            return BondsCylinder;
+        })();
+        Renderer.BondsCylinder = BondsCylinder;
+    })(Renderer = Molvwr.Renderer || (Molvwr.Renderer = {}));
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
+    var Renderer;
+    (function (Renderer) {
         var BondsLines = (function () {
             function BondsLines(viewer, ctx, config) {
                 this.meshes = {};
@@ -567,5 +673,81 @@ var Molvwr;
             return Sphere;
         })();
         Renderer.Sphere = Sphere;
+    })(Renderer = Molvwr.Renderer || (Molvwr.Renderer = {}));
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
+    var Renderer;
+    (function (Renderer) {
+        var Sticks = (function () {
+            function Sticks(viewer, ctx, config) {
+                this.meshes = {};
+                this.ctx = ctx;
+                this.config = config;
+                this.viewer = viewer;
+            }
+            Sticks.prototype.render = function (molecule) {
+                var _this = this;
+                var cfg = this.config;
+                var meshes = [];
+                console.log("rendering bonds as lines");
+                var diameter = Molvwr.Elements.MIN_ATOM_RADIUS * 0.6 * this.config.atomScaleFactor;
+                molecule.bonds.forEach(function (b, index) {
+                    var cylinder = _this.getCylinderForBinding(diameter, b, index);
+                    _this.alignCylinderToBinding(b, cylinder);
+                    // this.createCylinderBetweenPoints(
+                    // 	new BABYLON.Vector3(b.atomA.x, b.atomA.y, b.atomA.z),
+                    // 	new BABYLON.Vector3(b.atomB.x, b.atomB.y, b.atomB.z),
+                    // 	"bond"+index,
+                    // 	Molvwr.Elements.MIN_ATOM_RADIUS*0.8*this.config.atomScaleFactor)
+                });
+            };
+            Sticks.prototype.getCylinderForBinding = function (diameter, binding, index) {
+                var key = binding.atomA.kind.symbol + "#" + binding.atomB.kind.symbol;
+                if (this.meshes[key])
+                    return this.meshes[key].createInstance("bond" + index);
+                var cylinder = BABYLON.Mesh.CreateCylinder("bond" + index, binding.d, diameter, diameter, this.config.sphereSegments, 1, this.ctx.scene, false);
+                this.meshes[key] = cylinder;
+                var atomMat = new BABYLON.StandardMaterial('materialFor' + key, this.ctx.scene);
+                atomMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
+                atomMat.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
+                atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+                atomMat.bumpTexture = new BABYLON.Texture('bump.png', this.ctx.scene);
+                atomMat.bumpTexture.uScale = 6;
+                atomMat.bumpTexture.vScale = 6;
+                atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
+                atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
+                cylinder.material = atomMat;
+                return cylinder;
+            };
+            Sticks.prototype.alignCylinderToBinding = function (b, cylinder) {
+                var pointA = new BABYLON.Vector3(b.atomA.x, b.atomA.y, b.atomA.z);
+                var pointB = new BABYLON.Vector3(b.atomB.x, b.atomB.y, b.atomB.z);
+                // First of all we have to set the pivot not in the center of the cylinder:
+                cylinder.setPivotMatrix(BABYLON.Matrix.Translation(0, -b.d / 2, 0));
+                // Then move the cylinder to red sphere
+                cylinder.position = pointB;
+                // Then find the vector between spheres
+                var v1 = pointB.subtract(pointA);
+                console.log(v1);
+                v1.normalize();
+                console.log(v1);
+                var v2 = new BABYLON.Vector3(0, 1, 0);
+                // Using cross we will have a vector perpendicular to both vectors
+                var axis = BABYLON.Vector3.Cross(v2, v1);
+                axis.normalize();
+                console.log(axis);
+                // Angle between vectors
+                var angle = BABYLON.Vector3.Dot(v1, v2);
+                angle = Math.acos(angle);
+                console.log(angle);
+                // Then using axis rotation the result is obvious
+                cylinder.rotationQuaternion = BABYLON.Quaternion.RotationAxis(axis, angle);
+                return cylinder;
+            };
+            return Sticks;
+        })();
+        Renderer.Sticks = Sticks;
     })(Renderer = Molvwr.Renderer || (Molvwr.Renderer = {}));
 })(Molvwr || (Molvwr = {}));

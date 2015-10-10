@@ -2,6 +2,7 @@ module Molvwr.Config {
 	export interface IMolvwrConfig{
 		renderers : string[];
 		atomScaleFactor : number;
+		cylinderScale : number;
 		sphereSegments : number;
 	}
 	
@@ -9,22 +10,25 @@ module Molvwr.Config {
 		return {
 			renderers : ['Sphere'],
 			atomScaleFactor: 3,
+			cylinderScale : 0.6,
 			sphereSegments : 16
 		};
 	}
 	
-	export function sphere() : IMolvwrConfig { 
+	export function spheres() : IMolvwrConfig { 
 		return {
 			renderers : ['Sphere'],
 			atomScaleFactor: 3,
+			cylinderScale : 0.6,
 			sphereSegments : 16
 		};
 	}
 	
-	export function sphereAndLineBonds() : IMolvwrConfig { 
+	export function ballsAndSticks() : IMolvwrConfig { 
 		return {
-			renderers : ['BondsLines', 'Sphere'],
-			atomScaleFactor: 1,
+			renderers : ['BondsCylinder', 'Sphere'],
+			atomScaleFactor: 1.6,
+			cylinderScale : 0.6,
 			sphereSegments : 16
 		};
 	}

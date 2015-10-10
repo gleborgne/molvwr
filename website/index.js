@@ -14,17 +14,31 @@
 		{ name : "DNA fragment", url: "molsamples/xyz/dna.txt", format: "xyz"},		
 	];
 
-	function ChoicePanel(element, titleElement, viewer, samples){
+	var viewmodes = [
+		{ name : 'spheres', cfg : Molvwr.Config.spheres},
+		{ name : 'balls and sticks', cfg : Molvwr.Config.ballsAndSticks},
+	];
+
+	function hideAllPanels(){
+		var panels = document.querySelectorAll(".panel");
+		for (var i=0, l=panels.length; i<l; i++){
+			panels[i].classList.remove("visible");
+		}
+	}
+
+	function ChoicePanel(element, titleElement, viewer, samples, onselected){
 		var ctrl = this;
 		this.viewer = viewer;
 		this.titleElement = titleElement;
 		this.element = element;
+		this.onselected = onselected;
 
 		this.itemsElt = document.createElement("DIV");
 		this.itemsElt.className = "items"
 		this.element.appendChild(this.itemsElt);
 
 		this.titleElement.onclick = function(){
+			hideAllPanels();
 			ctrl.element.classList.toggle("visible");
 			if (ctrl.element.classList.contains("visible")){
 				overlay.classList.add("visible");
@@ -33,22 +47,25 @@
 			}
 		}
 
-		samples.forEach(function(s){
+		samples.forEach(function(item){
 			var sampleitem = document.createElement("DIV");
-			sampleitem.className = "sample-item";
-			sampleitem.innerHTML = s.name;
+			sampleitem.className = "choice-item";
+			sampleitem.innerHTML = item.name;
 			ctrl.itemsElt.appendChild(sampleitem);
-			sampleitem.onclick = function(){
-				ctrl.setSelected(s);
-				ctrl.hide();
-			}
+				sampleitem.onclick = function(){
+					ctrl.setSelected(item);
+					ctrl.hide();
+				}
+			
 		})
 	}
 
-	ChoicePanel.prototype.setSelected = function(sample){
+	ChoicePanel.prototype.setSelected = function(item){
 		var ctrl = this;
-		ctrl.titleElement.innerText = sample.name;
-		ctrl.viewer.loadContentFromUrl(sample.url, sample.format);
+		ctrl.titleElement.innerText = item.name;
+		if (ctrl.onselected){
+			ctrl.onselected(ctrl, item)
+		}
 	}
 
 	ChoicePanel.prototype.hide = function(){
@@ -61,24 +78,33 @@
 	var aboutpanel = document.getElementById("about-panel");
 	var aboutlink = document.getElementById("about");
 	var titleelement = document.getElementById("moleculetitle");
+	var viewmodetitle = document.getElementById("viewmodetitle");
+	var viewmodepanel = document.getElementById("viewmode-choice-panel");
 	var overlay = document.getElementById("overlay");
 	var root = document.getElementById("molvwr-container");
-	var viewer = new Molvwr.Viewer(root, Molvwr.Config.sphereAndLineBonds());
-	
-	var panel = new ChoicePanel(samplespanel, titleelement, viewer, samples);
-	panel.setSelected(samples[5]);
-	
+	var viewer = new Molvwr.Viewer(root);
+
+	var viewpanelctrl = new ChoicePanel(viewmodepanel, viewmodetitle, viewer, viewmodes, function(ctrl, item){
+		ctrl.viewer.setOptions(item.cfg());
+	});
+	viewpanelctrl.setSelected(viewmodes[1]);
+		
+	var samplespanelctrl = new ChoicePanel(samplespanel, titleelement, viewer, samples, function(ctrl, item){
+		ctrl.viewer.loadContentFromUrl(item.url, item.format);
+	});
+	samplespanelctrl.setSelected(samples[5]);
+
 	function hideAbout(){
 		overlay.classList.remove("visible");
 		aboutpanel.classList.remove("visible");
 	}
 	aboutlink.onclick = function(){
+		hideAllPanels();
 		overlay.classList.add("visible");
 		aboutpanel.classList.add("visible");
 	}
 
 	overlay.onclick = function(){
-		panel.hide();
-		hideAbout();
+		hideAllPanels();
 	}
 })();

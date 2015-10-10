@@ -29,7 +29,7 @@ module Molvwr {
 			if (atomKind){
 				var atomMat = new BABYLON.StandardMaterial('materialFor' + atomsymbol, this.scene);
 				atomMat.diffuseColor = new BABYLON.Color3(atomKind.color[0], atomKind.color[1], atomKind.color[2]);
-				atomMat.specularColor = new BABYLON.Color3(0.1,0.1,0.1);
+				atomMat.specularColor = new BABYLON.Color3(0.2,0.2,0.2);
 				atomMat.emissiveColor = new BABYLON.Color3(0.2,0.2,0.2);
 				atomMat.bumpTexture   = new BABYLON.Texture('bump.png', this.scene);
 				(<any>atomMat.bumpTexture).uScale = 6;

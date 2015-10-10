@@ -44,20 +44,33 @@ html, body{
 		touch-action:manipulation;
 	}
 
-	#moleculetitle{
+	#titleribbon{
 		background-color: black;
 		color: white;
-		display: inline-block;
 		margin-top: 20px;
 		padding : 10px 20px 10px 40px;
-		font-weight: 700;
-		font-size : 18pt;
-		cursor : pointer;
-		touch-action:manipulation;
+		display: inline-block;
+
+		#moleculetitle{
+			display: inline-block;
+			font-weight: 700;
+			font-size : 18pt;
+			cursor : pointer;
+			touch-action:manipulation;
+		}
+
+		#viewmodetitle{
+			display: inline-block;
+			font-size : 14pt;
+			margin-left: 10px;
+			color : #777;
+			cursor : pointer;
+			touch-action:manipulation;
+		}
 	}
 }
 
-#molecule-choice-panel{
+.itemspanel{
 	position: absolute;
 	left: 0;	
 	top: 0;
@@ -89,7 +102,7 @@ html, body{
 		width: 100%;
 		color: white;
 
-		.sample-item{
+		.choice-item{
 			padding : 6px 0;
 			font-size : 14pt;
 			cursor : pointer;

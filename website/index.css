@@ -40,18 +40,29 @@ body {
   opacity: 0.5;
   touch-action: manipulation;
 }
-#pagetitle #moleculetitle {
+#pagetitle #titleribbon {
   background-color: black;
   color: white;
-  display: inline-block;
   margin-top: 20px;
   padding: 10px 20px 10px 40px;
+  display: inline-block;
+}
+#pagetitle #titleribbon #moleculetitle {
+  display: inline-block;
   font-weight: 700;
   font-size: 18pt;
   cursor: pointer;
   touch-action: manipulation;
 }
-#molecule-choice-panel {
+#pagetitle #titleribbon #viewmodetitle {
+  display: inline-block;
+  font-size: 14pt;
+  margin-left: 10px;
+  color: #777;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.itemspanel {
   position: absolute;
   left: 0;
   top: 0;
@@ -71,16 +82,16 @@ body {
   -moz-transition: transform 200ms ease-out;
   transition: transform 200ms ease-out;
 }
-#molecule-choice-panel.visible {
+.itemspanel.visible {
   -webkit-transform: translate3d(0, 0, 0);
   -moz-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
 }
-#molecule-choice-panel .items {
+.itemspanel .items {
   width: 100%;
   color: white;
 }
-#molecule-choice-panel .items .sample-item {
+.itemspanel .items .choice-item {
   padding: 6px 0;
   font-size: 14pt;
   cursor: pointer;
