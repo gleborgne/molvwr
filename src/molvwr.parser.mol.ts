@@ -20,31 +20,35 @@ module Molvwr.Parser {
 			molecule.title = lines[1];
 
 			for (var i = 4, l = lines.length; i < l; i++) {
-				var lineElements = lines[i].split(" ").filter((s) => {
-					var tmp = s.trim();
-					if (tmp && tmp.length)
-						return true;
-					else
-						return false;
-				});
-
-				if (lineElements.length && lineElements.length >= 4) {
-					var symbol = lineElements[3].trim();
-					var x = getFloat(lineElements[0]);
-					var y = getFloat(lineElements[1]);
-					var z = getFloat(lineElements[2]);
-
-					var atomKind = Molvwr.Elements.elementsBySymbol[symbol];
-					if (atomKind) {
-						console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
-						molecule.atoms.push({
-							kind: atomKind,
-							x: x,
-							y: y,
-							z: z,
-							bonds: []
-						});
+				if (lines[i].indexOf("   ") == 0){
+					var lineElements = lines[i].split(" ").filter((s) => {
+						var tmp = s.trim();
+						if (tmp && tmp.length)
+							return true;
+						else
+							return false;
+					});
+	
+					if (lineElements.length && lineElements.length >= 4) {
+						var symbol = lineElements[3].trim();
+						var x = getFloat(lineElements[0]);
+						var y = getFloat(lineElements[1]);
+						var z = getFloat(lineElements[2]);
+	
+						var atomKind = Molvwr.Elements.elementsBySymbol[symbol];
+						if (atomKind) {
+							console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
+							molecule.atoms.push({
+								kind: atomKind,
+								x: x,
+								y: y,
+								z: z,
+								bonds: []
+							});
+						}
 					}
+				}else{
+					break;
 				}
 			}
 			console.log("found " + molecule.title + " " + molecule.atoms.length);

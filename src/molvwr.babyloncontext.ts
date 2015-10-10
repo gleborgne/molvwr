@@ -29,9 +29,10 @@ module Molvwr {
 			if (atomKind){
 				var atomMat = new BABYLON.StandardMaterial('materialFor' + atomsymbol, this.scene);
 				atomMat.diffuseColor = new BABYLON.Color3(atomKind.color[0], atomKind.color[1], atomKind.color[2]);
-				atomMat.specularColor = new BABYLON.Color3(0.2,0.2,0.2);
+				atomMat.specularColor = new BABYLON.Color3(0.1,0.1,0.1);
 				atomMat.emissiveColor = new BABYLON.Color3(0.2,0.2,0.2);
 				atomMat.bumpTexture   = new BABYLON.Texture('bump.png', this.scene);
+				//atomMat.specularTexture   = new BABYLON.Texture('bump.png', this.scene);
 				(<any>atomMat.bumpTexture).uScale = 6;
 				(<any>atomMat.bumpTexture).vScale = 6;
 				atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
@@ -57,6 +58,8 @@ module Molvwr {
 			
 			var camera = new BABYLON.ArcRotateCamera('Camera', 1, .8, 28, new BABYLON.Vector3(0, 0, 0), scene);
 			camera.wheelPrecision = 10;
+			camera.pinchPrecision = 7;
+			camera.panningSensibility = 70;
 			camera.setTarget(BABYLON.Vector3.Zero());
 			camera.attachControl(this.canvas, true);
 			this.camera = camera;

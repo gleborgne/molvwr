@@ -22,9 +22,10 @@
             if (atomKind) {
                 var atomMat = new BABYLON.StandardMaterial('materialFor' + atomsymbol, this.scene);
                 atomMat.diffuseColor = new BABYLON.Color3(atomKind.color[0], atomKind.color[1], atomKind.color[2]);
-                atomMat.specularColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+                atomMat.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
                 atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
                 atomMat.bumpTexture = new BABYLON.Texture('bump.png', this.scene);
+                //atomMat.specularTexture   = new BABYLON.Texture('bump.png', this.scene);
                 atomMat.bumpTexture.uScale = 6;
                 atomMat.bumpTexture.vScale = 6;
                 atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
@@ -45,6 +46,8 @@
             scene.fogDensity = 0.01;
             var camera = new BABYLON.ArcRotateCamera('Camera', 1, .8, 28, new BABYLON.Vector3(0, 0, 0), scene);
             camera.wheelPrecision = 10;
+            camera.pinchPrecision = 7;
+            camera.panningSensibility = 70;
             camera.setTarget(BABYLON.Vector3.Zero());
             camera.attachControl(this.canvas, true);
             this.camera = camera;
@@ -111,7 +114,7 @@ var Molvwr;
         function ballsAndSticks() {
             return {
                 renderers: ['BondsCylinder', 'Sphere'],
-                atomScaleFactor: 1.6,
+                atomScaleFactor: 1.3,
                 cylinderScale: 0.6,
                 sphereSegments: 16
             };
@@ -220,7 +223,7 @@ var Molvwr;
                     var l = new BABYLON.Vector3(atom.x, atom.y, atom.z);
                     var m = new BABYLON.Vector3(siblingAtom.x, siblingAtom.y, siblingAtom.z);
                     var d = BABYLON.Vector3.Distance(l, m);
-                    if (d < 1.2 * (atom.kind.radius + siblingAtom.kind.radius)) {
+                    if (d < 1.1 * (atom.kind.radius + siblingAtom.kind.radius)) {
                         bonds.push({
                             d: d,
                             atomA: atom,
@@ -424,29 +427,34 @@ var Molvwr;
                 var lines = content.split('\n');
                 molecule.title = lines[1];
                 for (var i = 4, l = lines.length; i < l; i++) {
-                    var lineElements = lines[i].split(" ").filter(function (s) {
-                        var tmp = s.trim();
-                        if (tmp && tmp.length)
-                            return true;
-                        else
-                            return false;
-                    });
-                    if (lineElements.length && lineElements.length >= 4) {
-                        var symbol = lineElements[3].trim();
-                        var x = getFloat(lineElements[0]);
-                        var y = getFloat(lineElements[1]);
-                        var z = getFloat(lineElements[2]);
-                        var atomKind = Molvwr.Elements.elementsBySymbol[symbol];
-                        if (atomKind) {
-                            console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
-                            molecule.atoms.push({
-                                kind: atomKind,
-                                x: x,
-                                y: y,
-                                z: z,
-                                bonds: []
-                            });
+                    if (lines[i].indexOf("   ") == 0) {
+                        var lineElements = lines[i].split(" ").filter(function (s) {
+                            var tmp = s.trim();
+                            if (tmp && tmp.length)
+                                return true;
+                            else
+                                return false;
+                        });
+                        if (lineElements.length && lineElements.length >= 4) {
+                            var symbol = lineElements[3].trim();
+                            var x = getFloat(lineElements[0]);
+                            var y = getFloat(lineElements[1]);
+                            var z = getFloat(lineElements[2]);
+                            var atomKind = Molvwr.Elements.elementsBySymbol[symbol];
+                            if (atomKind) {
+                                console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
+                                molecule.atoms.push({
+                                    kind: atomKind,
+                                    x: x,
+                                    y: y,
+                                    z: z,
+                                    bonds: []
+                                });
+                            }
                         }
+                    }
+                    else {
+                        break;
                     }
                 }
                 console.log("found " + molecule.title + " " + molecule.atoms.length);

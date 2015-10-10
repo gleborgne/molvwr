@@ -27,7 +27,7 @@ module Molvwr.Config {
 	export function ballsAndSticks() : IMolvwrConfig { 
 		return {
 			renderers : ['BondsCylinder', 'Sphere'],
-			atomScaleFactor: 1.6,
+			atomScaleFactor: 1.3,
 			cylinderScale : 0.6,
 			sphereSegments : 16
 		};
