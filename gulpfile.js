@@ -76,7 +76,7 @@ gulp.task('compile-molvwr', function () {
 });
 
 gulp.task('webserver', function() {
-  gulp.src('website')
+  gulp.src('demo website')
     .pipe(webserver({
       livereload: true,
       open: 'http://localhost:1338/index.html',
