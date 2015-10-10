@@ -38,12 +38,14 @@ module Molvwr.Parser {
 					if (atomKind) {
 						console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
 						molecule.atoms.push({
-							kind : atomKind,							
+							kind: atomKind,
 							x: x,
 							y: y,
 							z: z,
 							bonds: []
 						});
+					} else {
+						console.log("atom not found " + symbol);
 					}
 				}
 			}

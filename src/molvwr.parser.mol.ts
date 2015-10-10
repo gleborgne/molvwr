@@ -20,7 +20,7 @@ module Molvwr.Parser {
 			molecule.title = lines[1];
 
 			for (var i = 4, l = lines.length; i < l; i++) {
-				if (lines[i].indexOf("   ") == 0){
+				if (lines[i].indexOf("   ") == 0) {
 					var lineElements = lines[i].split(" ").filter((s) => {
 						var tmp = s.trim();
 						if (tmp && tmp.length)
@@ -28,13 +28,13 @@ module Molvwr.Parser {
 						else
 							return false;
 					});
-	
+
 					if (lineElements.length && lineElements.length >= 4) {
 						var symbol = lineElements[3].trim();
 						var x = getFloat(lineElements[0]);
 						var y = getFloat(lineElements[1]);
 						var z = getFloat(lineElements[2]);
-	
+
 						var atomKind = Molvwr.Elements.elementsBySymbol[symbol];
 						if (atomKind) {
 							console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
@@ -45,9 +45,11 @@ module Molvwr.Parser {
 								z: z,
 								bonds: []
 							});
+						} else {
+							console.log("atom not found " + symbol);
 						}
 					}
-				}else{
+				} else {
 					break;
 				}
 			}

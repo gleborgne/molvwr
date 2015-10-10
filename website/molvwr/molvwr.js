@@ -210,7 +210,7 @@ var Molvwr;
             }
         };
         Viewer.prototype._postProcessMolecule = function (molecule) {
-            //this._center(molecule);
+            this._center(molecule);
             this._calculateAtomsBonds(molecule);
         };
         Viewer.prototype._calculateAtomsBonds = function (molecule) {
@@ -237,19 +237,26 @@ var Molvwr;
             console.timeEnd("check bounds");
             console.log("found " + bonds.length + " bonds");
         };
-        Viewer.prototype._getCentroid = function (s) {
-            var xsum = 0;
-            var ysum = 0;
-            var zsum = 0;
-            for (var i = 0; i < s.atoms.length; i++) {
-                xsum += s.atoms[i].x;
-                ysum += s.atoms[i].y;
-                zsum += s.atoms[i].z;
-            }
+        Viewer.prototype._getCentroid = function (molecule) {
+            var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity, minZ = Infinity, maxZ = -Infinity;
+            molecule.atoms.forEach(function (atom) {
+                if (atom.x > maxX)
+                    maxX = atom.x;
+                if (atom.x < minX)
+                    minX = atom.x;
+                if (atom.y > maxY)
+                    maxY = atom.y;
+                if (atom.y < minY)
+                    minY = atom.y;
+                if (atom.z > maxZ)
+                    maxZ = atom.z;
+                if (atom.z < minZ)
+                    minZ = atom.z;
+            });
             return {
-                x: xsum / s.atoms.length,
-                y: ysum / s.atoms.length,
-                z: zsum / s.atoms.length
+                x: (minX + maxX) / 2,
+                y: (minY + maxY) / 2,
+                z: (minZ + maxZ) / 2,
             };
         };
         Viewer.prototype._center = function (molecule) {
@@ -258,6 +265,7 @@ var Molvwr;
                 atom.x -= shift.x;
                 atom.y -= shift.y;
                 atom.z -= shift.z;
+                console.log(atom.kind.symbol + " " + atom.x + "," + atom.y + "," + atom.z);
             });
         };
         return Viewer;
@@ -451,6 +459,9 @@ var Molvwr;
                                     bonds: []
                                 });
                             }
+                            else {
+                                console.log("atom not found " + symbol);
+                            }
                         }
                     }
                     else {
@@ -459,6 +470,61 @@ var Molvwr;
                 }
                 console.log("found " + molecule.title + " " + molecule.atoms.length);
                 return molecule;
+            }
+        };
+    })(Parser = Molvwr.Parser || (Molvwr.Parser = {}));
+})(Molvwr || (Molvwr = {}));
+
+//see http://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ANISOU for reference
+var Molvwr;
+(function (Molvwr) {
+    var Parser;
+    (function (Parser) {
+        function getFloat(s) {
+            if (!s)
+                return 0;
+            return parseFloat(s.trim());
+        }
+        Parser.pdb = {
+            parse: function (content) {
+                console.log("parsing pdb content");
+                //console.log(content);
+                var molecule = {
+                    atoms: [],
+                    title: null
+                };
+                var lines = content.split('\n');
+                for (var i = 0, l = lines.length; i < l; i++) {
+                    var line = lines[i];
+                    if (line.indexOf("HETATM") == 0 || line.indexOf("ATOM") == 0) {
+                        this.parseHETATM(molecule, line);
+                    }
+                }
+                console.log("found " + molecule.title + " " + molecule.atoms.length);
+                return molecule;
+            },
+            parseHETATM: function (molecule, line) {
+                var symbol = line.substr(12, 2).trim();
+                if (isNaN(symbol[0]) === false) {
+                    symbol = symbol.substr(1);
+                }
+                var atomKind = Molvwr.Elements.elementsBySymbol[symbol];
+                if (atomKind) {
+                    var x = parseFloat(line.substr(30, 8).trim());
+                    var y = parseFloat(line.substr(38, 8).trim());
+                    var z = parseFloat(line.substr(46, 8).trim());
+                    console.log(symbol + " " + x + "," + y + "," + z);
+                    molecule.atoms.push({
+                        kind: atomKind,
+                        x: x,
+                        y: y,
+                        z: z,
+                        bonds: []
+                    });
+                }
+                else {
+                    console.log("atom not found " + symbol);
+                }
             }
         };
     })(Parser = Molvwr.Parser || (Molvwr.Parser = {}));
@@ -506,6 +572,9 @@ var Molvwr;
                                 z: z,
                                 bonds: []
                             });
+                        }
+                        else {
+                            console.log("atom not found " + symbol);
                         }
                     }
                 }

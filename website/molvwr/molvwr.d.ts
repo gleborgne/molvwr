@@ -43,7 +43,7 @@ declare module Molvwr {
         loadContentFromUrl(url: string, contentFormat: string): void;
         private _postProcessMolecule(molecule);
         private _calculateAtomsBonds(molecule);
-        private _getCentroid(s);
+        private _getCentroid(molecule);
         private _center(molecule);
     }
 }
@@ -70,6 +70,16 @@ declare module Molvwr.Parser {
             atoms: any[];
             title: any;
         };
+    };
+}
+
+declare module Molvwr.Parser {
+    var pdb: {
+        parse: (content: string) => {
+            atoms: any[];
+            title: any;
+        };
+        parseHETATM(molecule: any, line: any): void;
     };
 }
 

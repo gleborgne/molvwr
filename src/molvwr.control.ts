@@ -94,7 +94,7 @@ module Molvwr {
 		}
 
 		private _postProcessMolecule(molecule) {
-			//this._center(molecule);
+			this._center(molecule);
 			this._calculateAtomsBonds(molecule);
 		}
 
@@ -125,30 +125,45 @@ module Molvwr {
 			console.log("found " + bonds.length + " bonds");
 		}
 
-		private _getCentroid(s) {
-			var xsum = 0;
-			var ysum = 0;
-			var zsum = 0;
-			for (var i = 0; i < s.atoms.length; i++) {
-				xsum += s.atoms[i].x;
-				ysum += s.atoms[i].y;
-				zsum += s.atoms[i].z;
-			}
-
+		private _getCentroid(molecule) {
+			var minX=Infinity,maxX=-Infinity,
+				minY=Infinity,maxY=-Infinity,
+				minZ=Infinity,maxZ=-Infinity;
+				
+			molecule.atoms.forEach(function(atom) {
+				if (atom.x > maxX)
+					maxX = atom.x;
+				if (atom.x < minX)
+					minX = atom.x;
+					
+				if (atom.y > maxY)
+					maxY = atom.y;
+				if (atom.y < minY)
+					minY = atom.y;
+					
+				if (atom.z > maxZ)
+					maxZ = atom.z;
+				if (atom.z < minZ)
+					minZ = atom.z;
+			});
+			
 			return {
-				x: xsum / s.atoms.length,
-				y: ysum / s.atoms.length,
-				z: zsum / s.atoms.length
-			};
+				x : (minX + maxX)/2,
+				y : (minY + maxY)/2,
+				z : (minZ + maxZ)/2,
+			}
 		}
 
 		private _center(molecule) {
 			var shift = this._getCentroid(molecule);
+			
 			molecule.atoms.forEach(function(atom) {
 				atom.x -= shift.x;
 				atom.y -= shift.y;
 				atom.z -= shift.z;
-			});
+				
+				console.log(atom.kind.symbol + " " + atom.x + "," + atom.y + "," + atom.z);
+			});									
 		}
 
 	}

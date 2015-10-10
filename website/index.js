@@ -1,6 +1,7 @@
 (function(){
 	'use strict';
 	var samples = [
+		{ name : "Water", url: "molsamples/pdb/water.pdb", format: "pdb"},
 		{ name : "Methane", url: "molsamples/xyz/methane.txt", format: "xyz"},
 		{ name : "Benzene", url: "molsamples/xyz/benzene.txt", format: "xyz"},
 		{ name : "Caffeine", url: "molsamples/xyz/caffeine.txt", format: "xyz"},
@@ -10,6 +11,7 @@
 		{ name : "Creatin", url: "molsamples/mol/creatin.txt", format: "mol"},
 		{ name : "Linoleic acid (aka Omega 3)", url : "molsamples/xyz/linoleic acid.txt", format : "xyz" },
 		{ name : "Glucose", url : "molsamples/mol/glucose.txt", format : "mol" },
+		{ name : "Cellulose", url: "molsamples/pdb/cellulose.pdb", format: "pdb"},
 		{ name : "Pennicilin", url : "molsamples/mol/pennicilin.txt", format : "mol" },
 		{ name : "Carbon (graphite)", url: "molsamples/xyz/graphite.txt", format: "xyz"},
 		{ name : "Carbon (diamond)", url: "molsamples/xyz/diamond.txt", format: "xyz"},
