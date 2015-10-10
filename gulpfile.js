@@ -32,7 +32,7 @@ gulp.task('clean', function(cb) {
 });
 
 gulp.task('styles', function() {
-	return gulp.src(['**/*.less'], { cwd: 'website',  base : '.' })
+	return gulp.src(['**/*.less'], { cwd: 'demo website',  base : '.' })
 	.pipe(plumber({errorHandler: onError}))
 	.pipe(less())
 	.pipe(bom())
@@ -71,7 +71,7 @@ gulp.task('compile-molvwr', function () {
             //    }
             //}))
             .pipe(bom())
-        	.pipe(gulp.dest('website/molvwr'))
+        	.pipe(gulp.dest('demo website/molvwr'))
     ]);
 });
 
@@ -90,7 +90,7 @@ gulp.task('build', ['clean', 'compile-molvwr'], function () {
 
 gulp.task('watch', function() {
 	gulp.start('webserver');
-    gulp.watch(['website/**/*.less'], ['styles']);
+    gulp.watch(['demo website/**/*.less'], ['styles']);
     gulp.watch(['src/**/*.ts'], ['compile-molvwr']);
 });
 

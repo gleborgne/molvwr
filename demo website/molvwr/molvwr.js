@@ -223,7 +223,7 @@ var Molvwr;
                     var l = new BABYLON.Vector3(atom.x, atom.y, atom.z);
                     var m = new BABYLON.Vector3(siblingAtom.x, siblingAtom.y, siblingAtom.z);
                     var d = BABYLON.Vector3.Distance(l, m);
-                    if (d < 1.1 * (atom.kind.radius + siblingAtom.kind.radius)) {
+                    if (d < 1.3 * (atom.kind.radius + siblingAtom.kind.radius)) {
                         bonds.push({
                             d: d,
                             atomA: atom,
