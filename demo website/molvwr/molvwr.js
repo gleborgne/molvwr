@@ -43,7 +43,7 @@
             scene.clearColor = new BABYLON.Color3(100, 100, 100);
             scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
             scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
-            scene.fogDensity = 0.01;
+            scene.fogDensity = 0.015;
             var camera = new BABYLON.ArcRotateCamera('Camera', 1, .8, 28, new BABYLON.Vector3(0, 0, 0), scene);
             camera.wheelPrecision = 10;
             camera.pinchPrecision = 7;
@@ -136,13 +136,13 @@ var Molvwr;
             this.element.appendChild(this.canvas);
             this.context = new Molvwr.BabylonContext(this.canvas);
         }
-        Viewer.prototype._loadContentFromString = function (content, contentFormat) {
+        Viewer.prototype._loadContentFromString = function (content, contentFormat, completedcallback) {
             var parser = Molvwr.Parser[contentFormat];
             if (parser) {
                 var molecule = parser.parse(content);
                 if (molecule) {
                     this._postProcessMolecule(molecule);
-                    this.renderMolecule(molecule);
+                    this.renderMolecule(molecule, completedcallback);
                 }
                 else {
                     console.warn("no molecule from parser " + contentFormat);
@@ -152,29 +152,42 @@ var Molvwr;
                 console.warn("no parser for " + contentFormat);
             }
         };
-        Viewer.prototype.renderMolecule = function (molecule) {
+        Viewer.prototype.renderMolecule = function (molecule, completedcallback) {
             var _this = this;
             this.molecule = molecule;
             this.createContext();
             setTimeout(function () {
                 if (_this.config.renderers) {
+                    var completedCount = 0;
+                    var nbrenderers = _this.config.renderers.length;
+                    var incCompleted = function () {
+                        completedCount++;
+                        if (completedCount == nbrenderers) {
+                            console.log("render complete");
+                            if (completedcallback)
+                                completedcallback();
+                        }
+                    };
                     _this.config.renderers.forEach(function (rendererName) {
                         var rendererClass = Molvwr.Renderer[rendererName];
                         if (rendererClass) {
                             var renderer = new rendererClass(_this, _this.context, _this.config);
-                            renderer.render(_this.molecule);
+                            renderer.render(_this.molecule, function () {
+                                incCompleted();
+                            });
                         }
                         else {
+                            incCompleted();
                             console.warn("no renderer for " + rendererName);
                         }
                     });
                 }
             }, 50);
         };
-        Viewer.prototype.setOptions = function (options) {
+        Viewer.prototype.setOptions = function (options, completedcallback) {
             this.config = options;
             if (this.molecule) {
-                this.renderMolecule(this.molecule);
+                this.renderMolecule(this.molecule, completedcallback);
             }
         };
         Viewer.prototype.createContext = function () {
@@ -183,11 +196,11 @@ var Molvwr;
             this.context = new Molvwr.BabylonContext(this.canvas);
             this.context.createScene();
         };
-        Viewer.prototype.loadContentFromString = function (content, contentFormat) {
+        Viewer.prototype.loadContentFromString = function (content, contentFormat, completedcallback) {
             this.createContext();
-            this._loadContentFromString(content, contentFormat);
+            this._loadContentFromString(content, contentFormat, completedcallback);
         };
-        Viewer.prototype.loadContentFromUrl = function (url, contentFormat) {
+        Viewer.prototype.loadContentFromUrl = function (url, contentFormat, completedcallback) {
             var _this = this;
             this.createContext();
             try {
@@ -195,10 +208,11 @@ var Molvwr;
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == 4) {
                         if (xhr.status == 200) {
-                            _this._loadContentFromString(xhr.responseText, contentFormat);
+                            _this._loadContentFromString(xhr.responseText, contentFormat, completedcallback);
                         }
                         else {
                             console.warn("cannot get content from " + url + " " + xhr.status + " " + xhr.statusText);
+                            completedcallback();
                         }
                     }
                 };
@@ -207,6 +221,7 @@ var Molvwr;
             }
             catch (e) {
                 console.error(e);
+                completedcallback();
             }
         };
         Viewer.prototype._postProcessMolecule = function (molecule) {

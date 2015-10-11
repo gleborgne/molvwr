@@ -35,12 +35,12 @@ declare module Molvwr {
         context: BabylonContext;
         molecule: any;
         constructor(element: HTMLElement, config?: Molvwr.Config.IMolvwrConfig);
-        private _loadContentFromString(content, contentFormat);
-        renderMolecule(molecule: any): void;
-        setOptions(options: any): void;
+        private _loadContentFromString(content, contentFormat, completedcallback);
+        renderMolecule(molecule: any, completedcallback: any): void;
+        setOptions(options: any, completedcallback: any): void;
         createContext(): void;
-        loadContentFromString(content: string, contentFormat: string): void;
-        loadContentFromUrl(url: string, contentFormat: string): void;
+        loadContentFromString(content: string, contentFormat: string, completedcallback: any): void;
+        loadContentFromUrl(url: string, contentFormat: string, completedcallback: any): void;
         private _postProcessMolecule(molecule);
         private _calculateAtomsBonds(molecule);
         private _getCentroid(molecule);

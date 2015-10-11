@@ -120,6 +120,19 @@
 				panels[i].classList.remove("visible");
 			}
 		}
+		overlay.classList.remove("visible");
+		document.body.classList.remove("haspanel");
+	}
+
+	function showPanel(panelElt){
+		if (panelElt.classList.contains("visible")){
+			hideAllPanels();		
+		}else{
+			hideAllPanels();
+			document.body.classList.add("haspanel");
+			panelElt.classList.add("visible");
+			overlay.classList.add("visible");
+		}
 	}
 
 	function ChoicePanel(element, titleElement, viewer, items, onselected){
@@ -136,13 +149,7 @@
 		this.element.appendChild(this.contentPanel);
 
 		this.titleElement.onclick = function(){
-			hideAllPanels();
-			ctrl.element.classList.toggle("visible");
-			if (ctrl.element.classList.contains("visible")){
-				overlay.classList.add("visible");
-			}else{
-				overlay.classList.remove("visible");
-			}
+			showPanel(ctrl.element);
 		}
 
 		ctrl.openDetail(this.items);
@@ -167,7 +174,7 @@
 			}else{
 				sampleitem.onclick = function(){
 					ctrl.setSelected(item.id);
-						ctrl.hide();
+					hideAllPanels();
 				}	
 			}		
 		});
@@ -200,7 +207,7 @@
 
 			var btnClose = document.createElement("DIV");
 			btnClose.className = "btnclose";
-			btnClose.innerHTML = "back";
+			btnClose.innerHTML = '<i class="oi-chevron-left"></i> back';
 			itemsElt.appendChild(btnClose);
 			btnClose.onclick = function(){
 				itemspanel.classList.remove("visible");
@@ -238,7 +245,7 @@
 		var ctrl = this;
 		var item = this.getItemById(itemid);
 		if (item){
-			ctrl.titleElement.innerText = item.name;
+			if (!ctrl.dontSetTitleText) ctrl.titleElement.innerText = item.name;
 			if (ctrl.onselected){
 				ctrl.onselected(ctrl, item)
 			}
@@ -249,15 +256,6 @@
 		var ctrl = this;
 		this.element.classList.remove("visible");
 		overlay.classList.remove("visible");
-		//setTimeout(function(){
-		//	if (ctrl.contentPanel.children.length){
-		//		ctrl.contentPanel.children[0].classList.remove("away");
-		//		for (var i=1, l=ctrl.contentPanel.children.length; i<l ; i++){
-		//			ctrl.contentPanel.removeChild(ctrl.contentPanel.children[i]);
-		//		}
-		//	}
-		//},250);
-		
 	}
 
 
@@ -271,17 +269,25 @@
 	var root = document.getElementById("molvwr-container");
 	var moleculeinfo = document.getElementById("moleculeinfo");
 	var descriptionpanel = document.getElementById("description-panel");
+	var loadingstate = document.getElementById("loadingstate");
 	var viewer = new Molvwr.Viewer(root);
 
 	var viewpanelctrl = new ChoicePanel(viewmodepanel, viewmodetitle, viewer, viewmodes, function(ctrl, item){
-		ctrl.viewer.setOptions(item.cfg());
+		loadingstate.classList.add("visible");
+		ctrl.viewer.setOptions(item.cfg(), function(){
+			loadingstate.classList.remove("visible");
+		});
 	});
+	viewpanelctrl.dontSetTitleText = true;
 	viewpanelctrl.setSelected("ballsandsticks");
 		
 	var samplespanelctrl = new ChoicePanel(samplespanel, titleelement, viewer, samples, function(ctrl, item){
-		ctrl.viewer.loadContentFromUrl(item.url, item.format);
-		//moleculeinfo.classList.add("visible");
+		loadingstate.classList.add("visible");
+		ctrl.viewer.loadContentFromUrl(item.url, item.format, function(){
+			loadingstate.classList.remove("visible");
+		});		
 		window.location.hash = item.id;
+		//moleculeinfo.classList.add("visible");
 	});
 
 	var currentmolecule = "morphine";
@@ -295,28 +301,15 @@
 	samplespanelctrl.setSelected(currentmolecule);
 
 	function hideAbout(){
-		overlay.classList.remove("visible");
-		aboutpanel.classList.remove("visible");
+		hideAllPanels();
 	}
 
 	aboutlink.onclick = function(){
-		if (aboutpanel.classList.contains("visible")){
-			hideAllPanels();		
-		}else{
-			hideAllPanels();		
-			overlay.classList.add("visible");
-			aboutpanel.classList.add("visible");
-		}
+		showPanel(aboutpanel);
 	}
 
 	moleculeinfo.onclick = function(){
-		if (descriptionpanel.classList.contains("visible")){
-			hideAllPanels();		
-		}else{
-			hideAllPanels();
-			overlay.classList.add("visible");
-			descriptionpanel.classList.add("visible");
-		}
+		showPanel(descriptionpanel);
 	}
 
 	overlay.onclick = function(){

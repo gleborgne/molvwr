@@ -54,7 +54,7 @@ module Molvwr {
 			scene.clearColor = new BABYLON.Color3(100, 100, 100);
 			scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
 			scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
-    		scene.fogDensity = 0.01;
+    		scene.fogDensity = 0.015;
 			
 			var camera = new BABYLON.ArcRotateCamera('Camera', 1, .8, 28, new BABYLON.Vector3(0, 0, 0), scene);
 			camera.wheelPrecision = 10;

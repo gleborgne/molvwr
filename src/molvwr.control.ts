@@ -18,14 +18,14 @@ module Molvwr {
 
 		}
 
-		private _loadContentFromString(content: string, contentFormat: string) {
+		private _loadContentFromString(content: string, contentFormat: string, completedcallback) {
 			var parser = Molvwr.Parser[contentFormat];
 			if (parser) {
 				var molecule = parser.parse(content);
 				if (molecule) {
 					this._postProcessMolecule(molecule);
 
-					this.renderMolecule(molecule);
+					this.renderMolecule(molecule, completedcallback);
 				} else {
 					console.warn("no molecule from parser " + contentFormat);
 				}
@@ -34,17 +34,32 @@ module Molvwr {
 			}
 		}
 
-		renderMolecule(molecule) {
+		renderMolecule(molecule, completedcallback) {
 			this.molecule = molecule;
 			this.createContext();
 			setTimeout(() => {
 				if (this.config.renderers) {
+					var completedCount = 0;
+					var nbrenderers = this.config.renderers.length;
+					var incCompleted = function(){
+						completedCount++;
+						
+						if (completedCount == nbrenderers){
+							console.log("render complete");
+							if (completedcallback)
+								completedcallback();
+						}
+					}
+					
 					this.config.renderers.forEach((rendererName) => {
 						var rendererClass = Molvwr.Renderer[rendererName];
 						if (rendererClass) {
 							var renderer = new rendererClass(this, this.context, this.config);
-							renderer.render(this.molecule);
+							renderer.render(this.molecule, function(){
+								incCompleted();
+							});
 						} else {
+							incCompleted();
 							console.warn("no renderer for " + rendererName);
 						}
 					});
@@ -52,10 +67,10 @@ module Molvwr {
 			}, 50);
 		}
 
-		setOptions(options) {
+		setOptions(options, completedcallback) {
 			this.config = options;
 			if (this.molecule) {
-				this.renderMolecule(this.molecule);
+				this.renderMolecule(this.molecule, completedcallback);
 			}
 		}
 
@@ -66,22 +81,23 @@ module Molvwr {
 			this.context.createScene();
 		}
 
-		loadContentFromString(content: string, contentFormat: string) {
+		loadContentFromString(content: string, contentFormat: string, completedcallback) {
 			this.createContext();
-			this._loadContentFromString(content, contentFormat);
+			this._loadContentFromString(content, contentFormat, completedcallback);
 		}
 
-		loadContentFromUrl(url: string, contentFormat: string) {
+		loadContentFromUrl(url: string, contentFormat: string, completedcallback) {
 			this.createContext();
 			try {
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = () => {
                     if (xhr.readyState == 4) {
                         if (xhr.status == 200) {
-                            this._loadContentFromString(xhr.responseText, contentFormat);
+                            this._loadContentFromString(xhr.responseText, contentFormat, completedcallback);
                         }
                         else {
 							console.warn("cannot get content from " + url + " " + xhr.status + " " + xhr.statusText);
+							completedcallback();
                         }
                     }
                 };
@@ -90,6 +106,7 @@ module Molvwr {
                 xhr.send(null);
             } catch (e) {
                 console.error(e);
+				completedcallback();
             }
 		}
 

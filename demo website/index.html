@@ -5,25 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">    
     <link href='https://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="font/outicons-basic.css" />
 	  <script src="lib/hand.js"></script>
     <script src="lib/babylon.2.2.js"></script>
     <script src="molvwr/molvwr.js"></script>
   </head>
   <body>     
-     <div id="pagetitle">          
-          <div id="titleribbon">
-            <div id="moleculetitle" class="noselect" unselectable="on"></div>
-            <div id="viewmodetitle" class="noselect" unselectable="on"></div>
-          </div>
-          <div id="about">About...</div>
-     </div>
+
      <div id="pagecontent">
        <div id="pagecontentwrapper">
          <div id="molvwr-container"></div>
+         <div id="loadingstate">loading...</div>
          <div id="overlay" class="panel"></div>
          <div id="molecule-choice-panel" class="panel leftitemspanel"></div>
          <div id="viewmode-choice-panel" class="panel leftitemspanel"></div>
-         <div id="description-panel" class="panel rightitemspanel"></div>
+         <div id="description-panel" class="panel leftitemspanel"></div>
          <div id="about-panel" class="panel rightitemspanel">
            <h1>Molvwr</h1>
            <p>Molvwr is a simple molecule viewer for the web, made with Babylon.js. This site is the demo website for this component.</p>
@@ -32,10 +28,14 @@
          </div>         
        </div>
      </div>
-	   
-     <div id="moleculeinfo">
-     	info
+	   <div id="pagetitle">          
+          <div id="moleculetitle" class="noselect" unselectable="on"></div>
+          <div id="viewmodetitle" class="iconbtn noselect oi-eye" unselectable="on"></div>
+          <div id="moleculeinfo" class="iconbtn noselect oi-info" unselectable="on"></div>
+          <div class="space"></div>
+          <div id="about" class="oi-help noselect iconbtn" unselectable="on"></div>          
      </div>
+     
      <script src="index.js"></script>
   </body>
 </html>
