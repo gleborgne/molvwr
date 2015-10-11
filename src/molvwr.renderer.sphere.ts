@@ -11,18 +11,39 @@ module Molvwr.Renderer {
 			this.viewer = viewer;
 		}	
 		
-		render(molecule){
+		render(molecule, completedCallback){
 			
 			console.log("sphere rendering");
-			if (molecule && molecule.atoms){
-				var meshes = [];
-				molecule.atoms.forEach((atom, index) => {
-					meshes.push(this.renderAtom(atom, index));
-				});
-				//BABYLON.Mesh.MergeMeshes(meshes, true);
-			}
+			this.runBatch(0,100,molecule, completedCallback);
+			// if (molecule && molecule.atoms){
+			// 	var meshes = [];
+			// 	molecule.atoms.forEach((atom, index) => {
+			// 		meshes.push(this.renderAtom(atom, index));
+			// 	});
+			// 	//BABYLON.Mesh.MergeMeshes(meshes, true);
+			// }			
+			// 
+			// if (completedCallback)
+			// 		completedCallback();
 		}
 		
+		runBatch(offset, size, molecule, completedCallback){
+			setTimeout(()=>{
+				console.log("batch rendering bonds " + offset + "/" + molecule.bonds.length);
+				var items = molecule.atoms.slice(offset, offset + size);
+								
+				items.forEach((atom, index) => {
+					this.renderAtom(atom, index);
+				});
+				
+				if (items.length < size){
+					console.log("batch end " + items.length);
+					if (completedCallback) completedCallback();
+				}else{
+					this.runBatch(offset+size, size, molecule, completedCallback);
+				}
+			},10);
+		}
 		
 		renderAtom(atom, index){
 			var cfg= this.config;

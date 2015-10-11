@@ -46,7 +46,7 @@ module Molvwr.Parser {
 								bonds: []
 							});
 						} else {
-							console.log("atom not found " + symbol);
+							console.warn("atom not found " + symbol);
 						}
 					}
 				} else {

@@ -460,7 +460,7 @@ var Molvwr;
                                 });
                             }
                             else {
-                                console.log("atom not found " + symbol);
+                                console.warn("atom not found " + symbol);
                             }
                         }
                     }
@@ -523,7 +523,7 @@ var Molvwr;
                     });
                 }
                 else {
-                    console.log("atom not found " + symbol);
+                    console.warn("atom not found " + symbol);
                 }
             }
         };
@@ -574,7 +574,7 @@ var Molvwr;
                             });
                         }
                         else {
-                            console.log("atom not found " + symbol);
+                            console.warn("atom not found " + symbol);
                         }
                     }
                 }
@@ -596,17 +596,41 @@ var Molvwr;
                 this.config = config;
                 this.viewer = viewer;
             }
-            BondsCylinder.prototype.render = function (molecule) {
-                var _this = this;
+            BondsCylinder.prototype.render = function (molecule, completedCallback) {
                 var cfg = this.config;
                 var meshes = [];
-                console.log("rendering bonds as lines");
                 var diameter = Molvwr.Elements.MIN_ATOM_RADIUS * this.config.cylinderScale * this.config.atomScaleFactor;
-                molecule.bonds.forEach(function (b, index) {
-                    var cylinder = _this.getCylinderForBinding(diameter, b, index);
-                    cylinder.pickable = false;
-                    _this.alignCylinderToBinding(b, cylinder);
-                });
+                var nbbonds = molecule.bonds.length;
+                console.log("rendering " + nbbonds + " bonds as cylinder");
+                this.runBatch(0, 50, molecule, diameter, completedCallback);
+                // molecule.bonds.forEach((b, index) => {
+                // 	var cylinder = this.getCylinderForBinding(diameter, b, index);
+                // 	cylinder.pickable = false;
+                // 	this.alignCylinderToBinding(b, cylinder);
+                // });
+                // 
+                // if (completedCallback)
+                // 		completedCallback();
+            };
+            BondsCylinder.prototype.runBatch = function (offset, size, molecule, diameter, completedCallback) {
+                var _this = this;
+                setTimeout(function () {
+                    console.log("batch rendering bonds " + offset + "/" + molecule.bonds.length);
+                    var items = molecule.bonds.slice(offset, offset + size);
+                    items.forEach(function (b, index) {
+                        var cylinder = _this.getCylinderForBinding(diameter, b, index + offset);
+                        cylinder.pickable = false;
+                        _this.alignCylinderToBinding(b, cylinder);
+                    });
+                    if (items.length < size) {
+                        console.log("batch end " + items.length);
+                        if (completedCallback)
+                            completedCallback();
+                    }
+                    else {
+                        _this.runBatch(offset + size, size, molecule, diameter, completedCallback);
+                    }
+                }, 10);
             };
             BondsCylinder.prototype.getCylinderForBinding = function (diameter, binding, index) {
                 var key = binding.atomA.kind.symbol + "#" + binding.atomB.kind.symbol;
@@ -686,7 +710,7 @@ var Molvwr;
                 this.config = config;
                 this.viewer = viewer;
             }
-            BondsLines.prototype.render = function (molecule) {
+            BondsLines.prototype.render = function (molecule, completedCallback) {
                 var _this = this;
                 var cfg = this.config;
                 var meshes = [];
@@ -699,6 +723,8 @@ var Molvwr;
                     line.color = new BABYLON.Color3(0.5, 0.5, 0.5);
                     meshes.push(line);
                 });
+                if (completedCallback)
+                    completedCallback();
             };
             return BondsLines;
         })();
@@ -717,15 +743,37 @@ var Molvwr;
                 this.config = config;
                 this.viewer = viewer;
             }
-            Sphere.prototype.render = function (molecule) {
-                var _this = this;
+            Sphere.prototype.render = function (molecule, completedCallback) {
                 console.log("sphere rendering");
-                if (molecule && molecule.atoms) {
-                    var meshes = [];
-                    molecule.atoms.forEach(function (atom, index) {
-                        meshes.push(_this.renderAtom(atom, index));
+                this.runBatch(0, 100, molecule, completedCallback);
+                // if (molecule && molecule.atoms){
+                // 	var meshes = [];
+                // 	molecule.atoms.forEach((atom, index) => {
+                // 		meshes.push(this.renderAtom(atom, index));
+                // 	});
+                // 	//BABYLON.Mesh.MergeMeshes(meshes, true);
+                // }			
+                // 
+                // if (completedCallback)
+                // 		completedCallback();
+            };
+            Sphere.prototype.runBatch = function (offset, size, molecule, completedCallback) {
+                var _this = this;
+                setTimeout(function () {
+                    console.log("batch rendering bonds " + offset + "/" + molecule.bonds.length);
+                    var items = molecule.atoms.slice(offset, offset + size);
+                    items.forEach(function (atom, index) {
+                        _this.renderAtom(atom, index);
                     });
-                }
+                    if (items.length < size) {
+                        console.log("batch end " + items.length);
+                        if (completedCallback)
+                            completedCallback();
+                    }
+                    else {
+                        _this.runBatch(offset + size, size, molecule, completedCallback);
+                    }
+                }, 10);
             };
             Sphere.prototype.renderAtom = function (atom, index) {
                 var cfg = this.config;
@@ -764,21 +812,19 @@ var Molvwr;
                 this.config = config;
                 this.viewer = viewer;
             }
-            Sticks.prototype.render = function (molecule) {
+            Sticks.prototype.render = function (molecule, completedCallback) {
                 var _this = this;
                 var cfg = this.config;
                 var meshes = [];
-                console.log("rendering bonds as lines");
-                var diameter = Molvwr.Elements.MIN_ATOM_RADIUS * 0.6 * this.config.atomScaleFactor;
+                console.log("rendering bonds as cylinder");
+                var diameter = Molvwr.Elements.MIN_ATOM_RADIUS * this.config.cylinderScale * this.config.atomScaleFactor;
                 molecule.bonds.forEach(function (b, index) {
                     var cylinder = _this.getCylinderForBinding(diameter, b, index);
+                    cylinder.pickable = false;
                     _this.alignCylinderToBinding(b, cylinder);
-                    // this.createCylinderBetweenPoints(
-                    // 	new BABYLON.Vector3(b.atomA.x, b.atomA.y, b.atomA.z),
-                    // 	new BABYLON.Vector3(b.atomB.x, b.atomB.y, b.atomB.z),
-                    // 	"bond"+index,
-                    // 	Molvwr.Elements.MIN_ATOM_RADIUS*0.8*this.config.atomScaleFactor)
                 });
+                if (completedCallback)
+                    completedCallback();
             };
             Sticks.prototype.getCylinderForBinding = function (diameter, binding, index) {
                 var key = binding.atomA.kind.symbol + "#" + binding.atomB.kind.symbol;
@@ -807,21 +853,39 @@ var Molvwr;
                 cylinder.position = pointB;
                 // Then find the vector between spheres
                 var v1 = pointB.subtract(pointA);
-                console.log(v1);
                 v1.normalize();
-                console.log(v1);
                 var v2 = new BABYLON.Vector3(0, 1, 0);
                 // Using cross we will have a vector perpendicular to both vectors
                 var axis = BABYLON.Vector3.Cross(v2, v1);
                 axis.normalize();
-                console.log(axis);
                 // Angle between vectors
                 var angle = BABYLON.Vector3.Dot(v1, v2);
                 angle = Math.acos(angle);
-                console.log(angle);
                 // Then using axis rotation the result is obvious
                 cylinder.rotationQuaternion = BABYLON.Quaternion.RotationAxis(axis, angle);
+                if (this.vectorEqualsCloseEnough(v1, v2.negate())) {
+                    cylinder.position = pointA;
+                }
                 return cylinder;
+            };
+            Sticks.prototype.vectorEqualsCloseEnough = function (v1, v2, tolerance) {
+                if (tolerance === void 0) { tolerance = 0.00002; }
+                if (typeof (v2) !== 'object') {
+                    throw ("v2 is supposed to be an object");
+                }
+                if (typeof (v1) !== 'object') {
+                    throw ("v1 is supposed to be an object");
+                }
+                if (v1.x < v2.x - tolerance || v1.x > v2.x + tolerance) {
+                    return false;
+                }
+                if (v1.y < v2.y - tolerance || v1.y > v2.y + tolerance) {
+                    return false;
+                }
+                if (v1.z < v2.z - tolerance || v1.z > v2.z + tolerance) {
+                    return false;
+                }
+                return true;
             };
             return Sticks;
         })();

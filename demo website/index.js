@@ -269,6 +269,8 @@
 	var viewmodepanel = document.getElementById("viewmode-choice-panel");
 	var overlay = document.getElementById("overlay");
 	var root = document.getElementById("molvwr-container");
+	var moleculeinfo = document.getElementById("moleculeinfo");
+	var descriptionpanel = document.getElementById("description-panel");
 	var viewer = new Molvwr.Viewer(root);
 
 	var viewpanelctrl = new ChoicePanel(viewmodepanel, viewmodetitle, viewer, viewmodes, function(ctrl, item){
@@ -278,6 +280,7 @@
 		
 	var samplespanelctrl = new ChoicePanel(samplespanel, titleelement, viewer, samples, function(ctrl, item){
 		ctrl.viewer.loadContentFromUrl(item.url, item.format);
+		moleculeinfo.classList.add("visible");
 		window.location.hash = item.id;
 	});
 
@@ -295,10 +298,25 @@
 		overlay.classList.remove("visible");
 		aboutpanel.classList.remove("visible");
 	}
+	
 	aboutlink.onclick = function(){
-		hideAllPanels();
-		overlay.classList.add("visible");
-		aboutpanel.classList.add("visible");
+		if (aboutpanel.classList.contains("visible")){
+			hideAllPanels();		
+		}else{
+			hideAllPanels();		
+			overlay.classList.add("visible");
+			aboutpanel.classList.add("visible");
+		}
+	}
+
+	moleculeinfo.onclick = function(){
+		if (descriptionpanel.classList.contains("visible")){
+			hideAllPanels();		
+		}else{
+			hideAllPanels();
+			overlay.classList.add("visible");
+			descriptionpanel.classList.add("visible");
+		}
 	}
 
 	overlay.onclick = function(){

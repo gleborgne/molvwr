@@ -11,7 +11,7 @@ module Molvwr.Renderer {
 			this.viewer = viewer;
 		}
 
-		render(molecule) {
+		render(molecule, completedCallback) {
 			var cfg = this.config;
 			var meshes = [];
 			console.log("rendering bonds as lines");
@@ -23,6 +23,9 @@ module Molvwr.Renderer {
 				line.color = new BABYLON.Color3(0.5, 0.5, 0.5);
 				meshes.push(line);
 			});
+			
+			if (completedCallback)
+					completedCallback();
 		}
 	}
 }

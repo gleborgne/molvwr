@@ -99,7 +99,8 @@ declare module Molvwr.Renderer {
         viewer: Molvwr.Viewer;
         meshes: any;
         constructor(viewer: Molvwr.Viewer, ctx: Molvwr.BabylonContext, config: Molvwr.Config.IMolvwrConfig);
-        render(molecule: any): void;
+        render(molecule: any, completedCallback: any): void;
+        runBatch(offset: any, size: any, molecule: any, diameter: any, completedCallback: any): void;
         getCylinderForBinding(diameter: any, binding: any, index: any): any;
         alignCylinderToBinding(b: any, cylinder: any): any;
         vectorEqualsCloseEnough(v1: any, v2: any, tolerance?: number): boolean;
@@ -113,7 +114,7 @@ declare module Molvwr.Renderer {
         viewer: Molvwr.Viewer;
         meshes: any;
         constructor(viewer: Molvwr.Viewer, ctx: Molvwr.BabylonContext, config: Molvwr.Config.IMolvwrConfig);
-        render(molecule: any): void;
+        render(molecule: any, completedCallback: any): void;
     }
 }
 
@@ -124,7 +125,8 @@ declare module Molvwr.Renderer {
         viewer: Molvwr.Viewer;
         meshes: any;
         constructor(viewer: Molvwr.Viewer, ctx: Molvwr.BabylonContext, config: Molvwr.Config.IMolvwrConfig);
-        render(molecule: any): void;
+        render(molecule: any, completedCallback: any): void;
+        runBatch(offset: any, size: any, molecule: any, completedCallback: any): void;
         renderAtom(atom: any, index: any): any;
     }
 }
@@ -136,8 +138,9 @@ declare module Molvwr.Renderer {
         viewer: Molvwr.Viewer;
         meshes: any;
         constructor(viewer: Molvwr.Viewer, ctx: Molvwr.BabylonContext, config: Molvwr.Config.IMolvwrConfig);
-        render(molecule: any): void;
+        render(molecule: any, completedCallback: any): void;
         getCylinderForBinding(diameter: any, binding: any, index: any): any;
         alignCylinderToBinding(b: any, cylinder: any): any;
+        vectorEqualsCloseEnough(v1: any, v2: any, tolerance?: number): boolean;
     }
 }

@@ -11,17 +11,42 @@ module Molvwr.Renderer {
 			this.viewer = viewer;
 		}
 
-		render(molecule) {
+		render(molecule, completedCallback) {
 			var cfg = this.config;
 			var meshes = [];
-			console.log("rendering bonds as lines");
 			var diameter = Molvwr.Elements.MIN_ATOM_RADIUS * this.config.cylinderScale * this.config.atomScaleFactor;
-
-			molecule.bonds.forEach((b, index) => {
-				var cylinder = this.getCylinderForBinding(diameter, b, index);
-				cylinder.pickable = false;
-				this.alignCylinderToBinding(b, cylinder);
-			});
+			var nbbonds = molecule.bonds.length;
+			console.log("rendering " + nbbonds + " bonds as cylinder");
+			
+			this.runBatch(0, 50, molecule, diameter, completedCallback); 
+			// molecule.bonds.forEach((b, index) => {
+			// 	var cylinder = this.getCylinderForBinding(diameter, b, index);
+			// 	cylinder.pickable = false;
+			// 	this.alignCylinderToBinding(b, cylinder);
+			// });
+			// 
+			// if (completedCallback)
+			// 		completedCallback();
+		}
+		
+		runBatch(offset, size, molecule, diameter, completedCallback){
+			setTimeout(()=>{
+				console.log("batch rendering bonds " + offset + "/" + molecule.bonds.length);
+				var items = molecule.bonds.slice(offset, offset + size);
+				
+				items.forEach((b, index) => {
+					var cylinder = this.getCylinderForBinding(diameter, b, index + offset);
+					cylinder.pickable = false;
+					this.alignCylinderToBinding(b, cylinder);
+				});
+				
+				if (items.length < size){
+					console.log("batch end " + items.length);
+					if (completedCallback) completedCallback();
+				}else{
+					this.runBatch(offset+size, size, molecule, diameter, completedCallback);
+				}
+			},10);
 		}
 
 		getCylinderForBinding(diameter, binding, index) {
