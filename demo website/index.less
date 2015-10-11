@@ -37,27 +37,26 @@ html, body{
 	left: 0;	
 	top: 0;
 	right : 0;
+	height : 60px;
 	text-transform : uppercase;	
-	
-	color: black;	
-	
+	background-color: #111;
+	color: white;	
+	display: -webkit-flex;
+	display: flex;
+	flex-flow : row nowrap;
+	align-items : center;
+	padding: 0 40px;
+
 	#about{
-		background-color: black;
-		color: white;
-		display: inline-block;
-		padding : 5px 10px;
-		font-size : 10pt;
-		float: right;		
+		display: inline-block;		
+		font-size : 12pt;
 		cursor : pointer;
-		opacity: 0.5;
+		color : #777;
 		touch-action:manipulation;
 	}
 
 	#titleribbon{
-		background-color: black;
-		color: white;
-		margin-top: 20px;
-		padding : 10px 20px 10px 40px;
+		flex : 1;
 		display: inline-block;
 
 		#moleculetitle{
@@ -76,6 +75,20 @@ html, body{
 			cursor : pointer;
 			touch-action:manipulation;
 		}
+	}
+}
+
+#pagecontent{
+	position: absolute;
+	top: 60px;
+	left: 0;
+	right:0;
+	bottom: 0;
+
+	#pagecontentwrapper{
+		width: 100%;
+		height : 100%;
+		position: relative;
 	}
 }
 
@@ -118,7 +131,7 @@ html, body{
 
 			-webkit-box-sizing: border-box;
 			box-sizing: border-box;
-			padding : 90px 40px 20px 40px;
+			padding : 20px 40px;
 			overflow-x: hidden;	
 			overflow-y: auto;		
 
@@ -254,13 +267,24 @@ html, body{
 
 @media screen and (max-width : 800px){
 	#pagetitle{
+		padding: 0 20px;
+		height : 40px;
 		#about{
 			font-size : 9pt;
 		}
+		#titleribbon{ 
+			#moleculetitle{
+				font-size : 12pt;
+			}
 
-		#moleculetitle{
-			font-size : 14pt;
+			#viewmodetitle{
+				font-size : 10pt;
+			}
 		}
+	}
+	
+	#pagecontent{
+		top: 40px;
 	}
 
 	#molecule-choice-panel{

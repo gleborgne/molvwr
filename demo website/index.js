@@ -280,7 +280,7 @@
 		
 	var samplespanelctrl = new ChoicePanel(samplespanel, titleelement, viewer, samples, function(ctrl, item){
 		ctrl.viewer.loadContentFromUrl(item.url, item.format);
-		moleculeinfo.classList.add("visible");
+		//moleculeinfo.classList.add("visible");
 		window.location.hash = item.id;
 	});
 
@@ -298,7 +298,7 @@
 		overlay.classList.remove("visible");
 		aboutpanel.classList.remove("visible");
 	}
-	
+
 	aboutlink.onclick = function(){
 		if (aboutpanel.classList.contains("visible")){
 			hideAllPanels();		
