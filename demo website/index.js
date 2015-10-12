@@ -270,6 +270,7 @@
 	var moleculeinfo = document.getElementById("moleculeinfo");
 	var descriptionpanel = document.getElementById("description-panel");
 	var loadingstate = document.getElementById("loadingstate");
+	var savepic = document.getElementById("savepic");
 	var viewer = new Molvwr.Viewer(root);
 
 	var viewpanelctrl = new ChoicePanel(viewmodepanel, viewmodetitle, viewer, viewmodes, function(ctrl, item){
@@ -314,5 +315,9 @@
 
 	overlay.onclick = function(){
 		hideAllPanels();
+	}
+
+	savepic.onclick = function(){
+		viewer.exportScreenshot();
 	}
 })();

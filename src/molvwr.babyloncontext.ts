@@ -8,54 +8,58 @@ module Molvwr {
 
 		constructor(canvas) {
 			this.canvas = canvas;
-			this.engine = new BABYLON.Engine(canvas, true);
+			this.engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true });
 			this.atomsMaterials = {};
 			this.engine.runRenderLoop(() => {
 				if (this.scene)
 					this.scene.render();
 			});
 		}
-		
-		dispose(){
+
+		exportScreenshot() {
+			var pic = this.canvas.toDataURL("image/png");
+			window.open(pic, "_blank");
+		}
+
+		dispose() {
 			this.engine.dispose();
 		}
-		
-		getMaterial(atomsymbol:string){
-			var existing = this.atomsMaterials[atomsymbol];
-			if (existing)
-				return existing;
-			
-			var atomKind = Molvwr.Elements.elementsBySymbol[atomsymbol];
-			if (atomKind){
-				var atomMat = new BABYLON.StandardMaterial('materialFor' + atomsymbol, this.scene);
-				atomMat.diffuseColor = new BABYLON.Color3(atomKind.color[0], atomKind.color[1], atomKind.color[2]);
-				atomMat.specularColor = new BABYLON.Color3(0.1,0.1,0.1);
-				atomMat.emissiveColor = new BABYLON.Color3(0.2,0.2,0.2);
-				atomMat.bumpTexture   = new BABYLON.Texture('bump.png', this.scene);
-				//atomMat.specularTexture   = new BABYLON.Texture('bump.png', this.scene);
-				(<any>atomMat.bumpTexture).uScale = 6;
-				(<any>atomMat.bumpTexture).vScale = 6;
-				atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
-				atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
 
-				this.atomsMaterials[atomsymbol] = atomMat;
-				return atomMat;
-			}
-		}		
+		getMaterial(atomMat: BABYLON.StandardMaterial) {
+			var texturescale = 12;
+			var texture = "174"
+				
+				
+			// atomMat.diffuseTexture   = new BABYLON.Texture('textures/' + texture + '.jpg', this.scene);
+			// (<any>atomMat.diffuseTexture).uScale = texturescale;
+			// (<any>atomMat.diffuseTexture).vScale = texturescale;
+				
+			atomMat.specularTexture = new BABYLON.Texture('textures/' + texture + '.jpg', this.scene);
+			(<any>atomMat.specularTexture).uScale = texturescale;
+			(<any>atomMat.specularTexture).vScale = texturescale;
+
+			atomMat.bumpTexture = new BABYLON.Texture('textures/' + texture + '_norm.jpg', this.scene);
+			(<any>atomMat.bumpTexture).uScale = texturescale;
+			(<any>atomMat.bumpTexture).vScale = texturescale;
+			// atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
+			// atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
+
+			return atomMat;
+		}
 
 		createScene() {
 			if (this.scene)
 				this.scene.dispose();
 
 			console.log("create babylon scene");
-			
+
 			var scene = new BABYLON.Scene(this.engine);
 			this.scene = scene;
 			scene.clearColor = new BABYLON.Color3(100, 100, 100);
 			scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
 			scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
-    		scene.fogDensity = 0.015;
-			
+			scene.fogDensity = 0.015;
+
 			var camera = new BABYLON.ArcRotateCamera('Camera', 1, .8, 28, new BABYLON.Vector3(0, 0, 0), scene);
 			camera.wheelPrecision = 10;
 			camera.pinchPrecision = 7;
@@ -63,21 +67,22 @@ module Molvwr {
 			camera.setTarget(BABYLON.Vector3.Zero());
 			camera.attachControl(this.canvas, true);
 			this.camera = camera;
-		
+
 			var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(40, 40, 40), scene);
 			light.intensity = 0.6;			
 
 			//this.useAmbientOcclusion();
 			//this.useHDR();
+			//this.useLensEffect();
 		}
-		
-		useAmbientOcclusion(){
+
+		useAmbientOcclusion() {
 			var ssao = new BABYLON.SSAORenderingPipeline('ssaopipeline', this.scene, 0.75);
 			this.scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("ssaopipeline", this.camera);
 			//this.scene.postProcessRenderPipelineManager.detachCamerasFromRenderPipeline("ssaopipeline", this.camera);
 		}
-		
-		useHDR(){
+
+		useHDR() {
 			var hdr = new BABYLON.HDRRenderingPipeline("hdr", this.scene, 1.0, null, [this.camera]);
 			// About gaussian blur : http://homepages.inf.ed.ac.uk/rbf/HIPR2/gsmooth.htm
 			hdr.brightThreshold = 1.2; // Minimum luminance needed to compute HDR
@@ -91,6 +96,20 @@ module Molvwr {
 			hdr.luminanceIncreaserate = 0.5; // Increase rate: dark to white
 			this.scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("hdr", [this.camera]);
 			//this.scene.postProcessRenderPipelineManager.detachCamerasFromRenderPipeline("hdr", [this.camera]);
+		}
+
+		useLensEffect() {
+			var lensEffect = new BABYLON.LensRenderingPipeline('lens', {
+				edge_blur: 0.2, //1.0,
+				chromatic_aberration: 0.2, //1.0,
+				distortion: 0.2, //1.0,
+				dof_focus_depth: 100 / this.camera.maxZ,
+				dof_aperture: 1.0,
+				grain_amount: 0.2, //1.0,
+				dof_pentagon: true,
+				dof_gain: 1.0,
+				dof_threshold: 1.0,
+			}, this.scene, 1.0, [this.camera]);
 		}
 
 		testScene() {

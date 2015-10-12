@@ -81,6 +81,10 @@ module Molvwr {
 			this.context.createScene();
 		}
 
+		exportScreenshot(){
+			this.context.exportScreenshot();
+		}
+		
 		loadContentFromString(content: string, contentFormat: string, completedcallback) {
 			this.createContext();
 			this._loadContentFromString(content, contentFormat, completedcallback);
@@ -119,8 +123,16 @@ module Molvwr {
 			console.time("check bounds");
 			var bonds = [];
 			var nbatoms = molecule.atoms.length;
+			
+			molecule.kinds = molecule.kinds || {};
+			molecule.bondkinds = molecule.bondkinds || {};
+			
 			molecule.atoms.forEach(function(atom, index) {
-
+				
+				if (!molecule.kinds[atom.kind.symbol]){
+					molecule.kinds[atom.kind.symbol] = { kind : atom.kind};
+				}
+				
 				for (var i = index + 1; i < nbatoms; i++) {
 					var siblingAtom = molecule.atoms[i];
 					var l = new BABYLON.Vector3(atom.x, atom.y, atom.z);
@@ -128,6 +140,10 @@ module Molvwr {
 					var d = BABYLON.Vector3.Distance(l, m);
 
 					if (d < 1.3 * (atom.kind.radius + siblingAtom.kind.radius)) {
+						if (!molecule.bondkinds[atom.kind.symbol + "#" + siblingAtom.kind.symbol]){
+							molecule.bondkinds[atom.kind.symbol + "#" + siblingAtom.kind.symbol] = { d: d, key : atom.kind.symbol + "#" + siblingAtom.kind.symbol, kindA : atom.kind, kindB : siblingAtom.kind};
+						}		
+						
 						bonds.push({
 							d: d,
 							atomA: atom,

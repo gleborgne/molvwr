@@ -6,11 +6,13 @@
         canvas: HTMLCanvasElement;
         atomsMaterials: any;
         constructor(canvas: any);
+        exportScreenshot(): void;
         dispose(): void;
-        getMaterial(atomsymbol: string): any;
+        getMaterial(atomMat: BABYLON.StandardMaterial): BABYLON.StandardMaterial;
         createScene(): void;
         useAmbientOcclusion(): void;
         useHDR(): void;
+        useLensEffect(): void;
         testScene(): void;
     }
 }
@@ -20,7 +22,9 @@ declare module Molvwr.Config {
         renderers: string[];
         atomScaleFactor: number;
         cylinderScale: number;
+        cylinderLOD?: any[];
         sphereSegments: number;
+        sphereLOD?: any[];
     }
     function defaultConfig(): IMolvwrConfig;
     function spheres(): IMolvwrConfig;
@@ -39,6 +43,7 @@ declare module Molvwr {
         renderMolecule(molecule: any, completedcallback: any): void;
         setOptions(options: any, completedcallback: any): void;
         createContext(): void;
+        exportScreenshot(): void;
         loadContentFromString(content: string, contentFormat: string, completedcallback: any): void;
         loadContentFromUrl(url: string, contentFormat: string, completedcallback: any): void;
         private _postProcessMolecule(molecule);
@@ -100,8 +105,9 @@ declare module Molvwr.Renderer {
         meshes: any;
         constructor(viewer: Molvwr.Viewer, ctx: Molvwr.BabylonContext, config: Molvwr.Config.IMolvwrConfig);
         render(molecule: any, completedCallback: any): void;
+        prepareBonds(molecule: any, diameter: any): void;
+        createMesh(binding: any, diameter: any): BABYLON.Mesh;
         runBatch(offset: any, size: any, molecule: any, diameter: any, completedCallback: any): void;
-        getCylinderForBinding(diameter: any, binding: any, index: any): any;
         alignCylinderToBinding(b: any, cylinder: any): any;
         vectorEqualsCloseEnough(v1: any, v2: any, tolerance?: number): boolean;
     }
@@ -126,6 +132,8 @@ declare module Molvwr.Renderer {
         meshes: any;
         constructor(viewer: Molvwr.Viewer, ctx: Molvwr.BabylonContext, config: Molvwr.Config.IMolvwrConfig);
         render(molecule: any, completedCallback: any): void;
+        prepareMeshes(molecule: any): void;
+        createMesh(atomkind: any): BABYLON.Mesh;
         runBatch(offset: any, size: any, molecule: any, completedCallback: any): void;
         renderAtom(atom: any, index: any): any;
     }

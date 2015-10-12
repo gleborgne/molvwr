@@ -17,16 +17,32 @@ module Molvwr.Renderer {
 			var diameter = Molvwr.Elements.MIN_ATOM_RADIUS * this.config.cylinderScale * this.config.atomScaleFactor;
 			var nbbonds = molecule.bonds.length;
 			console.log("rendering " + nbbonds + " bonds as cylinder");
-			
+			this.prepareBonds(molecule, diameter);
 			this.runBatch(0, 50, molecule, diameter, completedCallback); 
-			// molecule.bonds.forEach((b, index) => {
-			// 	var cylinder = this.getCylinderForBinding(diameter, b, index);
-			// 	cylinder.pickable = false;
-			// 	this.alignCylinderToBinding(b, cylinder);
-			// });
-			// 
-			// if (completedCallback)
-			// 		completedCallback();
+		}
+		
+		prepareBonds(molecule, diameter){
+			for (var n in molecule.bondkinds){				
+				this.meshes[n] = this.createMesh(molecule.bondkinds[n], diameter);
+			}			
+		}
+		
+		createMesh(binding, diameter){			
+			var cylinder = BABYLON.Mesh.CreateCylinder("bondtemplate" + binding.key, binding.d, diameter, diameter, this.config.sphereSegments, 1, this.ctx.scene, false);
+        	var atomMat = new BABYLON.StandardMaterial('materialFor' + binding.key, this.ctx.scene);
+			atomMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
+			atomMat.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
+			atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+			atomMat.bumpTexture = new BABYLON.Texture('bump.png', this.ctx.scene);
+			(<any>atomMat.bumpTexture).uScale = 6;
+			(<any>atomMat.bumpTexture).vScale = 6;
+			atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
+			atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
+			cylinder.material = atomMat;
+			(<any>cylinder).pickable = false;
+			cylinder.setEnabled(false);
+			
+			return cylinder;
 		}
 		
 		runBatch(offset, size, molecule, diameter, completedCallback){
@@ -35,8 +51,9 @@ module Molvwr.Renderer {
 				var items = molecule.bonds.slice(offset, offset + size);
 				
 				items.forEach((b, index) => {
-					var cylinder = this.getCylinderForBinding(diameter, b, index + offset);
-					cylinder.pickable = false;
+					var key = b.atomA.kind.symbol + "#" + b.atomB.kind.symbol;
+					var mesh = this.meshes[key];
+					var cylinder = mesh.createInstance("bond" + index);
 					this.alignCylinderToBinding(b, cylinder);
 				});
 				
@@ -47,28 +64,6 @@ module Molvwr.Renderer {
 					this.runBatch(offset+size, size, molecule, diameter, completedCallback);
 				}
 			},10);
-		}
-
-		getCylinderForBinding(diameter, binding, index) {
-			var key = binding.atomA.kind.symbol + "#" + binding.atomB.kind.symbol;
-			if (this.meshes[key])
-				return this.meshes[key].createInstance("bond" + index);
-
-			var cylinder = BABYLON.Mesh.CreateCylinder("bond" + index, binding.d, diameter, diameter, this.config.sphereSegments, 1, this.ctx.scene, false);
-            this.meshes[key] = cylinder;
-
-			var atomMat = new BABYLON.StandardMaterial('materialFor' + key, this.ctx.scene);
-			atomMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
-			atomMat.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
-			atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-			atomMat.bumpTexture = new BABYLON.Texture('bump.png', this.ctx.scene);
-			(<any>atomMat.bumpTexture).uScale = 6;
-			(<any>atomMat.bumpTexture).vScale = 6;
-			atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
-			atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
-			cylinder.material = atomMat;
-
-			return cylinder;
 		}
 
 		alignCylinderToBinding(b, cylinder) {
