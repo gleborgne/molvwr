@@ -39,7 +39,7 @@ module Molvwr.Parser {
 				var x = parseFloat(line.substr(30, 8).trim());
 				var y = parseFloat(line.substr(38, 8).trim());
 				var z = parseFloat(line.substr(46, 8).trim());
-				console.log(symbol + " " + x + "," + y + "," + z);
+				//console.log(symbol + " " + x + "," + y + "," + z);
 				molecule.atoms.push({
 					kind: atomKind,
 					x: x,

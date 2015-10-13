@@ -5,6 +5,7 @@ module Molvwr.Config {
 		cylinderScale : number;
 		cylinderLOD? : any[];
 		sphereSegments : number;
+		cylinderSegments? : number;
 		sphereLOD? : any[];		
 	}
 	
@@ -23,7 +24,9 @@ module Molvwr.Config {
 			atomScaleFactor: 3,
 			cylinderScale : 0.6,
 			sphereSegments : 16,
-			sphereLOD : [{ depth : 10, segments : 32}, { depth : 20, segments : 20}, {depth: 30, segments : 12}, {depth: 40, segments : 6}, {depth: 50, segments : null} ]
+			cylinderSegments : 8,
+			cylinderLOD : [{ depth : 0, segments : 8, texture : true}, { depth : 5, segments : 6, texture : true}, {depth: 20, segments : 4, texture : true}],
+			sphereLOD : [{ depth : 0, segments : 32, texture : true}, { depth : 5, segments : 24, texture : true}, { depth : 10, segments : 16, texture : true}, {depth: 20, segments : 12, texture : true}, {depth: 40, segments : 6, texture : true}, {depth: 80, segments : 4} ]
 		};
 	}
 	
@@ -32,7 +35,8 @@ module Molvwr.Config {
 			renderers : ['BondsCylinder', 'Sphere'],
 			atomScaleFactor: 1.3,
 			cylinderScale : 0.5,
-			sphereSegments : 16
+			sphereSegments : 16,
+			sphereLOD : [{ depth : 0, segments : 32, texture : true}, { depth : 5, segments : 24, texture : true}, { depth : 10, segments : 16, texture : true}, {depth: 20, segments : 12, texture : true}, {depth: 40, segments : 6, texture : true}, {depth: 80, segments : 4} ]
 		};
 	}
 }

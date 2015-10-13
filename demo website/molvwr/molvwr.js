@@ -12,8 +12,7 @@
             });
         }
         BabylonContext.prototype.exportScreenshot = function () {
-            var pic = this.canvas.toDataURL("image/png");
-            window.open(pic, "_blank");
+            return this.canvas.toDataURL("image/png");
         };
         BabylonContext.prototype.dispose = function () {
             this.engine.dispose();
@@ -122,7 +121,9 @@ var Molvwr;
                 atomScaleFactor: 3,
                 cylinderScale: 0.6,
                 sphereSegments: 16,
-                sphereLOD: [{ depth: 10, segments: 32 }, { depth: 20, segments: 20 }, { depth: 30, segments: 12 }, { depth: 40, segments: 6 }, { depth: 50, segments: null }]
+                cylinderSegments: 8,
+                cylinderLOD: [{ depth: 0, segments: 8, texture: true }, { depth: 5, segments: 6, texture: true }, { depth: 20, segments: 4, texture: true }],
+                sphereLOD: [{ depth: 0, segments: 32, texture: true }, { depth: 5, segments: 24, texture: true }, { depth: 10, segments: 16, texture: true }, { depth: 20, segments: 12, texture: true }, { depth: 40, segments: 6, texture: true }, { depth: 80, segments: 4 }]
             };
         }
         Config.spheres = spheres;
@@ -131,7 +132,8 @@ var Molvwr;
                 renderers: ['BondsCylinder', 'Sphere'],
                 atomScaleFactor: 1.3,
                 cylinderScale: 0.5,
-                sphereSegments: 16
+                sphereSegments: 16,
+                sphereLOD: [{ depth: 0, segments: 32, texture: true }, { depth: 5, segments: 24, texture: true }, { depth: 10, segments: 16, texture: true }, { depth: 20, segments: 12, texture: true }, { depth: 40, segments: 6, texture: true }, { depth: 80, segments: 4 }]
             };
         }
         Config.ballsAndSticks = ballsAndSticks;
@@ -212,7 +214,7 @@ var Molvwr;
             this.context.createScene();
         };
         Viewer.prototype.exportScreenshot = function () {
-            this.context.exportScreenshot();
+            return this.context.exportScreenshot();
         };
         Viewer.prototype.loadContentFromString = function (content, contentFormat, completedcallback) {
             this.createContext();
@@ -491,7 +493,7 @@ var Molvwr;
                             var z = getFloat(lineElements[2]);
                             var atomKind = Molvwr.Elements.elementsBySymbol[symbol];
                             if (atomKind) {
-                                console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
+                                //console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
                                 molecule.atoms.push({
                                     kind: atomKind,
                                     x: x,
@@ -554,7 +556,7 @@ var Molvwr;
                     var x = parseFloat(line.substr(30, 8).trim());
                     var y = parseFloat(line.substr(38, 8).trim());
                     var z = parseFloat(line.substr(46, 8).trim());
-                    console.log(symbol + " " + x + "," + y + "," + z);
+                    //console.log(symbol + " " + x + "," + y + "," + z);
                     molecule.atoms.push({
                         kind: atomKind,
                         x: x,
@@ -605,7 +607,7 @@ var Molvwr;
                         var z = getFloat(lineElements[3]);
                         var atomKind = Molvwr.Elements.elementsBySymbol[symbol];
                         if (atomKind) {
-                            console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
+                            //console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
                             molecule.atoms.push({
                                 kind: atomKind,
                                 x: x,
@@ -657,11 +659,11 @@ var Molvwr;
                 atomMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
                 atomMat.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
                 atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-                atomMat.bumpTexture = new BABYLON.Texture('bump.png', this.ctx.scene);
-                atomMat.bumpTexture.uScale = 6;
-                atomMat.bumpTexture.vScale = 6;
-                atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
-                atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
+                //atomMat.bumpTexture = new BABYLON.Texture('textures/bump.png', this.ctx.scene);
+                //(<any>atomMat.bumpTexture).uScale = 6;
+                //(<any>atomMat.bumpTexture).vScale = 6;
+                //atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
+                //atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
                 cylinder.material = atomMat;
                 cylinder.pickable = false;
                 cylinder.setEnabled(false);
@@ -792,6 +794,20 @@ var Molvwr;
                 }
             };
             Sphere.prototype.createMesh = function (atomkind) {
+                if (this.config.sphereLOD) {
+                    console.log("sphere " + atomkind.symbol + "use LOD " + this.config.sphereLOD.length);
+                    var rootConf = this.config.sphereLOD[0];
+                    var rootMesh = this.createSphere(atomkind, rootConf.segments, rootConf.texture, rootConf.color);
+                    for (var i = 1, l = this.config.sphereLOD.length; i < l; i++) {
+                        var conf = this.config.sphereLOD[i];
+                        var childSphere = this.createSphere(atomkind, conf.segments, conf.texture, conf.color);
+                        rootMesh.addLODLevel(conf.depth, childSphere);
+                    }
+                    return rootMesh;
+                }
+                else {
+                    return this.createSphere(atomkind, this.config.sphereSegments, true, null);
+                }
                 // var knot00 = BABYLON.Mesh.CreateTorusKnot("knot0", 0.5, 0.2, 128, 64, 2, 3, scene);
                 // var knot01 = BABYLON.Mesh.CreateTorusKnot("knot1", 0.5, 0.2, 32, 16, 2, 3, scene);
                 // var knot02 = BABYLON.Mesh.CreateTorusKnot("knot2", 0.5, 0.2, 24, 12, 2, 3, scene);
@@ -801,14 +817,20 @@ var Molvwr;
                 // knot00.addLODLevel(30, knot02);
                 // knot00.addLODLevel(45, knot03);
                 // knot00.addLODLevel(55, null);
-                var sphere = BABYLON.Mesh.CreateSphere("spheretemplate", this.config.sphereSegments, atomkind.radius * this.config.atomScaleFactor, this.ctx.scene);
+            };
+            Sphere.prototype.createSphere = function (atomkind, segments, useTexture, overridecolor) {
+                var sphere = BABYLON.Mesh.CreateSphere("spheretemplate", segments, atomkind.radius * this.config.atomScaleFactor, this.ctx.scene);
                 sphere.setEnabled(false);
                 sphere.pickable = false;
                 var atomMat = new BABYLON.StandardMaterial('materialFor' + atomkind.symbol, this.ctx.scene);
-                atomMat.diffuseColor = new BABYLON.Color3(atomkind.color[0], atomkind.color[1], atomkind.color[2]);
+                var color = overridecolor || atomkind.color;
+                atomMat.diffuseColor = new BABYLON.Color3(color[0], color[1], color[2]);
                 atomMat.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
                 atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-                sphere.material = this.ctx.getMaterial(atomMat);
+                if (useTexture) {
+                    this.ctx.getMaterial(atomMat);
+                }
+                sphere.material = atomMat;
                 return sphere;
             };
             Sphere.prototype.runBatch = function (offset, size, molecule, completedCallback) {

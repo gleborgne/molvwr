@@ -33,11 +33,11 @@ module Molvwr.Renderer {
 			atomMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
 			atomMat.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
 			atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-			atomMat.bumpTexture = new BABYLON.Texture('bump.png', this.ctx.scene);
-			(<any>atomMat.bumpTexture).uScale = 6;
-			(<any>atomMat.bumpTexture).vScale = 6;
-			atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
-			atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
+			//atomMat.bumpTexture = new BABYLON.Texture('textures/bump.png', this.ctx.scene);
+			//(<any>atomMat.bumpTexture).uScale = 6;
+			//(<any>atomMat.bumpTexture).vScale = 6;
+			//atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
+			//atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
 			cylinder.material = atomMat;
 			(<any>cylinder).pickable = false;
 			cylinder.setEnabled(false);

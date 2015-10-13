@@ -6,7 +6,7 @@
         canvas: HTMLCanvasElement;
         atomsMaterials: any;
         constructor(canvas: any);
-        exportScreenshot(): void;
+        exportScreenshot(): string;
         dispose(): void;
         getMaterial(atomMat: BABYLON.StandardMaterial): BABYLON.StandardMaterial;
         createScene(): void;
@@ -24,6 +24,7 @@ declare module Molvwr.Config {
         cylinderScale: number;
         cylinderLOD?: any[];
         sphereSegments: number;
+        cylinderSegments?: number;
         sphereLOD?: any[];
     }
     function defaultConfig(): IMolvwrConfig;
@@ -43,7 +44,7 @@ declare module Molvwr {
         renderMolecule(molecule: any, completedcallback: any): void;
         setOptions(options: any, completedcallback: any): void;
         createContext(): void;
-        exportScreenshot(): void;
+        exportScreenshot(): string;
         loadContentFromString(content: string, contentFormat: string, completedcallback: any): void;
         loadContentFromUrl(url: string, contentFormat: string, completedcallback: any): void;
         private _postProcessMolecule(molecule);
@@ -134,6 +135,7 @@ declare module Molvwr.Renderer {
         render(molecule: any, completedCallback: any): void;
         prepareMeshes(molecule: any): void;
         createMesh(atomkind: any): BABYLON.Mesh;
+        createSphere(atomkind: any, segments: any, useTexture: any, overridecolor: any): BABYLON.Mesh;
         runBatch(offset: any, size: any, molecule: any, completedCallback: any): void;
         renderAtom(atom: any, index: any): any;
     }

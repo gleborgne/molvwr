@@ -23,7 +23,20 @@ module Molvwr.Renderer {
 			}			
 		}
 		
-		createMesh(atomkind){
+		createMesh(atomkind){			
+			if (this.config.sphereLOD){
+				console.log("sphere " + atomkind.symbol + "use LOD " + this.config.sphereLOD.length);
+				var rootConf = this.config.sphereLOD[0];
+				var rootMesh = this.createSphere(atomkind, rootConf.segments, rootConf.texture, rootConf.color);
+				for (var i=1, l=this.config.sphereLOD.length; i<l ; i++){
+					var conf = this.config.sphereLOD[i];
+					var childSphere = this.createSphere(atomkind, conf.segments, conf.texture, conf.color);
+					rootMesh.addLODLevel(conf.depth, childSphere);					
+				}
+				return rootMesh;
+			}else{
+				return this.createSphere(atomkind, this.config.sphereSegments, true, null);
+			}
 			// var knot00 = BABYLON.Mesh.CreateTorusKnot("knot0", 0.5, 0.2, 128, 64, 2, 3, scene);
 			// var knot01 = BABYLON.Mesh.CreateTorusKnot("knot1", 0.5, 0.2, 32, 16, 2, 3, scene);
 			// var knot02 = BABYLON.Mesh.CreateTorusKnot("knot2", 0.5, 0.2, 24, 12, 2, 3, scene);
@@ -33,18 +46,23 @@ module Molvwr.Renderer {
 			// knot00.addLODLevel(30, knot02);
 			// knot00.addLODLevel(45, knot03);
 			// knot00.addLODLevel(55, null);
-			
-			var sphere = BABYLON.Mesh.CreateSphere("spheretemplate", this.config.sphereSegments, atomkind.radius * this.config.atomScaleFactor, this.ctx.scene);
+		}
+		
+		createSphere(atomkind, segments, useTexture, overridecolor){
+			var sphere = BABYLON.Mesh.CreateSphere("spheretemplate", segments, atomkind.radius * this.config.atomScaleFactor, this.ctx.scene);
 			sphere.setEnabled(false);
 			(<any>sphere).pickable = false;
 			
 			var atomMat = new BABYLON.StandardMaterial('materialFor' + atomkind.symbol, this.ctx.scene);
-			atomMat.diffuseColor = new BABYLON.Color3(atomkind.color[0], atomkind.color[1], atomkind.color[2]);
+			var color = overridecolor || atomkind.color;
+			atomMat.diffuseColor = new BABYLON.Color3(color[0], color[1], color[2]);
 			atomMat.specularColor = new BABYLON.Color3(0.1,0.1,0.1);
 			atomMat.emissiveColor = new BABYLON.Color3(0.2,0.2,0.2);
 			
-			sphere.material = this.ctx.getMaterial(atomMat);
-			
+			if (useTexture){
+				this.ctx.getMaterial(atomMat);
+			}
+			sphere.material = atomMat;
 			
 			return sphere;
 		}

@@ -17,8 +17,7 @@ module Molvwr {
 		}
 
 		exportScreenshot() {
-			var pic = this.canvas.toDataURL("image/png");
-			window.open(pic, "_blank");
+			return this.canvas.toDataURL("image/png");			
 		}
 
 		dispose() {

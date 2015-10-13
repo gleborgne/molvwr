@@ -271,6 +271,8 @@
 	var descriptionpanel = document.getElementById("description-panel");
 	var loadingstate = document.getElementById("loadingstate");
 	var savepic = document.getElementById("savepic");
+	var screencapturepanel = document.getElementById("screencapture-panel");
+	var screencaptureImg = document.getElementById("screencapture");
 	var viewer = new Molvwr.Viewer(root);
 
 	var viewpanelctrl = new ChoicePanel(viewmodepanel, viewmodetitle, viewer, viewmodes, function(ctrl, item){
@@ -318,6 +320,8 @@
 	}
 
 	savepic.onclick = function(){
-		viewer.exportScreenshot();
+		var pic = viewer.exportScreenshot();
+		screencaptureImg.src = pic;
+		showPanel(screencapturepanel);
 	}
 })();

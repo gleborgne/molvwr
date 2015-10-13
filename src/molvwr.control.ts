@@ -82,7 +82,7 @@ module Molvwr {
 		}
 
 		exportScreenshot(){
-			this.context.exportScreenshot();
+			return this.context.exportScreenshot();
 		}
 		
 		loadContentFromString(content: string, contentFormat: string, completedcallback) {

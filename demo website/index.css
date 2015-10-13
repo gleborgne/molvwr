@@ -216,6 +216,18 @@ body {
   -moz-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
 }
+#screencapture-panel {
+  width: 800px;
+  padding: 20px;
+  text-align: center;
+}
+#screencapture-panel #screencapture {
+  max-width: 100%;
+  max-height: 60%;
+}
+#screencapture-panel p {
+  text-align: center;
+}
 #overlay {
   position: absolute;
   left: 0;
