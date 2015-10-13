@@ -51,8 +51,10 @@
             camera.attachControl(this.canvas, true);
             this.camera = camera;
             //var light = new BABYLON.Light("simplelight", scene);
-            var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(40, 40, 40), scene);
+            var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
             light.intensity = 0.7;
+            light.groundColor = new BABYLON.Color3(0.4, 0.4, 0.4);
+            light.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
             //this.useAmbientOcclusion();
             //this.useHDR();
             //this.useLensEffect();
