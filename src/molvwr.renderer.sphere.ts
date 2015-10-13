@@ -30,8 +30,12 @@ module Molvwr.Renderer {
 				var rootMesh = this.createSphere(atomkind, rootConf.segments, rootConf.texture, rootConf.color);
 				for (var i=1, l=this.config.sphereLOD.length; i<l ; i++){
 					var conf = this.config.sphereLOD[i];
-					var childSphere = this.createSphere(atomkind, conf.segments, conf.texture, conf.color);
-					rootMesh.addLODLevel(conf.depth, childSphere);					
+					if (conf.segments){
+						var childSphere = this.createSphere(atomkind, conf.segments, conf.texture, conf.color);
+						rootMesh.addLODLevel(conf.depth, childSphere);
+					} else{
+						rootMesh.addLODLevel(conf.depth, null);
+					}
 				}
 				return rootMesh;
 			}else{
@@ -51,7 +55,7 @@ module Molvwr.Renderer {
 		createSphere(atomkind, segments, useTexture, overridecolor){
 			var sphere = BABYLON.Mesh.CreateSphere("spheretemplate", segments, atomkind.radius * this.config.atomScaleFactor, this.ctx.scene);
 			sphere.setEnabled(false);
-			(<any>sphere).pickable = false;
+			sphere.isPickable = false;
 			
 			var atomMat = new BABYLON.StandardMaterial('materialFor' + atomkind.symbol, this.ctx.scene);
 			var color = overridecolor || atomkind.color;

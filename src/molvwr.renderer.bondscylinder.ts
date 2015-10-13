@@ -27,8 +27,31 @@ module Molvwr.Renderer {
 			}			
 		}
 		
-		createMesh(binding, diameter){			
-			var cylinder = BABYLON.Mesh.CreateCylinder("bondtemplate" + binding.key, binding.d, diameter, diameter, this.config.sphereSegments, 1, this.ctx.scene, false);
+		createMesh(binding, diameter){
+			console.log("create bind mesh " + binding.key);
+			if (this.config.cylinderLOD){
+				console.log("cylinder LOD " + this.config.cylinderLOD.length)
+				var rootConf = this.config.cylinderLOD[0];
+				var rootMesh = this.createCylinder(binding, diameter, rootConf.segments, rootConf.texture, rootConf.color);
+				for (var i=1, l=this.config.cylinderLOD.length; i<l ; i++){
+					var conf = this.config.cylinderLOD[i];
+					if (conf.segments){
+						var childCylinder = this.createCylinder(binding, diameter, conf.segments, conf.texture, conf.color);
+						rootMesh.addLODLevel(conf.depth, childCylinder);
+					} else{
+						rootMesh.addLODLevel(conf.depth, null);
+					}
+				}
+				return rootMesh;
+			}else{
+				return this.createCylinder(binding, diameter, this.config.cylinderSegments, true, null);
+			}	
+			
+		}
+		
+		createCylinder(binding, diameter, segments, texture, coloroverride){			
+			//console.log("render cyl " + segments);
+			var cylinder = BABYLON.Mesh.CreateCylinder("bondtemplate" + binding.key, binding.d, diameter, diameter, segments, 1, this.ctx.scene, false);
         	var atomMat = new BABYLON.StandardMaterial('materialFor' + binding.key, this.ctx.scene);
 			atomMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
 			atomMat.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
@@ -39,7 +62,7 @@ module Molvwr.Renderer {
 			//atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
 			//atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
 			cylinder.material = atomMat;
-			(<any>cylinder).pickable = false;
+			cylinder.isPickable = false;
 			cylinder.setEnabled(false);
 			
 			return cylinder;

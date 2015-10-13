@@ -245,7 +245,7 @@
 		var ctrl = this;
 		var item = this.getItemById(itemid);
 		if (item){
-			if (!ctrl.dontSetTitleText) ctrl.titleElement.innerText = item.name;
+			if (!ctrl.dontSetTitleText) ctrl.titleElement.innerHTML = item.name;
 			if (ctrl.onselected){
 				ctrl.onselected(ctrl, item)
 			}

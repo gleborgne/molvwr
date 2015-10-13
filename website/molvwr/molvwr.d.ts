@@ -108,6 +108,7 @@ declare module Molvwr.Renderer {
         render(molecule: any, completedCallback: any): void;
         prepareBonds(molecule: any, diameter: any): void;
         createMesh(binding: any, diameter: any): BABYLON.Mesh;
+        createCylinder(binding: any, diameter: any, segments: any, texture: any, coloroverride: any): BABYLON.Mesh;
         runBatch(offset: any, size: any, molecule: any, diameter: any, completedCallback: any): void;
         alignCylinderToBinding(b: any, cylinder: any): any;
         vectorEqualsCloseEnough(v1: any, v2: any, tolerance?: number): boolean;

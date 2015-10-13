@@ -121,8 +121,6 @@ var Molvwr;
                 atomScaleFactor: 3,
                 cylinderScale: 0.6,
                 sphereSegments: 16,
-                cylinderSegments: 8,
-                cylinderLOD: [{ depth: 0, segments: 8, texture: true }, { depth: 5, segments: 6, texture: true }, { depth: 20, segments: 4, texture: true }],
                 sphereLOD: [{ depth: 0, segments: 32, texture: true }, { depth: 5, segments: 24, texture: true }, { depth: 10, segments: 16, texture: true }, { depth: 20, segments: 12, texture: true }, { depth: 40, segments: 6, texture: true }, { depth: 80, segments: 4 }]
             };
         }
@@ -133,6 +131,8 @@ var Molvwr;
                 atomScaleFactor: 1.3,
                 cylinderScale: 0.5,
                 sphereSegments: 16,
+                cylinderSegments: 16,
+                cylinderLOD: [{ depth: 0, segments: 8, texture: true }, { depth: 5, segments: 6, texture: true }, { depth: 20, segments: 4, texture: true }],
                 sphereLOD: [{ depth: 0, segments: 32, texture: true }, { depth: 5, segments: 24, texture: true }, { depth: 10, segments: 16, texture: true }, { depth: 20, segments: 12, texture: true }, { depth: 40, segments: 6, texture: true }, { depth: 80, segments: 4 }]
             };
         }
@@ -654,7 +654,30 @@ var Molvwr;
                 }
             };
             BondsCylinder.prototype.createMesh = function (binding, diameter) {
-                var cylinder = BABYLON.Mesh.CreateCylinder("bondtemplate" + binding.key, binding.d, diameter, diameter, this.config.sphereSegments, 1, this.ctx.scene, false);
+                console.log("create bind mesh " + binding.key);
+                if (this.config.cylinderLOD) {
+                    console.log("cylinder LOD " + this.config.cylinderLOD.length);
+                    var rootConf = this.config.cylinderLOD[0];
+                    var rootMesh = this.createCylinder(binding, diameter, rootConf.segments, rootConf.texture, rootConf.color);
+                    for (var i = 1, l = this.config.cylinderLOD.length; i < l; i++) {
+                        var conf = this.config.cylinderLOD[i];
+                        if (conf.segments) {
+                            var childCylinder = this.createCylinder(binding, diameter, conf.segments, conf.texture, conf.color);
+                            rootMesh.addLODLevel(conf.depth, childCylinder);
+                        }
+                        else {
+                            rootMesh.addLODLevel(conf.depth, null);
+                        }
+                    }
+                    return rootMesh;
+                }
+                else {
+                    return this.createCylinder(binding, diameter, this.config.cylinderSegments, true, null);
+                }
+            };
+            BondsCylinder.prototype.createCylinder = function (binding, diameter, segments, texture, coloroverride) {
+                //console.log("render cyl " + segments);
+                var cylinder = BABYLON.Mesh.CreateCylinder("bondtemplate" + binding.key, binding.d, diameter, diameter, segments, 1, this.ctx.scene, false);
                 var atomMat = new BABYLON.StandardMaterial('materialFor' + binding.key, this.ctx.scene);
                 atomMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
                 atomMat.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
@@ -665,7 +688,7 @@ var Molvwr;
                 //atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
                 //atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
                 cylinder.material = atomMat;
-                cylinder.pickable = false;
+                cylinder.isPickable = false;
                 cylinder.setEnabled(false);
                 return cylinder;
             };
@@ -800,8 +823,13 @@ var Molvwr;
                     var rootMesh = this.createSphere(atomkind, rootConf.segments, rootConf.texture, rootConf.color);
                     for (var i = 1, l = this.config.sphereLOD.length; i < l; i++) {
                         var conf = this.config.sphereLOD[i];
-                        var childSphere = this.createSphere(atomkind, conf.segments, conf.texture, conf.color);
-                        rootMesh.addLODLevel(conf.depth, childSphere);
+                        if (conf.segments) {
+                            var childSphere = this.createSphere(atomkind, conf.segments, conf.texture, conf.color);
+                            rootMesh.addLODLevel(conf.depth, childSphere);
+                        }
+                        else {
+                            rootMesh.addLODLevel(conf.depth, null);
+                        }
                     }
                     return rootMesh;
                 }
@@ -821,7 +849,7 @@ var Molvwr;
             Sphere.prototype.createSphere = function (atomkind, segments, useTexture, overridecolor) {
                 var sphere = BABYLON.Mesh.CreateSphere("spheretemplate", segments, atomkind.radius * this.config.atomScaleFactor, this.ctx.scene);
                 sphere.setEnabled(false);
-                sphere.pickable = false;
+                sphere.isPickable = false;
                 var atomMat = new BABYLON.StandardMaterial('materialFor' + atomkind.symbol, this.ctx.scene);
                 var color = overridecolor || atomkind.color;
                 atomMat.diffuseColor = new BABYLON.Color3(color[0], color[1], color[2]);
