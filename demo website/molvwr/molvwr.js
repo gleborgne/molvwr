@@ -108,6 +108,7 @@ var Molvwr;
     (function (Config) {
         function defaultConfig() {
             return {
+                allowLOD: false,
                 renderers: ['Sphere'],
                 atomScaleFactor: 3,
                 cylinderScale: 0.6,
@@ -117,6 +118,7 @@ var Molvwr;
         Config.defaultConfig = defaultConfig;
         function spheres() {
             return {
+                allowLOD: true,
                 renderers: ['Sphere'],
                 atomScaleFactor: 3,
                 cylinderScale: 0.6,
@@ -127,12 +129,13 @@ var Molvwr;
         Config.spheres = spheres;
         function ballsAndSticks() {
             return {
+                allowLOD: true,
                 renderers: ['BondsCylinder', 'Sphere'],
                 atomScaleFactor: 1.3,
                 cylinderScale: 0.5,
                 sphereSegments: 16,
-                cylinderSegments: 16,
-                cylinderLOD: [{ depth: 0, segments: 8, texture: true }, { depth: 5, segments: 6, texture: true }, { depth: 20, segments: 4, texture: true }],
+                cylinderSegments: 8,
+                cylinderLOD: [{ depth: 0, segments: 20, texture: true }, { depth: 5, segments: 12, texture: true }, { depth: 20, segments: 8, texture: true }, { depth: 60, segments: 4, texture: true }],
                 sphereLOD: [{ depth: 0, segments: 32, texture: true }, { depth: 5, segments: 24, texture: true }, { depth: 10, segments: 16, texture: true }, { depth: 20, segments: 12, texture: true }, { depth: 40, segments: 6, texture: true }, { depth: 80, segments: 4 }]
             };
         }
@@ -680,7 +683,7 @@ var Molvwr;
                 var cylinder = BABYLON.Mesh.CreateCylinder("bondtemplate" + binding.key, binding.d, diameter, diameter, segments, 1, this.ctx.scene, false);
                 var atomMat = new BABYLON.StandardMaterial('materialFor' + binding.key, this.ctx.scene);
                 atomMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
-                atomMat.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
+                atomMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
                 atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
                 //atomMat.bumpTexture = new BABYLON.Texture('textures/bump.png', this.ctx.scene);
                 //(<any>atomMat.bumpTexture).uScale = 6;

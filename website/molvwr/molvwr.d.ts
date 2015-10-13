@@ -19,6 +19,7 @@
 
 declare module Molvwr.Config {
     interface IMolvwrConfig {
+        allowLOD: boolean;
         renderers: string[];
         atomScaleFactor: number;
         cylinderScale: number;
