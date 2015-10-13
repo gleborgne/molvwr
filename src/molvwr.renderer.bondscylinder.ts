@@ -56,6 +56,13 @@ module Molvwr.Renderer {
 			atomMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
 			atomMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
 			atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+			
+			atomMat.emissiveFresnelParameters = new BABYLON.FresnelParameters();
+			atomMat.emissiveFresnelParameters.bias = 0.6;
+			atomMat.emissiveFresnelParameters.power = 1;
+			atomMat.emissiveFresnelParameters.leftColor = BABYLON.Color3.Black();
+			atomMat.emissiveFresnelParameters.rightColor = BABYLON.Color3.White();
+		
 			//atomMat.bumpTexture = new BABYLON.Texture('textures/bump.png', this.ctx.scene);
 			//(<any>atomMat.bumpTexture).uScale = 6;
 			//(<any>atomMat.bumpTexture).vScale = 6;
