@@ -322,7 +322,7 @@
 		//moleculeinfo.classList.add("visible");
 	});
 
-	var currentmolecule = "morphine";
+	var currentmolecule = "cyanocobalamin";
 	if (window.location.hash){
 		var item = samplespanelctrl.getItemById(window.location.hash.substr(1));
 		if (item){
