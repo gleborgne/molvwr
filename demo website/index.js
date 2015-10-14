@@ -7,8 +7,22 @@
 			{ name : "Cellulose", id:"cellulose", url: "molsamples/pdb/cellulose.txt", format: "pdb"},
 		]},
 		{ name : "food", id:"food", childs: [
-			{ name : "misc.", id:"food-misc", childs: [
-				{ name : "Caffeine", id:"caffeine", url: "molsamples/xyz/caffeine.txt", format: "xyz"},
+			{ name : "Aromas", id:"aromas", childs: [
+				{ name : "Limonene (lemon)", id:"limonene", url: "molsamples/mol/limonene.txt", format: "mol"},
+				{ name : "Menthol (mint)", id:"menthol", url: "molsamples/mol/menthol.txt", format: "mol"},
+				{ name : "Humulone (beer)", id:"humulone", url: "molsamples/mol/humulone.txt", format: "mol"}, //beer taste
+				
+			]},
+			{ name : "vitamins", id: "vitamins", childs: [
+				{ name : "Retinol (vit. A)", id:"retinol", url : "molsamples/mol/vitamin_A_retinol.txt", format : "mol" },
+				{ name : "Riboflavin (vit. B2)", id:"riboflavin", url : "molsamples/mol/vitamin_B2_Riboflavin.txt", format : "mol" },
+				{ name : "Pyridoxine (vit. B6)", id:"pyridoxine", url : "molsamples/mol/vitamin_B6_pyridoxine.txt", format : "mol" },
+				{ name : "cyanocobalamin (vit. B12)", id:"cyanocobalamin", url : "molsamples/mol/vitamin_B12_cyanocobalamin.txt", format : "mol" },
+				{ name : "Ascorbic acid (vit. C)", id:"ascorbicacid", url : "molsamples/mol/vitamin_C_ascorbic acid.txt", format : "mol" },
+				{ name : "Cholecalciferol (vit. D3)", id:"cholecalciferol", url : "molsamples/mol/vitamin_D3_Cholecalciferol.txt", format : "mol" },
+				{ name : "Tocopherol (vit. E)", id:"tocopherol", url : "molsamples/mol/vitamin_E_tocopherol.txt", format : "mol" },
+				{ name : "Menadione (vit. K3)", id:"menadione", url : "molsamples/mol/vitamin_K3_menadione.txt", format : "mol" },
+				{ name : "Biotin (vit. H)", id:"biotin", url : "molsamples/mol/vitamin_H_biotin.txt", format : "mol" },
 			]},
 			{ name : "lipids", id:"food-lipids", childs: [
 				{ name : "Linoleic acid (aka Omega 3)", id:"linoleicacid", url : "molsamples/xyz/linoleic acid.txt", format : "xyz" },
@@ -21,11 +35,16 @@
 				{ name : "Palmitic", id:"palmitic", url: "molsamples/pdb/lipids/palmitic.txt", format: "pdb"},
 				{ name : "Pdmpg", id:"pdmpg", url: "molsamples/pdb/lipids/pdmpg.txt", format: "pdb"},
 				{ name : "Stearic", id:"stearic", url: "molsamples/pdb/lipids/stearic.txt", format: "pdb"},
+				{ name : "Cholesterol", id:"cholesterol", url: "molsamples/mol/cholesterol.txt", format: "mol"},
+				{ name : "Triglyceride", id:"triglyceride", url: "molsamples/mol/triglyceride.txt", format: "mol"},
 			]},
 			{ name : "sugars", id:"food-sugars", childs: [
 				{ name : "Glucose", id:"glucose", url : "molsamples/mol/glucose.txt", format : "mol" },
 				{ name : "Cellulose", id:"cellulose", url: "molsamples/pdb/cellulose.txt", format: "pdb"},
 			]},
+			{ name : "misc.", id:"food-misc", childs: [
+				{ name : "Caffeine", id:"caffeine", url: "molsamples/xyz/caffeine.txt", format: "xyz"},				
+			]},			
 		]},
 		{ name : "drugs", id:"drugs", childs: [
 			{ name : "Pennicilin", id:"pennicilin", url : "molsamples/mol/pennicilin.txt", format : "mol" },
@@ -35,12 +54,14 @@
 			{ name : "Caffeine", id:"caffeine", url: "molsamples/xyz/caffeine.txt", format: "xyz"},
 			{ name : "Cisplantin", id:"cisplantin", url: "molsamples/pdb/drugs/cisplantin.txt", format: "pdb"},
 			{ name : "Ibuprofen", id:"ibuprofen", url: "molsamples/pdb/drugs/ibuprofen.txt", format: "pdb"},
+			{ name : "Paracetamol", id:"paracetamol", url: "molsamples/pdb/drugs/paracetamol.txt", format: "pdb"},
 			{ name : "Nicotine", id:"nicotine", url: "molsamples/pdb/drugs/nicotine.txt", format: "pdb"},
 			{ name : "Streptomycin", id:"streptomycin", url: "molsamples/pdb/drugs/streptomycin.txt", format: "pdb"},
 			{ name : "Taxol", id:"taxol", url: "molsamples/pdb/drugs/taxol.txt", format: "pdb"},
 			{ name : "THC", id:"thc", url: "molsamples/pdb/drugs/thc.txt", format: "pdb"},
 			{ name : "Valium", id:"valium", url: "molsamples/pdb/drugs/valium.txt", format: "pdb"},
 			{ name : "Zantac", id:"zantac", url: "molsamples/pdb/drugs/zantac.txt", format: "pdb"},
+			{ name : "Amoxicillin", id:"amoxicillin", url: "molsamples/mol/amoxicillin.txt", format: "mol"},
 		]},
 		{ name : "life building blocks", id:"life", childs: [
 			{ name : "amino acids", id:"aminoacids", childs: [
@@ -68,6 +89,10 @@
 			{ name : "proteins", id:"proteins", childs: [
 				{ name : "4E0O", id:"4E0O", url: "molsamples/xyz/4E0O.txt", format: "xyz"},
 				{ name : "4QCI", id:"4QCI", url: "molsamples/xyz/4QCI.txt", format: "xyz"},
+				{ name : "1GCN (glucagon)", id:"1GCN", url: "molsamples/pdb/proteins/1GCN_glucagon.txt", format: "pdb"},
+				{ name : "Insulin", id:"insulin", url: "molsamples/pdb/proteins/insulin.txt", format: "pdb"},
+				{ name : "Haemoglobin", id:"haemoglobin", url: "molsamples/pdb/proteins/haemoglobin.txt", format: "pdb"},
+				{ name : "Collagen", id:"collagen", url: "molsamples/pdb/proteins/collagen.txt", format: "pdb"},
 			]},
 			{ name : "photosyntetic", id:"photosyntetic", childs: [
 				{ name : "Carotene", id:"carotene", url: "molsamples/pdb/photosynthetic/carotene.txt", format: "pdb"},

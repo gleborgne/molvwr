@@ -55,7 +55,7 @@ gulp.task('compile-molvwr', function () {
 	.pipe(ts(tsMolvwrProject));
 
     return merge([
-        tsResult.dts.pipe(flatten()).pipe(concat('molvwr.d.ts')).pipe(bom()).pipe(gulp.dest('website/molvwr')),
+        tsResult.dts.pipe(flatten()).pipe(concat('molvwr.d.ts')).pipe(bom()).pipe(gulp.dest('demo website/molvwr')),
         tsResult.js
             .pipe(concat('molvwr.js'))
         	//.pipe(sourcemaps.write(".",{

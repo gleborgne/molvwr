@@ -1,0 +1,841 @@
+HEADER    COLLAGEN                                29-MAR-94   1CAG      1CAG   2
+COMPND    COLLAGEN-LIKE PEPTIDE (PRO-HYP-GLY)4 PRO-HYP-ALA              1CAG   3
+COMPND   2 (PRO-HYP-GLY)5                                               1CAG   4
+SOURCE    SYNTHETIC                                                     1CAG   5
+AUTHOR    J.BELLA,M.EATON,B.BRODSKY,H.M.BERMAN                          1CAG   6
+REVDAT   1   01-NOV-94 1CAG    0                                        1CAG   7
+JRNL        AUTH   J.BELLA,M.EATON,B.BRODSKY,H.M.BERMAN                 1CAG   8
+JRNL        TITL   CRYSTAL AND MOLECULAR STRUCTURE OF A COLLAGEN-LIKE   1CAG   9
+JRNL        TITL 2 PEPTIDE AT 1.9 ANGSTROM RESOLUTION                   1CAG  10
+JRNL        REF    SCIENCE                       V. 266    75 1994      1CAG  11
+JRNL        REFN   ASTM SCIEAS  US ISSN 0036-8075                 0038  1CAG  12
+REMARK   1                                                              1CAG  13
+REMARK   2                                                              1CAG  14
+REMARK   2 RESOLUTION. 1.85 ANGSTROMS.                                  1CAG  15
+REMARK   3                                                              1CAG  16
+REMARK   3 REFINEMENT.                                                  1CAG  17
+REMARK   3   PROGRAM                    X-PLOR                          1CAG  18
+REMARK   3   AUTHORS                    BRUNGER                         1CAG  19
+REMARK   3   R VALUE                    0.197                           1CAG  20
+REMARK   3   RMSD BOND DISTANCES        0.016  ANGSTROMS                1CAG  21
+REMARK   3   RMSD BOND ANGLES           2.3    DEGREES                  1CAG  22
+REMARK   3   RMSD IMPROPER ANGLES       1.7    DEGREES                  1CAG  23
+REMARK   3                                                              1CAG  24
+REMARK   3   NUMBER OF REFLECTIONS      3393                            1CAG  25
+REMARK   3   RESOLUTION RANGE       8.0 - 1.85 ANGSTROMS                1CAG  26
+REMARK   3   DATA CUTOFF                3.0    SIGMA(F)                 1CAG  27
+REMARK   3   PERCENT COMPLETION         61.6                            1CAG  28
+REMARK   3                                                              1CAG  29
+REMARK   3   NUMBER OF PROTEIN ATOMS                        565         1CAG  30
+REMARK   3   NUMBER OF SOLVENT ATOMS                        109         1CAG  31
+REMARK   4                                                              1CAG  32
+REMARK   4 THE ASYMMETRIC UNIT CONTAINS 3 PEPTIDE MOLECULES IN A        1CAG  33
+REMARK   4 TRIPLE HELICAL CONFORMATION, 85 WATER MOLECULES, AND         1CAG  34
+REMARK   4 6 ACETIC ACID MOLECULES.                                     1CAG  35
+REMARK   5                                                              1CAG  36
+REMARK   5 BECAUSE OF DISORDER, RESIDUES GLY A 30 AND GLY C 90 ARE      1CAG  37
+REMARK   5 MISSING FROM THE CURRENT MODEL.                              1CAG  38
+REMARK   6                                                              1CAG  39
+REMARK   6 HYDROGEN BONDS BETWEEN PEPTIDE CHAINS FOLLOW THE RICH AND    1CAG  40
+REMARK   6 CRICK MODEL II FOR COLLAGEN.  THESE HAVE BEEN PRESENTED ON   1CAG  41
+REMARK   6 *CONECT* RECORDS IN THIS ENTRY.  AT THE ALANINE              1CAG  42
+REMARK   6 SUBSTITUTION FOUR INTERSTITIAL WATER MOLECULES INTERCONNECT  1CAG  43
+REMARK   6 THE PEPTIDE CHAINS THROUGH GLY - H2O - PRO HYDROGEN-BONDED   1CAG  44
+REMARK   6 BRIDGES.  THESE ALSO ARE PRESENTED ON *CONECT* RECORDS.      1CAG  45
+SEQRES   1 A   30  PRO HYP GLY PRO HYP GLY PRO HYP GLY PRO HYP GLY PRO  1CAG  46
+SEQRES   2 A   30  HYP ALA PRO HYP GLY PRO HYP GLY PRO HYP GLY PRO HYP  1CAG  47
+SEQRES   3 A   30  GLY PRO HYP GLY                                      1CAG  48
+SEQRES   1 B   30  PRO HYP GLY PRO HYP GLY PRO HYP GLY PRO HYP GLY PRO  1CAG  49
+SEQRES   2 B   30  HYP ALA PRO HYP GLY PRO HYP GLY PRO HYP GLY PRO HYP  1CAG  50
+SEQRES   3 B   30  GLY PRO HYP GLY                                      1CAG  51
+SEQRES   1 C   30  PRO HYP GLY PRO HYP GLY PRO HYP GLY PRO HYP GLY PRO  1CAG  52
+SEQRES   2 C   30  HYP ALA PRO HYP GLY PRO HYP GLY PRO HYP GLY PRO HYP  1CAG  53
+SEQRES   3 C   30  GLY PRO HYP GLY                                      1CAG  54
+FTNOTE   1                                                              1CAG  55
+FTNOTE   1 CIS HYDROXYPROLINE - HYP B    32                             1CAG  56
+FTNOTE   2                                                              1CAG  57
+FTNOTE   2 CIS HYDROXYPROLINE - HYP C    62                             1CAG  58
+HET    ACY    201       4     ACETIC ACID                               1CAG  59
+HET    ACY    202       4     ACETIC ACID                               1CAG  60
+HET    ACY    203       4     ACETIC ACID                               1CAG  61
+HET    ACY    204       4     ACETIC ACID                               1CAG  62
+HET    ACY    205       4     ACETIC ACID                               1CAG  63
+HET    ACY    206       4     ACETIC ACID                               1CAG  64
+FORMUL   4  ACY    6(C2 H4 O2)                                          1CAG  65
+FORMUL   5  HOH   *85(H2 O1)                                            1CAG  66
+HELIX    1  H1 PRO A    1  HYP A   29 10 COILED-COIL IN TRIPLE HELIX    1CAG  67
+HELIX    2  H2 GLY B   33  GLY B   60 10 COILED-COIL IN TRIPLE HELIX    1CAG  68
+HELIX    3  H3 GLY C   63  HYP C   89 10 COILED-COIL IN TRIPLE HELIX    1CAG  69
+CRYST1  173.460   14.057   25.308  90.00  95.82  90.00 C 2          12  1CAG  70
+ORIGX1      1.000000  0.000000  0.000000        0.00000                 1CAG  71
+ORIGX2      0.000000  1.000000  0.000000        0.00000                 1CAG  72
+ORIGX3      0.000000  0.000000  1.000000        0.00000                 1CAG  73
+SCALE1      0.005765  0.000000  0.000588        0.00000                 1CAG  74
+SCALE2      0.000000  0.071139  0.000000        0.00000                 1CAG  75
+SCALE3      0.000000  0.000000  0.039718        0.00000                 1CAG  76
+ATOM      1  N   PRO A   1       3.428   3.102   7.948  1.00 16.95      1CAG  77
+ATOM      2  CA  PRO A   1       4.715   3.664   8.503  1.00 15.29      1CAG  78
+ATOM      3  C   PRO A   1       5.886   2.836   7.969  1.00 14.56      1CAG  79
+ATOM      4  O   PRO A   1       5.795   1.600   7.935  1.00 13.83      1CAG  80
+ATOM      5  CB  PRO A   1       4.652   3.583  10.039  1.00 16.95      1CAG  81
+ATOM      6  CG  PRO A   1       3.594   2.547  10.288  1.00 17.45      1CAG  82
+ATOM      7  CD  PRO A   1       2.613   2.732   9.143  1.00 17.30      1CAG  83
+ATOM      8  N   HYP A   2       6.974   3.502   7.510  1.00 14.00      1CAG  84
+ATOM      9  CA  HYP A   2       8.249   2.952   6.959  1.00 12.62      1CAG  85
+ATOM     10  C   HYP A   2       9.010   2.006   7.895  1.00 10.74      1CAG  86
+ATOM     11  O   HYP A   2       9.102   2.240   9.092  1.00  8.02      1CAG  87
+ATOM     12  CB  HYP A   2       9.123   4.184   6.623  1.00 14.03      1CAG  88
+ATOM     13  CG  HYP A   2       8.265   5.440   6.841  1.00 15.60      1CAG  89
+ATOM     14  CD  HYP A   2       6.933   4.975   7.442  1.00 14.31      1CAG  90
+ATOM     15  OD1 HYP A   2       8.053   6.085   5.577  1.00 14.55      1CAG  91
+ATOM     16  N   GLY A   3       9.564   0.954   7.322  1.00 10.73      1CAG  92
+ATOM     17  CA  GLY A   3      10.271  -0.010   8.133  1.00 10.54      1CAG  93
+ATOM     18  C   GLY A   3      11.582   0.516   8.692  1.00 11.02      1CAG  94
+ATOM     19  O   GLY A   3      11.982   1.659   8.429  1.00 11.19      1CAG  95
+ATOM     20  N   PRO A   4      12.280  -0.325   9.480  1.00 11.25      1CAG  96
+ATOM     21  CA  PRO A   4      13.552  -0.116  10.171  1.00  9.62      1CAG  97
+ATOM     22  C   PRO A   4      14.676   0.304   9.243  1.00  8.00      1CAG  98
+ATOM     23  O   PRO A   4      14.585   0.106   7.992  1.00  7.96      1CAG  99
+ATOM     24  CB  PRO A   4      13.835  -1.469  10.835  1.00 11.40      1CAG 100
+ATOM     25  CG  PRO A   4      12.513  -2.168  10.903  1.00 10.87      1CAG 101
+ATOM     26  CD  PRO A   4      11.810  -1.716   9.656  1.00 13.38      1CAG 102
+ATOM     27  N   HYP A   5      15.739   0.908   9.828  1.00  7.30      1CAG 103
+ATOM     28  CA  HYP A   5      16.933   1.352   9.091  1.00  6.38      1CAG 104
+ATOM     29  C   HYP A   5      17.547   0.117   8.478  1.00  6.56      1CAG 105
+ATOM     30  O   HYP A   5      17.377  -0.977   9.039  1.00  5.30      1CAG 106
+ATOM     31  CB  HYP A   5      17.835   1.911  10.152  1.00  6.21      1CAG 107
+ATOM     32  CG  HYP A   5      16.916   2.371  11.262  1.00  7.98      1CAG 108
+ATOM     33  CD  HYP A   5      15.852   1.277  11.250  1.00  7.71      1CAG 109
+ATOM     34  OD1 HYP A   5      16.402   3.665  10.876  1.00  5.17      1CAG 110
+ATOM     35  N   GLY A   6      18.234   0.317   7.354  1.00  5.25      1CAG 111
+ATOM     36  CA  GLY A   6      18.913  -0.751   6.650  1.00  5.03      1CAG 112
+ATOM     37  C   GLY A   6      20.150  -1.222   7.360  1.00  4.13      1CAG 113
+ATOM     38  O   GLY A   6      20.646  -0.519   8.238  1.00  3.87      1CAG 114
+ATOM     39  N   PRO A   7      20.711  -2.382   6.997  1.00  3.51      1CAG 115
+ATOM     40  CA  PRO A   7      21.896  -2.781   7.768  1.00  2.99      1CAG 116
+ATOM     41  C   PRO A   7      23.163  -1.933   7.524  1.00  3.09      1CAG 117
+ATOM     42  O   PRO A   7      23.164  -1.012   6.637  1.00  2.00      1CAG 118
+ATOM     43  CB  PRO A   7      22.040  -4.256   7.431  1.00  2.00      1CAG 119
+ATOM     44  CG  PRO A   7      21.601  -4.267   6.010  1.00  3.84      1CAG 120
+ATOM     45  CD  PRO A   7      20.396  -3.370   5.956  1.00  2.78      1CAG 121
+ATOM     46  N   HYP A   8      24.238  -2.167   8.350  1.00  2.00      1CAG 122
+ATOM     47  CA  HYP A   8      25.478  -1.405   8.199  1.00  2.00      1CAG 123
+ATOM     48  C   HYP A   8      25.977  -1.646   6.824  1.00  2.57      1CAG 124
+ATOM     49  O   HYP A   8      25.766  -2.769   6.319  1.00  2.97      1CAG 125
+ATOM     50  CB  HYP A   8      26.410  -1.977   9.264  1.00  2.00      1CAG 126
+ATOM     51  CG  HYP A   8      25.457  -2.459  10.355  1.00  3.41      1CAG 127
+ATOM     52  CD  HYP A   8      24.329  -3.066   9.517  1.00  2.93      1CAG 128
+ATOM     53  OD1 HYP A   8      24.950  -1.358  11.145  1.00  2.00      1CAG 129
+ATOM     54  N   GLY A   9      26.610  -0.623   6.232  1.00  2.35      1CAG 130
+ATOM     55  CA  GLY A   9      27.177  -0.755   4.904  1.00  2.57      1CAG 131
+ATOM     56  C   GLY A   9      28.451  -1.608   4.973  1.00  2.27      1CAG 132
+ATOM     57  O   GLY A   9      28.943  -1.945   6.056  1.00  3.92      1CAG 133
+ATOM     58  N   PRO A  10      29.016  -1.986   3.835  1.00  3.65      1CAG 134
+ATOM     59  CA  PRO A  10      30.236  -2.795   3.926  1.00  2.88      1CAG 135
+ATOM     60  C   PRO A  10      31.520  -2.105   4.375  1.00  2.24      1CAG 136
+ATOM     61  O   PRO A  10      31.628  -0.876   4.407  1.00  2.00      1CAG 137
+ATOM     62  CB  PRO A  10      30.379  -3.356   2.527  1.00  3.93      1CAG 138
+ATOM     63  CG  PRO A  10      29.860  -2.220   1.694  1.00  2.00      1CAG 139
+ATOM     64  CD  PRO A  10      28.629  -1.767   2.433  1.00  2.00      1CAG 140
+ATOM     65  N   HYP A  11      32.505  -2.923   4.762  1.00  2.69      1CAG 141
+ATOM     66  CA  HYP A  11      33.836  -2.455   5.125  1.00  3.02      1CAG 142
+ATOM     67  C   HYP A  11      34.320  -1.266   4.266  1.00  3.61      1CAG 143
+ATOM     68  O   HYP A  11      34.039  -1.180   3.072  1.00  2.70      1CAG 144
+ATOM     69  CB  HYP A  11      34.698  -3.680   4.875  1.00  3.23      1CAG 145
+ATOM     70  CG  HYP A  11      33.823  -4.855   5.291  1.00  3.94      1CAG 146
+ATOM     71  CD  HYP A  11      32.398  -4.378   4.970  1.00  2.67      1CAG 147
+ATOM     72  OD1 HYP A  11      34.036  -5.064   6.712  1.00  4.43      1CAG 148
+ATOM     73  N   GLY A  12      35.059  -0.373   4.881  1.00  3.78      1CAG 149
+ATOM     74  CA  GLY A  12      35.666   0.667   4.102  1.00  3.04      1CAG 150
+ATOM     75  C   GLY A  12      36.817   0.200   3.245  1.00  3.34      1CAG 151
+ATOM     76  O   GLY A  12      37.225  -0.981   3.177  1.00  2.33      1CAG 152
+ATOM     77  N   PRO A  13      37.415   1.171   2.570  1.00  3.87      1CAG 153
+ATOM     78  CA  PRO A  13      38.548   0.929   1.682  1.00  3.59      1CAG 154
+ATOM     79  C   PRO A  13      39.733   0.355   2.444  1.00  3.51      1CAG 155
+ATOM     80  O   PRO A  13      39.941   0.672   3.619  1.00  5.17      1CAG 156
+ATOM     81  CB  PRO A  13      38.845   2.300   1.101  1.00  3.94      1CAG 157
+ATOM     82  CG  PRO A  13      37.638   3.114   1.420  1.00  4.41      1CAG 158
+ATOM     83  CD  PRO A  13      37.103   2.594   2.685  1.00  3.69      1CAG 159
+ATOM     84  N   HYP A  14      40.499  -0.542   1.815  1.00  3.60      1CAG 160
+ATOM     85  CA  HYP A  14      41.696  -1.093   2.499  1.00  3.31      1CAG 161
+ATOM     86  C   HYP A  14      42.601   0.019   3.054  1.00  2.64      1CAG 162
+ATOM     87  O   HYP A  14      42.922   0.998   2.392  1.00  2.59      1CAG 163
+ATOM     88  CB  HYP A  14      42.333  -1.959   1.420  1.00  2.36      1CAG 164
+ATOM     89  CG  HYP A  14      41.139  -2.450   0.601  1.00  3.18      1CAG 165
+ATOM     90  CD  HYP A  14      40.251  -1.234   0.548  1.00  2.16      1CAG 166
+ATOM     91  OD1 HYP A  14      40.406  -3.516   1.247  1.00  2.00      1CAG 167
+ATOM     92  N   ALA A  15      42.959  -0.146   4.323  1.00  4.45      1CAG 168
+ATOM     93  CA  ALA A  15      43.846   0.766   5.067  1.00  3.96      1CAG 169
+ATOM     94  C   ALA A  15      45.177   0.736   4.288  1.00  4.87      1CAG 170
+ATOM     95  O   ALA A  15      45.732  -0.345   4.003  1.00  5.69      1CAG 171
+ATOM     96  CB  ALA A  15      44.028   0.225   6.439  1.00  3.31      1CAG 172
+ATOM     97  N   PRO A  16      45.742   1.905   3.975  1.00  5.09      1CAG 173
+ATOM     98  CA  PRO A  16      46.952   1.810   3.168  1.00  4.34      1CAG 174
+ATOM     99  C   PRO A  16      48.127   1.127   3.835  1.00  3.31      1CAG 175
+ATOM    100  O   PRO A  16      48.085   0.829   5.008  1.00  4.75      1CAG 176
+ATOM    101  CB  PRO A  16      47.215   3.283   2.763  1.00  2.98      1CAG 177
+ATOM    102  CG  PRO A  16      46.705   4.037   3.924  1.00  3.99      1CAG 178
+ATOM    103  CD  PRO A  16      45.466   3.299   4.382  1.00  4.07      1CAG 179
+ATOM    104  N   HYP A  17      49.179   0.815   3.068  1.00  2.00      1CAG 180
+ATOM    105  CA  HYP A  17      50.392   0.205   3.635  1.00  2.32      1CAG 181
+ATOM    106  C   HYP A  17      51.099   1.270   4.448  1.00  2.40      1CAG 182
+ATOM    107  O   HYP A  17      50.872   2.475   4.220  1.00  3.81      1CAG 183
+ATOM    108  CB  HYP A  17      51.210  -0.220   2.438  1.00  2.45      1CAG 184
+ATOM    109  CG  HYP A  17      50.309  -0.040   1.213  1.00  3.90      1CAG 185
+ATOM    110  CD  HYP A  17      49.246   0.964   1.615  1.00  2.11      1CAG 186
+ATOM    111  OD1 HYP A  17      49.678  -1.284   0.863  1.00  3.97      1CAG 187
+ATOM    112  N   GLY A  18      51.942   0.875   5.392  1.00  2.00      1CAG 188
+ATOM    113  CA  GLY A  18      52.609   1.900   6.166  1.00  3.72      1CAG 189
+ATOM    114  C   GLY A  18      53.699   2.759   5.522  1.00  2.95      1CAG 190
+ATOM    115  O   GLY A  18      54.052   2.619   4.311  1.00  2.00      1CAG 191
+ATOM    116  N   PRO A  19      54.241   3.694   6.334  1.00  2.40      1CAG 192
+ATOM    117  CA  PRO A  19      55.322   4.546   5.856  1.00  2.22      1CAG 193
+ATOM    118  C   PRO A  19      56.592   3.649   5.716  1.00  2.48      1CAG 194
+ATOM    119  O   PRO A  19      56.681   2.554   6.315  1.00  2.00      1CAG 195
+ATOM    120  CB  PRO A  19      55.460   5.627   6.918  1.00  2.00      1CAG 196
+ATOM    121  CG  PRO A  19      54.381   5.393   7.939  1.00  3.19      1CAG 197
+ATOM    122  CD  PRO A  19      53.851   4.002   7.725  1.00  2.95      1CAG 198
+ATOM    123  N   HYP A  20      57.567   4.073   4.884  1.00  3.22      1CAG 199
+ATOM    124  CA  HYP A  20      58.779   3.269   4.704  1.00  2.27      1CAG 200
+ATOM    125  C   HYP A  20      59.443   3.027   6.090  1.00  4.26      1CAG 201
+ATOM    126  O   HYP A  20      59.217   3.797   7.032  1.00  2.00      1CAG 202
+ATOM    127  CB  HYP A  20      59.645   4.132   3.832  1.00  3.64      1CAG 203
+ATOM    128  CG  HYP A  20      58.678   5.056   3.111  1.00  2.00      1CAG 204
+ATOM    129  CD  HYP A  20      57.653   5.355   4.167  1.00  2.40      1CAG 205
+ATOM    130  OD1 HYP A  20      58.034   4.386   2.068  1.00  4.54      1CAG 206
+ATOM    131  N   GLY A  21      60.250   1.970   6.184  1.00  4.75      1CAG 207
+ATOM    132  CA  GLY A  21      60.989   1.757   7.390  1.00  4.78      1CAG 208
+ATOM    133  C   GLY A  21      62.102   2.778   7.516  1.00  5.37      1CAG 209
+ATOM    134  O   GLY A  21      62.267   3.675   6.681  1.00  6.31      1CAG 210
+ATOM    135  N   PRO A  22      62.937   2.626   8.547  1.00  6.25      1CAG 211
+ATOM    136  CA  PRO A  22      64.051   3.535   8.788  1.00  5.54      1CAG 212
+ATOM    137  C   PRO A  22      65.268   3.105   7.981  1.00  5.56      1CAG 213
+ATOM    138  O   PRO A  22      65.297   2.016   7.394  1.00  4.59      1CAG 214
+ATOM    139  CB  PRO A  22      64.271   3.438  10.294  1.00  6.12      1CAG 215
+ATOM    140  CG  PRO A  22      63.783   2.059  10.660  1.00  7.25      1CAG 216
+ATOM    141  CD  PRO A  22      62.941   1.507   9.517  1.00  7.47      1CAG 217
+ATOM    142  N   HYP A  23      66.285   3.961   7.952  1.00  5.60      1CAG 218
+ATOM    143  CA  HYP A  23      67.545   3.695   7.254  1.00  6.94      1CAG 219
+ATOM    144  C   HYP A  23      68.102   2.422   7.889  1.00  8.06      1CAG 220
+ATOM    145  O   HYP A  23      67.759   2.092   9.048  1.00  6.82      1CAG 221
+ATOM    146  CB  HYP A  23      68.399   4.907   7.578  1.00  7.27      1CAG 222
+ATOM    147  CG  HYP A  23      67.364   5.971   7.922  1.00  7.23      1CAG 223
+ATOM    148  CD  HYP A  23      66.356   5.205   8.729  1.00  6.24      1CAG 224
+ATOM    149  OD1 HYP A  23      66.724   6.370   6.785  1.00  9.90      1CAG 225
+ATOM    150  N   GLY A  24      68.929   1.714   7.139  1.00  7.06      1CAG 226
+ATOM    151  CA  GLY A  24      69.580   0.551   7.697  1.00  7.18      1CAG 227
+ATOM    152  C   GLY A  24      70.751   0.885   8.610  1.00  7.44      1CAG 228
+ATOM    153  O   GLY A  24      71.064   2.076   8.927  1.00  6.73      1CAG 229
+ATOM    154  N   PRO A  25      71.425  -0.156   9.078  1.00  7.67      1CAG 230
+ATOM    155  CA  PRO A  25      72.591   0.025   9.960  1.00  9.30      1CAG 231
+ATOM    156  C   PRO A  25      73.862   0.332   9.135  1.00 11.31      1CAG 232
+ATOM    157  O   PRO A  25      73.897  -0.045   7.950  1.00 12.50      1CAG 233
+ATOM    158  CB  PRO A  25      72.676  -1.306  10.686  1.00  8.27      1CAG 234
+ATOM    159  CG  PRO A  25      72.145  -2.275   9.699  1.00  7.90      1CAG 235
+ATOM    160  CD  PRO A  25      71.093  -1.576   8.885  1.00  6.59      1CAG 236
+ATOM    161  N   HYP A  26      74.886   1.041   9.713  1.00 12.18      1CAG 237
+ATOM    162  CA  HYP A  26      76.141   1.316   8.982  1.00 12.42      1CAG 238
+ATOM    163  C   HYP A  26      76.760   0.119   8.292  1.00 14.39      1CAG 239
+ATOM    164  O   HYP A  26      76.560  -1.055   8.699  1.00 14.31      1CAG 240
+ATOM    165  CB  HYP A  26      77.071   1.873  10.036  1.00 12.80      1CAG 241
+ATOM    166  CG  HYP A  26      76.140   2.629  10.965  1.00 12.42      1CAG 242
+ATOM    167  CD  HYP A  26      74.863   1.785  10.987  1.00 12.42      1CAG 243
+ATOM    168  OD1 HYP A  26      75.942   3.910  10.369  1.00 12.38      1CAG 244
+ATOM    169  N   GLY A  27      77.522   0.422   7.251  1.00 14.68      1CAG 245
+ATOM    170  CA  GLY A  27      78.152  -0.626   6.480  1.00 17.05      1CAG 246
+ATOM    171  C   GLY A  27      79.437  -1.084   7.111  1.00 18.57      1CAG 247
+ATOM    172  O   GLY A  27      79.890  -0.497   8.081  1.00 18.92      1CAG 248
+ATOM    173  N   PRO A  28      80.055  -2.138   6.572  1.00 20.36      1CAG 249
+ATOM    174  CA  PRO A  28      81.320  -2.685   7.066  1.00 21.33      1CAG 250
+ATOM    175  C   PRO A  28      82.304  -1.527   7.250  1.00 22.01      1CAG 251
+ATOM    176  O   PRO A  28      82.261  -0.579   6.476  1.00 21.87      1CAG 252
+ATOM    177  CB  PRO A  28      81.750  -3.622   5.956  1.00 21.94      1CAG 253
+ATOM    178  CG  PRO A  28      80.471  -4.071   5.336  1.00 22.10      1CAG 254
+ATOM    179  CD  PRO A  28      79.581  -2.861   5.373  1.00 21.01      1CAG 255
+ATOM    180  N   HYP A  29      83.194  -1.595   8.262  1.00 23.32      1CAG 256
+ATOM    181  CA  HYP A  29      84.230  -0.593   8.609  1.00 23.67      1CAG 257
+ATOM    182  C   HYP A  29      85.231  -0.304   7.467  1.00 24.36      1CAG 258
+ATOM    183  O   HYP A  29      86.096  -1.132   7.111  1.00 23.90      1CAG 259
+ATOM    184  CB  HYP A  29      84.901  -1.202   9.829  1.00 24.64      1CAG 260
+ATOM    185  CG  HYP A  29      84.762  -2.691   9.532  1.00 25.14      1CAG 261
+ATOM    186  CD  HYP A  29      83.291  -2.763   9.154  1.00 23.78      1CAG 262
+ATOM    187  OD1 HYP A  29      85.020  -3.479  10.709  1.00 26.86      1CAG 263
+TER     188      HYP A  29                                              1CAG 264
+ATOM    189  N   PRO B  31       1.394  -2.731   1.987  1.00 23.63      1CAG 265
+ATOM    190  CA  PRO B  31       1.692  -3.283   3.341  1.00 23.80      1CAG 266
+ATOM    191  C   PRO B  31       2.744  -4.352   3.115  1.00 23.90      1CAG 267
+ATOM    192  O   PRO B  31       2.580  -5.197   2.211  1.00 24.21      1CAG 268
+ATOM    193  CB  PRO B  31       0.417  -3.893   3.953  1.00 23.64      1CAG 269
+ATOM    194  CG  PRO B  31      -0.453  -4.171   2.751  1.00 23.13      1CAG 270
+ATOM    195  CD  PRO B  31       0.023  -3.255   1.641  1.00 22.48      1CAG 271
+ATOM    196  N   HYP B  32       3.827  -4.363   3.941  1.00 24.08   1  1CAG 272
+ATOM    197  CA  HYP B  32       4.221  -3.525   5.100  1.00 22.55   1  1CAG 273
+ATOM    198  C   HYP B  32       3.950  -1.970   5.059  1.00 21.92   1  1CAG 274
+ATOM    199  O   HYP B  32       2.970  -1.498   5.652  1.00 22.01   1  1CAG 275
+ATOM    200  CB  HYP B  32       5.706  -3.867   5.287  1.00 22.42   1  1CAG 276
+ATOM    201  CG  HYP B  32       5.887  -5.286   4.761  1.00 21.45   1  1CAG 277
+ATOM    202  CD  HYP B  32       4.906  -5.327   3.594  1.00 24.21   1  1CAG 278
+ATOM    203  OD1 HYP B  32       5.504  -6.249   5.743  1.00 21.25   1  1CAG 279
+ATOM    204  N   GLY B  33       4.808  -1.210   4.378  1.00 20.50      1CAG 280
+ATOM    205  CA  GLY B  33       4.658   0.232   4.215  1.00 18.79      1CAG 281
+ATOM    206  C   GLY B  33       5.781   0.658   3.273  1.00 17.47      1CAG 282
+ATOM    207  O   GLY B  33       6.180  -0.118   2.413  1.00 17.13      1CAG 283
+ATOM    208  N   PRO B  34       6.274   1.900   3.373  1.00 15.95      1CAG 284
+ATOM    209  CA  PRO B  34       7.404   2.281   2.525  1.00 14.68      1CAG 285
+ATOM    210  C   PRO B  34       8.684   1.711   3.189  1.00 13.82      1CAG 286
+ATOM    211  O   PRO B  34       8.751   1.479   4.422  1.00 13.95      1CAG 287
+ATOM    212  CB  PRO B  34       7.381   3.823   2.529  1.00 13.80      1CAG 288
+ATOM    213  CG  PRO B  34       6.109   4.195   3.202  1.00 14.40      1CAG 289
+ATOM    214  CD  PRO B  34       5.787   3.057   4.141  1.00 15.00      1CAG 290
+ATOM    215  N   HYP B  35       9.706   1.445   2.377  1.00 13.04      1CAG 291
+ATOM    216  CA  HYP B  35      10.976   0.935   2.905  1.00 11.25      1CAG 292
+ATOM    217  C   HYP B  35      11.634   1.975   3.829  1.00  9.87      1CAG 293
+ATOM    218  O   HYP B  35      11.490   3.217   3.621  1.00  9.50      1CAG 294
+ATOM    219  CB  HYP B  35      11.797   0.685   1.656  1.00 11.30      1CAG 295
+ATOM    220  CG  HYP B  35      10.738   0.454   0.591  1.00 11.92      1CAG 296
+ATOM    221  CD  HYP B  35       9.729   1.539   0.904  1.00 11.88      1CAG 297
+ATOM    222  OD1 HYP B  35      10.128  -0.766   0.832  1.00 13.01      1CAG 298
+ATOM    223  N   GLY B  36      12.329   1.479   4.846  1.00  7.67      1CAG 299
+ATOM    224  CA  GLY B  36      13.085   2.384   5.718  1.00  7.12      1CAG 300
+ATOM    225  C   GLY B  36      14.316   3.057   5.076  1.00  5.46      1CAG 301
+ATOM    226  O   GLY B  36      14.670   2.783   3.931  1.00  2.49      1CAG 302
+ATOM    227  N   PRO B  37      14.990   3.955   5.823  1.00  5.58      1CAG 303
+ATOM    228  CA  PRO B  37      16.179   4.654   5.366  1.00  5.84      1CAG 304
+ATOM    229  C   PRO B  37      17.370   3.695   5.174  1.00  6.40      1CAG 305
+ATOM    230  O   PRO B  37      17.415   2.598   5.732  1.00  6.76      1CAG 306
+ATOM    231  CB  PRO B  37      16.455   5.667   6.482  1.00  4.57      1CAG 307
+ATOM    232  CG  PRO B  37      15.155   5.801   7.183  1.00  6.11      1CAG 308
+ATOM    233  CD  PRO B  37      14.642   4.397   7.185  1.00  4.39      1CAG 309
+ATOM    234  N   HYP B  38      18.352   4.116   4.386  1.00  5.78      1CAG 310
+ATOM    235  CA  HYP B  38      19.511   3.259   4.193  1.00  6.21      1CAG 311
+ATOM    236  C   HYP B  38      20.149   3.038   5.544  1.00  5.35      1CAG 312
+ATOM    237  O   HYP B  38      19.883   3.767   6.499  1.00  3.82      1CAG 313
+ATOM    238  CB  HYP B  38      20.380   4.060   3.229  1.00  6.50      1CAG 314
+ATOM    239  CG  HYP B  38      19.359   4.916   2.472  1.00  5.69      1CAG 315
+ATOM    240  CD  HYP B  38      18.475   5.361   3.621  1.00  6.71      1CAG 316
+ATOM    241  OD1 HYP B  38      18.559   4.147   1.572  1.00  5.20      1CAG 317
+ATOM    242  N   GLY B  39      20.980   2.011   5.613  1.00  5.22      1CAG 318
+ATOM    243  CA  GLY B  39      21.737   1.741   6.811  1.00  3.90      1CAG 319
+ATOM    244  C   GLY B  39      22.882   2.685   7.080  1.00  2.74      1CAG 320
+ATOM    245  O   GLY B  39      23.203   3.551   6.287  1.00  2.63      1CAG 321
+ATOM    246  N   PRO B  40      23.540   2.518   8.220  1.00  3.10      1CAG 322
+ATOM    247  CA  PRO B  40      24.667   3.356   8.653  1.00  2.00      1CAG 323
+ATOM    248  C   PRO B  40      25.957   3.047   7.864  1.00  2.15      1CAG 324
+ATOM    249  O   PRO B  40      26.045   1.999   7.231  1.00  2.00      1CAG 325
+ATOM    250  CB  PRO B  40      24.785   3.045  10.150  1.00  3.40      1CAG 326
+ATOM    251  CG  PRO B  40      23.712   2.039  10.455  1.00  3.80      1CAG 327
+ATOM    252  CD  PRO B  40      23.239   1.443   9.167  1.00  2.98      1CAG 328
+ATOM    253  N   HYP B  41      26.958   3.948   7.899  1.00  2.54      1CAG 329
+ATOM    254  CA  HYP B  41      28.211   3.698   7.181  1.00  3.47      1CAG 330
+ATOM    255  C   HYP B  41      28.859   2.439   7.726  1.00  4.57      1CAG 331
+ATOM    256  O   HYP B  41      28.805   2.198   8.950  1.00  5.72      1CAG 332
+ATOM    257  CB  HYP B  41      29.050   4.937   7.446  1.00  2.71      1CAG 333
+ATOM    258  CG  HYP B  41      28.027   6.006   7.791  1.00  4.21      1CAG 334
+ATOM    259  CD  HYP B  41      27.022   5.227   8.629  1.00  3.31      1CAG 335
+ATOM    260  OD1 HYP B  41      27.447   6.457   6.571  1.00  5.55      1CAG 336
+ATOM    261  N   GLY B  42      29.447   1.630   6.853  1.00  3.08      1CAG 337
+ATOM    262  CA  GLY B  42      30.117   0.436   7.361  1.00  3.81      1CAG 338
+ATOM    263  C   GLY B  42      31.265   0.726   8.348  1.00  2.51      1CAG 339
+ATOM    264  O   GLY B  42      31.509   1.897   8.736  1.00  2.00      1CAG 340
+ATOM    265  N   PRO B  43      31.961  -0.324   8.822  1.00  2.60      1CAG 341
+ATOM    266  CA  PRO B  43      33.128  -0.149   9.695  1.00  2.02      1CAG 342
+ATOM    267  C   PRO B  43      34.408   0.125   8.799  1.00  2.12      1CAG 343
+ATOM    268  O   PRO B  43      34.307   0.164   7.585  1.00  2.00      1CAG 344
+ATOM    269  CB  PRO B  43      33.202  -1.478  10.403  1.00  2.31      1CAG 345
+ATOM    270  CG  PRO B  43      32.744  -2.469   9.394  1.00  2.00      1CAG 346
+ATOM    271  CD  PRO B  43      31.603  -1.761   8.695  1.00  2.97      1CAG 347
+ATOM    272  N   HYP B  44      35.591   0.375   9.404  1.00  3.15      1CAG 348
+ATOM    273  CA  HYP B  44      36.902   0.550   8.736  1.00  3.12      1CAG 349
+ATOM    274  C   HYP B  44      37.398  -0.887   8.282  1.00  3.61      1CAG 350
+ATOM    275  O   HYP B  44      36.924  -1.868   8.811  1.00  3.76      1CAG 351
+ATOM    276  CB  HYP B  44      37.823   1.129   9.832  1.00  2.00      1CAG 352
+ATOM    277  CG  HYP B  44      36.920   1.734  10.881  1.00  3.06      1CAG 353
+ATOM    278  CD  HYP B  44      35.666   0.850  10.806  1.00  4.57      1CAG 354
+ATOM    279  OD1 HYP B  44      36.636   3.104  10.526  1.00  2.21      1CAG 355
+ATOM    280  N   ALA B  45      38.340  -0.968   7.344  1.00  4.24      1CAG 356
+ATOM    281  CA  ALA B  45      38.927  -2.220   6.837  1.00  3.89      1CAG 357
+ATOM    282  C   ALA B  45      39.950  -2.529   7.914  1.00  3.64      1CAG 358
+ATOM    283  O   ALA B  45      40.366  -1.620   8.567  1.00  4.62      1CAG 359
+ATOM    284  CB  ALA B  45      39.627  -1.969   5.435  1.00  2.46      1CAG 360
+ATOM    285  N   PRO B  46      40.401  -3.799   8.090  1.00  4.38      1CAG 361
+ATOM    286  CA  PRO B  46      41.348  -4.028   9.204  1.00  4.59      1CAG 362
+ATOM    287  C   PRO B  46      42.694  -3.235   9.162  1.00  5.71      1CAG 363
+ATOM    288  O   PRO B  46      42.930  -2.411   8.262  1.00  5.97      1CAG 364
+ATOM    289  CB  PRO B  46      41.522  -5.571   9.226  1.00  3.51      1CAG 365
+ATOM    290  CG  PRO B  46      40.560  -6.127   8.201  1.00  2.84      1CAG 366
+ATOM    291  CD  PRO B  46      40.187  -5.013   7.272  1.00  3.51      1CAG 367
+ATOM    292  N   HYP B  47      43.559  -3.421  10.176  1.00  5.95      1CAG 368
+ATOM    293  CA  HYP B  47      44.861  -2.761  10.233  1.00  5.02      1CAG 369
+ATOM    294  C   HYP B  47      45.679  -3.049   8.987  1.00  4.65      1CAG 370
+ATOM    295  O   HYP B  47      45.882  -4.223   8.632  1.00  3.02      1CAG 371
+ATOM    296  CB  HYP B  47      45.500  -3.356  11.475  1.00  7.28      1CAG 372
+ATOM    297  CG  HYP B  47      44.324  -3.655  12.393  1.00  5.05      1CAG 373
+ATOM    298  CD  HYP B  47      43.322  -4.212  11.396  1.00  7.05      1CAG 374
+ATOM    299  OD1 HYP B  47      43.855  -2.443  12.960  1.00  5.52      1CAG 375
+ATOM    300  N   GLY B  48      46.151  -1.976   8.346  1.00  5.35      1CAG 376
+ATOM    301  CA  GLY B  48      46.988  -2.049   7.142  1.00  5.07      1CAG 377
+ATOM    302  C   GLY B  48      48.369  -2.734   7.190  1.00  4.38      1CAG 378
+ATOM    303  O   GLY B  48      48.961  -2.886   8.280  1.00  4.92      1CAG 379
+ATOM    304  N   PRO B  49      48.907  -3.174   6.020  1.00  4.20      1CAG 380
+ATOM    305  CA  PRO B  49      50.206  -3.857   5.933  1.00  3.98      1CAG 381
+ATOM    306  C   PRO B  49      51.377  -2.954   6.224  1.00  3.44      1CAG 382
+ATOM    307  O   PRO B  49      51.300  -1.754   6.068  1.00  3.59      1CAG 383
+ATOM    308  CB  PRO B  49      50.208  -4.426   4.516  1.00  3.43      1CAG 384
+ATOM    309  CG  PRO B  49      49.395  -3.448   3.738  1.00  3.63      1CAG 385
+ATOM    310  CD  PRO B  49      48.287  -3.048   4.684  1.00  3.78      1CAG 386
+ATOM    311  N   HYP B  50      52.483  -3.510   6.683  1.00  5.52      1CAG 387
+ATOM    312  CA  HYP B  50      53.535  -2.523   6.907  1.00  5.39      1CAG 388
+ATOM    313  C   HYP B  50      54.110  -1.925   5.611  1.00  6.02      1CAG 389
+ATOM    314  O   HYP B  50      53.979  -2.462   4.483  1.00  5.28      1CAG 390
+ATOM    315  CB  HYP B  50      54.575  -3.255   7.775  1.00  6.15      1CAG 391
+ATOM    316  CG  HYP B  50      54.224  -4.742   7.736  1.00  6.64      1CAG 392
+ATOM    317  CD  HYP B  50      52.845  -4.865   7.118  1.00  5.22      1CAG 393
+ATOM    318  OD1 HYP B  50      54.218  -5.308   9.098  1.00  6.31      1CAG 394
+ATOM    319  N   GLY B  51      54.750  -0.784   5.757  1.00  4.59      1CAG 395
+ATOM    320  CA  GLY B  51      55.331  -0.199   4.563  1.00  3.04      1CAG 396
+ATOM    321  C   GLY B  51      56.504  -1.006   4.028  1.00  3.28      1CAG 397
+ATOM    322  O   GLY B  51      56.852  -2.102   4.522  1.00  2.82      1CAG 398
+ATOM    323  N   PRO B  52      57.142  -0.478   2.999  1.00  3.10      1CAG 399
+ATOM    324  CA  PRO B  52      58.299  -1.093   2.327  1.00  3.57      1CAG 400
+ATOM    325  C   PRO B  52      59.554  -0.829   3.144  1.00  2.00      1CAG 401
+ATOM    326  O   PRO B  52      59.501  -0.096   4.125  1.00  2.00      1CAG 402
+ATOM    327  CB  PRO B  52      58.303  -0.403   0.974  1.00  2.33      1CAG 403
+ATOM    328  CG  PRO B  52      57.888   0.965   1.378  1.00  3.37      1CAG 404
+ATOM    329  CD  PRO B  52      56.715   0.734   2.291  1.00  3.94      1CAG 405
+ATOM    330  N   HYP B  53      60.701  -1.444   2.759  1.00  2.94      1CAG 406
+ATOM    331  CA  HYP B  53      61.942  -1.191   3.537  1.00  2.09      1CAG 407
+ATOM    332  C   HYP B  53      62.426   0.243   3.548  1.00  2.00      1CAG 408
+ATOM    333  O   HYP B  53      62.174   0.950   2.613  1.00  2.00      1CAG 409
+ATOM    334  CB  HYP B  53      62.978  -2.118   2.898  1.00  2.00      1CAG 410
+ATOM    335  CG  HYP B  53      62.147  -3.229   2.279  1.00  2.00      1CAG 411
+ATOM    336  CD  HYP B  53      60.931  -2.477   1.723  1.00  2.00      1CAG 412
+ATOM    337  OD1 HYP B  53      61.773  -4.111   3.320  1.00  2.00      1CAG 413
+ATOM    338  N   GLY B  54      63.140   0.637   4.593  1.00  2.00      1CAG 414
+ATOM    339  CA  GLY B  54      63.711   1.969   4.629  1.00  2.25      1CAG 415
+ATOM    340  C   GLY B  54      64.900   2.054   3.685  1.00  2.74      1CAG 416
+ATOM    341  O   GLY B  54      65.308   1.069   3.066  1.00  2.00      1CAG 417
+ATOM    342  N   PRO B  55      65.501   3.227   3.543  1.00  4.11      1CAG 418
+ATOM    343  CA  PRO B  55      66.648   3.296   2.610  1.00  3.64      1CAG 419
+ATOM    344  C   PRO B  55      67.955   2.639   3.240  1.00  4.82      1CAG 420
+ATOM    345  O   PRO B  55      67.965   2.165   4.381  1.00  2.00      1CAG 421
+ATOM    346  CB  PRO B  55      66.756   4.792   2.324  1.00  2.98      1CAG 422
+ATOM    347  CG  PRO B  55      66.287   5.426   3.605  1.00  3.84      1CAG 423
+ATOM    348  CD  PRO B  55      65.228   4.513   4.211  1.00  4.71      1CAG 424
+ATOM    349  N   HYP B  56      69.056   2.591   2.474  1.00  5.64      1CAG 425
+ATOM    350  CA  HYP B  56      70.259   1.991   3.056  1.00  7.36      1CAG 426
+ATOM    351  C   HYP B  56      70.804   2.728   4.279  1.00  8.98      1CAG 427
+ATOM    352  O   HYP B  56      70.490   3.923   4.508  1.00  9.17      1CAG 428
+ATOM    353  CB  HYP B  56      71.256   1.955   1.898  1.00  6.72      1CAG 429
+ATOM    354  CG  HYP B  56      70.396   2.086   0.659  1.00  6.01      1CAG 430
+ATOM    355  CD  HYP B  56      69.260   3.000   1.083  1.00  6.72      1CAG 431
+ATOM    356  OD1 HYP B  56      69.870   0.834   0.296  1.00  8.77      1CAG 432
+ATOM    357  N   GLY B  57      71.605   2.000   5.057  1.00  9.86      1CAG 433
+ATOM    358  CA  GLY B  57      72.300   2.589   6.188  1.00 12.05      1CAG 434
+ATOM    359  C   GLY B  57      73.482   3.463   5.820  1.00 13.08      1CAG 435
+ATOM    360  O   GLY B  57      73.901   3.563   4.660  1.00 12.71      1CAG 436
+ATOM    361  N   PRO B  58      74.038   4.139   6.814  1.00 14.54      1CAG 437
+ATOM    362  CA  PRO B  58      75.194   5.016   6.652  1.00 15.69      1CAG 438
+ATOM    363  C   PRO B  58      76.552   4.321   6.345  1.00 17.07      1CAG 439
+ATOM    364  O   PRO B  58      76.759   3.110   6.615  1.00 16.11      1CAG 440
+ATOM    365  CB  PRO B  58      75.205   5.818   7.960  1.00 17.11      1CAG 441
+ATOM    366  CG  PRO B  58      73.809   5.642   8.517  1.00 16.32      1CAG 442
+ATOM    367  CD  PRO B  58      73.480   4.229   8.169  1.00 14.62      1CAG 443
+ATOM    368  N   HYP B  59      77.491   5.094   5.752  1.00 17.97      1CAG 444
+ATOM    369  CA  HYP B  59      78.850   4.660   5.362  1.00 17.64      1CAG 445
+ATOM    370  C   HYP B  59      79.784   4.030   6.449  1.00 17.95      1CAG 446
+ATOM    371  O   HYP B  59      79.655   4.306   7.661  1.00 15.63      1CAG 447
+ATOM    372  CB  HYP B  59      79.445   5.926   4.725  1.00 19.00      1CAG 448
+ATOM    373  CG  HYP B  59      78.233   6.688   4.180  1.00 18.45      1CAG 449
+ATOM    374  CD  HYP B  59      77.229   6.488   5.317  1.00 18.46      1CAG 450
+ATOM    375  OD1 HYP B  59      77.745   6.066   2.924  1.00 18.46      1CAG 451
+ATOM    376  N   GLY B  60      80.683   3.158   5.963  1.00 18.81      1CAG 452
+ATOM    377  CA  GLY B  60      81.680   2.483   6.773  1.00 18.61      1CAG 453
+ATOM    378  C   GLY B  60      83.059   2.557   6.134  1.00 19.55      1CAG 454
+ATOM    379  O   GLY B  60      83.702   1.542   5.794  1.00 20.03      1CAG 455
+TER     380      GLY B  60                                              1CAG 456
+ATOM    381  N   PRO C  61       2.669  -3.243   7.814  1.00 25.90      1CAG 457
+ATOM    382  CA  PRO C  61       3.625  -2.325   8.480  1.00 25.45      1CAG 458
+ATOM    383  C   PRO C  61       4.260  -2.965   9.691  1.00 25.88      1CAG 459
+ATOM    384  O   PRO C  61       3.718  -3.892  10.305  1.00 25.97      1CAG 460
+ATOM    385  CB  PRO C  61       2.926  -1.054   8.922  1.00 25.22      1CAG 461
+ATOM    386  CG  PRO C  61       1.565  -1.175   8.310  1.00 26.28      1CAG 462
+ATOM    387  CD  PRO C  61       1.347  -2.647   8.101  1.00 25.90      1CAG 463
+ATOM    388  N   HYP C  62       5.448  -2.485  10.049  1.00 26.59   2  1CAG 464
+ATOM    389  CA  HYP C  62       6.220  -1.397   9.393  1.00 24.92   2  1CAG 465
+ATOM    390  C   HYP C  62       6.550  -1.791   7.958  1.00 23.82   2  1CAG 466
+ATOM    391  O   HYP C  62       6.398  -2.971   7.615  1.00 23.90   2  1CAG 467
+ATOM    392  CB  HYP C  62       7.468  -1.273  10.260  1.00 24.99   2  1CAG 468
+ATOM    393  CG  HYP C  62       7.605  -2.646  10.938  1.00 25.28   2  1CAG 469
+ATOM    394  CD  HYP C  62       6.170  -3.072  11.186  1.00 26.19   2  1CAG 470
+ATOM    395  OD1 HYP C  62       8.214  -2.531  12.203  1.00 24.59   2  1CAG 471
+ATOM    396  N   GLY C  63       6.969  -0.831   7.137  1.00 21.97      1CAG 472
+ATOM    397  CA  GLY C  63       7.430  -1.156   5.805  1.00 19.53      1CAG 473
+ATOM    398  C   GLY C  63       8.647  -2.069   5.899  1.00 18.48      1CAG 474
+ATOM    399  O   GLY C  63       9.102  -2.372   7.002  1.00 18.70      1CAG 475
+ATOM    400  N   PRO C  64       9.209  -2.531   4.768  1.00 16.69      1CAG 476
+ATOM    401  CA  PRO C  64      10.389  -3.398   4.892  1.00 14.97      1CAG 477
+ATOM    402  C   PRO C  64      11.624  -2.553   5.258  1.00 13.25      1CAG 478
+ATOM    403  O   PRO C  64      11.638  -1.332   5.016  1.00 12.33      1CAG 479
+ATOM    404  CB  PRO C  64      10.493  -4.023   3.513  1.00 14.38      1CAG 480
+ATOM    405  CG  PRO C  64      10.072  -2.887   2.639  1.00 15.13      1CAG 481
+ATOM    406  CD  PRO C  64       8.878  -2.298   3.352  1.00 16.09      1CAG 482
+ATOM    407  N   HYP C  65      12.682  -3.192   5.817  1.00 11.83      1CAG 483
+ATOM    408  CA  HYP C  65      13.915  -2.484   6.198  1.00  9.83      1CAG 484
+ATOM    409  C   HYP C  65      14.497  -1.867   4.959  1.00  7.23      1CAG 485
+ATOM    410  O   HYP C  65      14.352  -2.436   3.901  1.00  4.85      1CAG 486
+ATOM    411  CB  HYP C  65      14.833  -3.579   6.729  1.00  8.69      1CAG 487
+ATOM    412  CG  HYP C  65      13.857  -4.636   7.182  1.00  9.12      1CAG 488
+ATOM    413  CD  HYP C  65      12.811  -4.630   6.091  1.00 10.83      1CAG 489
+ATOM    414  OD1 HYP C  65      13.284  -4.196   8.321  1.00  9.11      1CAG 490
+ATOM    415  N   GLY C  66      15.177  -0.736   5.150  1.00  7.06      1CAG 491
+ATOM    416  CA  GLY C  66      15.884  -0.063   4.074  1.00  5.99      1CAG 492
+ATOM    417  C   GLY C  66      17.081  -0.887   3.616  1.00  5.46      1CAG 493
+ATOM    418  O   GLY C  66      17.446  -1.903   4.234  1.00  6.87      1CAG 494
+ATOM    419  N   PRO C  67      17.731  -0.466   2.528  1.00  4.39      1CAG 495
+ATOM    420  CA  PRO C  67      18.902  -1.150   1.957  1.00  4.14      1CAG 496
+ATOM    421  C   PRO C  67      20.208  -0.931   2.779  1.00  2.02      1CAG 497
+ATOM    422  O   PRO C  67      20.242  -0.170   3.740  1.00  2.00      1CAG 498
+ATOM    423  CB  PRO C  67      18.970  -0.562   0.552  1.00  2.87      1CAG 499
+ATOM    424  CG  PRO C  67      18.527   0.847   0.771  1.00  3.71      1CAG 500
+ATOM    425  CD  PRO C  67      17.404   0.758   1.774  1.00  4.37      1CAG 501
+ATOM    426  N   HYP C  68      21.288  -1.592   2.398  1.00  2.05      1CAG 502
+ATOM    427  CA  HYP C  68      22.534  -1.394   3.124  1.00  2.75      1CAG 503
+ATOM    428  C   HYP C  68      23.033   0.045   3.018  1.00  2.53      1CAG 504
+ATOM    429  O   HYP C  68      22.891   0.725   1.993  1.00  2.00      1CAG 505
+ATOM    430  CB  HYP C  68      23.504  -2.400   2.491  1.00  3.06      1CAG 506
+ATOM    431  CG  HYP C  68      22.636  -3.399   1.722  1.00  2.70      1CAG 507
+ATOM    432  CD  HYP C  68      21.435  -2.575   1.320  1.00  3.29      1CAG 508
+ATOM    433  OD1 HYP C  68      22.136  -4.463   2.526  1.00  3.02      1CAG 509
+ATOM    434  N   GLY C  69      23.610   0.485   4.113  1.00  2.00      1CAG 510
+ATOM    435  CA  GLY C  69      24.172   1.793   4.154  1.00  2.77      1CAG 511
+ATOM    436  C   GLY C  69      25.410   1.840   3.287  1.00  2.84      1CAG 512
+ATOM    437  O   GLY C  69      25.798   0.854   2.671  1.00  2.00      1CAG 513
+ATOM    438  N   PRO C  70      26.045   3.006   3.230  1.00  2.96      1CAG 514
+ATOM    439  CA  PRO C  70      27.247   3.178   2.422  1.00  4.80      1CAG 515
+ATOM    440  C   PRO C  70      28.540   2.533   3.000  1.00  4.92      1CAG 516
+ATOM    441  O   PRO C  70      28.598   2.141   4.171  1.00  4.58      1CAG 517
+ATOM    442  CB  PRO C  70      27.303   4.698   2.214  1.00  5.84      1CAG 518
+ATOM    443  CG  PRO C  70      26.592   5.278   3.407  1.00  3.45      1CAG 519
+ATOM    444  CD  PRO C  70      25.621   4.241   3.896  1.00  4.09      1CAG 520
+ATOM    445  N   HYP C  71      29.563   2.376   2.145  1.00  5.63      1CAG 521
+ATOM    446  CA  HYP C  71      30.861   1.804   2.500  1.00  5.28      1CAG 522
+ATOM    447  C   HYP C  71      31.483   2.591   3.647  1.00  4.85      1CAG 523
+ATOM    448  O   HYP C  71      31.294   3.812   3.756  1.00  4.98      1CAG 524
+ATOM    449  CB  HYP C  71      31.662   1.887   1.194  1.00  4.59      1CAG 525
+ATOM    450  CG  HYP C  71      30.609   1.860   0.097  1.00  4.16      1CAG 526
+ATOM    451  CD  HYP C  71      29.469   2.663   0.691  1.00  4.91      1CAG 527
+ATOM    452  OD1 HYP C  71      30.229   0.540  -0.093  1.00  4.34      1CAG 528
+ATOM    453  N   GLY C  72      32.205   1.881   4.489  1.00  4.87      1CAG 529
+ATOM    454  CA  GLY C  72      32.866   2.519   5.602  1.00  4.01      1CAG 530
+ATOM    455  C   GLY C  72      33.913   3.572   5.307  1.00  2.63      1CAG 531
+ATOM    456  O   GLY C  72      34.323   3.713   4.201  1.00  2.00      1CAG 532
+ATOM    457  N   PRO C  73      34.361   4.324   6.334  1.00  2.00      1CAG 533
+ATOM    458  CA  PRO C  73      35.369   5.336   6.098  1.00  2.00      1CAG 534
+ATOM    459  C   PRO C  73      36.723   4.712   5.860  1.00  2.00      1CAG 535
+ATOM    460  O   PRO C  73      36.886   3.504   6.092  1.00  2.62      1CAG 536
+ATOM    461  CB  PRO C  73      35.304   6.184   7.360  1.00  2.81      1CAG 537
+ATOM    462  CG  PRO C  73      34.949   5.180   8.405  1.00  2.00      1CAG 538
+ATOM    463  CD  PRO C  73      33.958   4.283   7.750  1.00  2.00      1CAG 539
+ATOM    464  N   HYP C  74      37.689   5.509   5.329  1.00  2.19      1CAG 540
+ATOM    465  CA  HYP C  74      39.108   5.199   5.054  1.00  2.00      1CAG 541
+ATOM    466  C   HYP C  74      39.691   4.857   6.451  1.00  2.27      1CAG 542
+ATOM    467  O   HYP C  74      39.261   5.390   7.463  1.00  2.17      1CAG 543
+ATOM    468  CB  HYP C  74      39.687   6.506   4.564  1.00  2.00      1CAG 544
+ATOM    469  CG  HYP C  74      38.532   7.266   3.929  1.00  2.00      1CAG 545
+ATOM    470  CD  HYP C  74      37.340   6.830   4.771  1.00  2.35      1CAG 546
+ATOM    471  OD1 HYP C  74      38.320   6.860   2.582  1.00  2.00      1CAG 547
+ATOM    472  N   ALA C  75      40.664   3.989   6.450  1.00  2.17      1CAG 548
+ATOM    473  CA  ALA C  75      41.341   3.495   7.567  1.00  3.57      1CAG 549
+ATOM    474  C   ALA C  75      42.700   4.224   7.591  1.00  6.21      1CAG 550
+ATOM    475  O   ALA C  75      43.070   4.914   6.615  1.00  6.73      1CAG 551
+ATOM    476  CB  ALA C  75      41.515   1.985   7.360  1.00  3.68      1CAG 552
+ATOM    477  N   PRO C  76      43.470   4.098   8.711  1.00  5.43      1CAG 553
+ATOM    478  CA  PRO C  76      44.800   4.703   8.867  1.00  5.21      1CAG 554
+ATOM    479  C   PRO C  76      45.889   3.903   8.143  1.00  4.62      1CAG 555
+ATOM    480  O   PRO C  76      45.687   2.749   7.816  1.00  5.11      1CAG 556
+ATOM    481  CB  PRO C  76      45.039   4.691  10.375  1.00  6.58      1CAG 557
+ATOM    482  CG  PRO C  76      43.763   4.198  10.986  1.00  3.98      1CAG 558
+ATOM    483  CD  PRO C  76      43.095   3.379   9.931  1.00  6.26      1CAG 559
+ATOM    484  N   HYP C  77      47.039   4.526   7.823  1.00  5.97      1CAG 560
+ATOM    485  CA  HYP C  77      48.103   3.702   7.208  1.00  5.23      1CAG 561
+ATOM    486  C   HYP C  77      48.561   2.577   8.136  1.00  2.00      1CAG 562
+ATOM    487  O   HYP C  77      48.530   2.719   9.358  1.00  2.00      1CAG 563
+ATOM    488  CB  HYP C  77      49.294   4.652   7.013  1.00  3.03      1CAG 564
+ATOM    489  CG  HYP C  77      48.691   6.039   6.944  1.00  6.43      1CAG 565
+ATOM    490  CD  HYP C  77      47.401   5.959   7.787  1.00  6.18      1CAG 566
+ATOM    491  OD1 HYP C  77      48.501   6.317   5.499  1.00  5.60      1CAG 567
+ATOM    492  N   GLY C  78      49.038   1.516   7.514  1.00  2.00      1CAG 568
+ATOM    493  CA  GLY C  78      49.744   0.447   8.205  1.00  2.00      1CAG 569
+ATOM    494  C   GLY C  78      50.966   0.966   8.971  1.00  2.00      1CAG 570
+ATOM    495  O   GLY C  78      51.289   2.174   8.987  1.00  2.00      1CAG 571
+ATOM    496  N   PRO C  79      51.681   0.073   9.618  1.00  2.00      1CAG 572
+ATOM    497  CA  PRO C  79      52.846   0.418  10.442  1.00  2.00      1CAG 573
+ATOM    498  C   PRO C  79      54.078   0.596   9.590  1.00  2.00      1CAG 574
+ATOM    499  O   PRO C  79      54.042   0.238   8.424  1.00  2.00      1CAG 575
+ATOM    500  CB  PRO C  79      52.920  -0.738  11.403  1.00  2.00      1CAG 576
+ATOM    501  CG  PRO C  79      52.527  -1.900  10.548  1.00  2.00      1CAG 577
+ATOM    502  CD  PRO C  79      51.483  -1.388   9.556  1.00  2.67      1CAG 578
+ATOM    503  N   HYP C  80      55.138   1.218  10.130  1.00  2.98      1CAG 579
+ATOM    504  CA  HYP C  80      56.356   1.405   9.347  1.00  2.00      1CAG 580
+ATOM    505  C   HYP C  80      56.917   0.093   8.829  1.00  3.47      1CAG 581
+ATOM    506  O   HYP C  80      56.719  -0.981   9.461  1.00  2.59      1CAG 582
+ATOM    507  CB  HYP C  80      57.326   2.043  10.314  1.00  2.00      1CAG 583
+ATOM    508  CG  HYP C  80      56.482   2.781  11.317  1.00  3.38      1CAG 584
+ATOM    509  CD  HYP C  80      55.266   1.862  11.453  1.00  2.12      1CAG 585
+ATOM    510  OD1 HYP C  80      56.161   4.059  10.737  1.00  4.75      1CAG 586
+ATOM    511  N   GLY C  81      57.619   0.186   7.687  1.00  3.82      1CAG 587
+ATOM    512  CA  GLY C  81      58.305  -0.959   7.132  1.00  3.34      1CAG 588
+ATOM    513  C   GLY C  81      59.618  -1.284   7.824  1.00  3.27      1CAG 589
+ATOM    514  O   GLY C  81      60.064  -0.580   8.726  1.00  3.62      1CAG 590
+ATOM    515  N   PRO C  82      60.266  -2.392   7.443  1.00  3.79      1CAG 591
+ATOM    516  CA  PRO C  82      61.554  -2.780   8.026  1.00  3.44      1CAG 592
+ATOM    517  C   PRO C  82      62.696  -1.831   7.688  1.00  2.78      1CAG 593
+ATOM    518  O   PRO C  82      62.668  -1.119   6.662  1.00  3.47      1CAG 594
+ATOM    519  CB  PRO C  82      61.793  -4.180   7.477  1.00  2.00      1CAG 595
+ATOM    520  CG  PRO C  82      60.474  -4.640   7.012  1.00  2.00      1CAG 596
+ATOM    521  CD  PRO C  82      59.742  -3.440   6.562  1.00  2.75      1CAG 597
+ATOM    522  N   HYP C  83      63.720  -1.789   8.554  1.00  2.24      1CAG 598
+ATOM    523  CA  HYP C  83      64.880  -0.933   8.261  1.00  3.26      1CAG 599
+ATOM    524  C   HYP C  83      65.435  -1.442   6.940  1.00  3.73      1CAG 600
+ATOM    525  O   HYP C  83      65.232  -2.637   6.635  1.00  4.00      1CAG 601
+ATOM    526  CB  HYP C  83      65.858  -1.201   9.386  1.00  2.00      1CAG 602
+ATOM    527  CG  HYP C  83      65.008  -1.739  10.525  1.00  2.00      1CAG 603
+ATOM    528  CD  HYP C  83      63.852  -2.466   9.844  1.00  2.00      1CAG 604
+ATOM    529  OD1 HYP C  83      64.578  -0.646  11.210  1.00  3.56      1CAG 605
+ATOM    530  N   GLY C  84      66.118  -0.577   6.196  1.00  3.46      1CAG 606
+ATOM    531  CA  GLY C  84      66.702  -0.976   4.912  1.00  3.25      1CAG 607
+ATOM    532  C   GLY C  84      68.036  -1.717   5.037  1.00  3.14      1CAG 608
+ATOM    533  O   GLY C  84      68.451  -2.028   6.141  1.00  4.29      1CAG 609
+ATOM    534  N   PRO C  85      68.749  -2.005   3.924  1.00  3.75      1CAG 610
+ATOM    535  CA  PRO C  85      70.021  -2.733   4.040  1.00  3.63      1CAG 611
+ATOM    536  C   PRO C  85      71.147  -1.932   4.725  1.00  4.45      1CAG 612
+ATOM    537  O   PRO C  85      71.042  -0.703   4.916  1.00  3.49      1CAG 613
+ATOM    538  CB  PRO C  85      70.371  -3.095   2.611  1.00  2.00      1CAG 614
+ATOM    539  CG  PRO C  85      69.802  -1.942   1.864  1.00  3.18      1CAG 615
+ATOM    540  CD  PRO C  85      68.495  -1.597   2.534  1.00  2.00      1CAG 616
+ATOM    541  N   HYP C  86      72.238  -2.636   5.110  1.00  5.07      1CAG 617
+ATOM    542  CA  HYP C  86      73.385  -1.985   5.761  1.00  7.48      1CAG 618
+ATOM    543  C   HYP C  86      73.988  -0.993   4.787  1.00  7.98      1CAG 619
+ATOM    544  O   HYP C  86      73.997  -1.222   3.577  1.00  8.08      1CAG 620
+ATOM    545  CB  HYP C  86      74.320  -3.149   6.131  1.00  6.49      1CAG 621
+ATOM    546  CG  HYP C  86      73.408  -4.376   6.180  1.00  3.03      1CAG 622
+ATOM    547  CD  HYP C  86      72.430  -4.094   5.035  1.00  5.52      1CAG 623
+ATOM    548  OD1 HYP C  86      72.746  -4.423   7.442  1.00  3.04      1CAG 624
+ATOM    549  N   GLY C  87      74.440   0.116   5.330  1.00  9.40      1CAG 625
+ATOM    550  CA  GLY C  87      75.000   1.127   4.502  1.00 11.76      1CAG 626
+ATOM    551  C   GLY C  87      76.213   0.636   3.789  1.00 14.88      1CAG 627
+ATOM    552  O   GLY C  87      76.630  -0.547   3.884  1.00 14.73      1CAG 628
+ATOM    553  N   PRO C  88      76.837   1.559   3.071  1.00 16.72      1CAG 629
+ATOM    554  CA  PRO C  88      78.032   1.220   2.318  1.00 17.42      1CAG 630
+ATOM    555  C   PRO C  88      79.234   1.141   3.256  1.00 18.46      1CAG 631
+ATOM    556  O   PRO C  88      79.365   1.932   4.196  1.00 17.76      1CAG 632
+ATOM    557  CB  PRO C  88      78.163   2.349   1.313  1.00 17.84      1CAG 633
+ATOM    558  CG  PRO C  88      77.015   3.286   1.567  1.00 18.96      1CAG 634
+ATOM    559  CD  PRO C  88      76.522   2.986   2.957  1.00 18.08      1CAG 635
+ATOM    560  N   HYP C  89      80.089   0.149   3.035  1.00 18.33      1CAG 636
+ATOM    561  CA  HYP C  89      81.354  -0.164   3.703  1.00 18.91      1CAG 637
+ATOM    562  C   HYP C  89      82.422   0.827   3.221  1.00 18.36      1CAG 638
+ATOM    563  O   HYP C  89      82.399   1.281   2.054  1.00 17.52      1CAG 639
+ATOM    564  CB  HYP C  89      81.645  -1.610   3.282  1.00 18.86      1CAG 640
+ATOM    565  CG  HYP C  89      80.951  -1.755   1.926  1.00 20.97      1CAG 641
+ATOM    566  CD  HYP C  89      79.695  -0.912   2.100  1.00 20.39      1CAG 642
+ATOM    567  OD1 HYP C  89      80.521  -3.115   1.651  1.00 22.12      1CAG 643
+TER     568      HYP C  89                                              1CAG 644
+HETATM  569  C   ACY   201      14.647  -6.026   3.452  1.00 12.84      1CAG 645
+HETATM  570  O   ACY   201      15.713  -5.931   4.057  1.00 14.74      1CAG 646
+HETATM  571  OXT ACY   201      14.266  -5.088   2.632  1.00 13.34      1CAG 647
+HETATM  572  CH3 ACY   201      13.662  -7.173   3.577  1.00 11.99      1CAG 648
+HETATM  573  C   ACY   202      25.561   3.825  14.240  1.00 11.75      1CAG 649
+HETATM  574  O   ACY   202      26.557   3.757  14.972  1.00 12.37      1CAG 650
+HETATM  575  OXT ACY   202      25.152   2.800  13.542  1.00 10.18      1CAG 651
+HETATM  576  CH3 ACY   202      24.703   5.051  14.046  1.00 11.12      1CAG 652
+HETATM  577  C   ACY   203      19.220   7.461   7.519  1.00  7.89      1CAG 653
+HETATM  578  O   ACY   203      19.621   7.438   8.678  1.00 10.04      1CAG 654
+HETATM  579  OXT ACY   203      19.606   6.568   6.652  1.00  7.57      1CAG 655
+HETATM  580  CH3 ACY   203      18.249   8.471   6.961  1.00  7.42      1CAG 656
+HETATM  581  C   ACY   204      34.676   2.610  -0.958  1.00 15.13      1CAG 657
+HETATM  582  O   ACY   204      34.567   3.033  -2.101  1.00 15.58      1CAG 658
+HETATM  583  OXT ACY   204      34.384   3.357   0.071  1.00 15.10      1CAG 659
+HETATM  584  CH3 ACY   204      35.116   1.221  -0.609  1.00 15.51      1CAG 660
+HETATM  585  C   ACY   205      32.108   6.144  -0.041  1.00 12.60      1CAG 661
+HETATM  586  O   ACY   205      31.241   5.884   0.799  1.00 14.13      1CAG 662
+HETATM  587  OXT ACY   205      32.479   5.269  -0.952  1.00 10.89      1CAG 663
+HETATM  588  CH3 ACY   205      32.828   7.465  -0.140  1.00 11.35      1CAG 664
+HETATM  589  C   ACY   206      14.996   3.326  13.936  1.00  8.42      1CAG 665
+HETATM  590  O   ACY   206      15.499   4.417  13.672  1.00  6.68      1CAG 666
+HETATM  591  OXT ACY   206      15.584   2.452  14.704  1.00  7.85      1CAG 667
+HETATM  592  CH3 ACY   206      13.667   2.862  13.421  1.00  9.32      1CAG 668
+HETATM  593  O   HOH   101      11.409  -6.021   0.480  1.00  8.21      1CAG 669
+HETATM  594  O   HOH   102      14.844  -2.113   1.024  1.00  3.48      1CAG 670
+HETATM  595  O   HOH   103       9.427  -0.114  12.841  1.00 22.39      1CAG 671
+HETATM  596  O   HOH   104      12.563  -3.588  -0.039  1.00  7.18      1CAG 672
+HETATM  597  O   HOH   105      15.707  -4.532   9.791  1.00 11.80      1CAG 673
+HETATM  598  O   HOH   106      80.144   0.545  10.395  1.00 16.01      1CAG 674
+HETATM  599  O   HOH   107      12.569   2.820  10.988  1.00 13.08      1CAG 675
+HETATM  600  O   HOH   108      42.752  -2.779   5.460  1.00  4.42      1CAG 676
+HETATM  601  O   HOH   109      62.084   0.320  15.193  1.00 10.77      1CAG 677
+HETATM  602  O   HOH   110      17.948  -4.790   3.853  1.00 11.02      1CAG 678
+HETATM  603  O   HOH   111      23.070   3.451   1.011  1.00  4.91      1CAG 679
+HETATM  604  O   HOH   112      41.677   3.638   1.531  1.00  6.99      1CAG 680
+HETATM  605  O   HOH   113      26.066  -4.825   4.580  1.00  5.00      1CAG 681
+HETATM  606  O   HOH   114      56.484  -1.093  12.335  1.00  4.11      1CAG 682
+HETATM  607  O   HOH   115      31.932  -6.379   7.990  1.00  5.96      1CAG 683
+HETATM  608  O   HOH   116      31.881   6.345   4.802  1.00  4.64      1CAG 684
+HETATM  609  O   HOH   117      54.587  -5.238   3.130  1.00  6.80      1CAG 685
+HETATM  610  O   HOH   118      28.365  -4.409  10.031  1.00  8.24      1CAG 686
+HETATM  611  O   HOH   119      41.400  -5.165   3.994  1.00  7.16      1CAG 687
+HETATM  612  O   HOH   120      34.257   5.288   1.816  1.00  3.50      1CAG 688
+HETATM  613  O   HOH   121      51.216   5.696   4.960  1.00  6.12      1CAG 689
+HETATM  614  O   HOH   122      57.016  -5.041   4.278  1.00  7.94      1CAG 690
+HETATM  615  O   HOH   123      32.287  -0.729  -1.179  1.00  5.00      1CAG 691
+HETATM  616  O   HOH   124      28.141   1.313  -1.681  1.00  5.10      1CAG 692
+HETATM  617  O   HOH   125      28.712   3.412  11.807  1.00  7.76      1CAG 693
+HETATM  618  O   HOH   126      26.356   0.745  12.788  1.00  4.39      1CAG 694
+HETATM  619  O   HOH   127      51.489   4.006  11.025  1.00  5.27      1CAG 695
+HETATM  620  O   HOH   128      59.702   1.903  -1.699  1.00  4.75      1CAG 696
+HETATM  621  O   HOH   129      69.637   7.421   2.670  1.00  7.74      1CAG 697
+HETATM  622  O   HOH   130      53.786   5.308  11.695  1.00  7.03      1CAG 698
+HETATM  623  O   HOH   131      20.593   3.079  11.301  1.00  5.69      1CAG 699
+HETATM  624  O   HOH   132      23.132   6.041   5.894  1.00  2.89      1CAG 700
+HETATM  625  O   HOH   133      62.439  -0.962  12.978  1.00  3.87      1CAG 701
+HETATM  626  O   HOH   134      29.551  -4.465   7.410  1.00  5.29      1CAG 702
+HETATM  627  O   HOH   135      45.334   1.746  13.397  1.00  4.03      1CAG 703
+HETATM  628  O   HOH   136      36.031  -4.309   8.251  1.00  5.73      1CAG 704
+HETATM  629  O   HOH   137      71.533   3.341  11.377  1.00  7.70      1CAG 705
+HETATM  630  O   HOH   138      45.843  -6.226  10.695  1.00  6.11      1CAG 706
+HETATM  631  O   HOH   139       4.868  -1.195  -0.055  1.00 19.87      1CAG 707
+HETATM  632  O   HOH   140      49.148  -5.373   9.337  1.00  5.08      1CAG 708
+HETATM  633  O   HOH   141      66.397   0.634  13.028  1.00  6.97      1CAG 709
+HETATM  634  O   HOH   142      11.573   6.678   5.956  1.00  9.22      1CAG 710
+HETATM  635  O   HOH   143      65.722  -0.403   0.661  1.00  5.00      1CAG 711
+HETATM  636  O   HOH   144      70.521  -6.187   7.835  1.00  8.90      1CAG 712
+HETATM  637  O   HOH   145      48.617   4.647  12.038  1.00  5.10      1CAG 713
+HETATM  638  O   HOH   146      10.354   5.983   3.423  1.00  9.12      1CAG 714
+HETATM  639  O   HOH   147      74.776   5.782   3.338  1.00 14.91      1CAG 715
+HETATM  640  O   HOH   148      76.637  -1.878  11.688  1.00 13.46      1CAG 716
+HETATM  641  O   HOH   149      23.272   6.088   1.487  1.00  5.08      1CAG 717
+HETATM  642  O   HOH   150      43.464   5.887   3.727  1.00 11.31      1CAG 718
+HETATM  643  O   HOH   151      34.510   3.855  12.171  1.00  3.59      1CAG 719
+HETATM  644  O   HOH   152      41.132   3.287   3.975  1.00  6.46      1CAG 720
+HETATM  645  O   HOH   153      17.948  -3.687   8.801  1.00  8.77      1CAG 721
+HETATM  646  O   HOH   154      61.657   6.177   6.131  1.00  7.73      1CAG 722
+HETATM  647  O   HOH   155      17.490   5.900   9.603  1.00  5.39      1CAG 723
+HETATM  648  O   HOH   156      20.690  -1.093  10.888  1.00  3.12      1CAG 724
+HETATM  649  O   HOH   157      22.050   0.318  -0.635  1.00  5.50      1CAG 725
+HETATM  650  O   HOH   158      24.194  -0.559  -2.226  1.00  6.72      1CAG 726
+HETATM  651  O   HOH   159      62.914   2.928   0.978  1.00  2.73      1CAG 727
+HETATM  652  O   HOH   160      25.971  -0.122   0.230  1.00  6.01      1CAG 728
+HETATM  653  O   HOH   161      45.437  -4.043   2.127  1.00  5.04      1CAG 729
+HETATM  654  O   HOH   162      26.400  -5.850  10.171  1.00  8.01      1CAG 730
+HETATM  655  O   HOH   163      40.550   6.047   0.812  1.00  3.45      1CAG 731
+HETATM  656  O   HOH   164      29.399   7.834   5.090  1.00  5.56      1CAG 732
+HETATM  657  O   HOH   165      28.771  -1.494  10.907  1.00 10.46      1CAG 733
+HETATM  658  O   HOH   166      57.582  -5.981   7.217  1.00  5.60      1CAG 734
+HETATM  659  O   HOH   167      64.443  -4.924   4.810  1.00  3.59      1CAG 735
+HETATM  660  O   HOH   168      22.005   1.402  14.160  1.00 14.37      1CAG 736
+HETATM  661  O   HOH   169      77.250   9.690   2.544  1.00 20.24      1CAG 737
+HETATM  662  O   HOH   170      45.414   0.546   9.527  1.00  3.36      1CAG 738
+HETATM  663  O   HOH   171      38.127   5.611  10.291  1.00  4.29      1CAG 739
+HETATM  664  O   HOH   172      51.817  -6.471  10.731  1.00  7.94      1CAG 740
+HETATM  665  O   HOH   173      38.472   1.434   5.644  1.00  6.53      1CAG 741
+HETATM  666  O   HOH   174      47.176  -2.174   1.679  1.00  5.00      1CAG 742
+HETATM  667  O   HOH   175      12.064   0.557  13.051  1.00 15.52      1CAG 743
+HETATM  668  O   HOH   176      70.536  -0.007  14.816  1.00  9.46      1CAG 744
+HETATM  669  O   HOH   177      68.961   5.662  11.270  1.00 11.66      1CAG 745
+HETATM  670  O   HOH   178       2.936   0.362  14.402  1.00 10.97      1CAG 746
+HETATM  671  O   HOH   179      59.915   4.081   0.142  1.00  4.63      1CAG 747
+HETATM  672  O   HOH   180      71.678   6.264   5.356  1.00  9.55      1CAG 748
+HETATM  673  O   HOH   181      69.000   6.970   5.323  1.00  9.38      1CAG 749
+HETATM  674  O   HOH   182      70.999  -1.503  -1.502  1.00 10.53      1CAG 750
+HETATM  675  O   HOH   183      72.472  -4.884   0.209  1.00  8.55      1CAG 751
+HETATM  676  O   HOH   184      71.439   0.935  12.467  1.00 12.10      1CAG 752
+HETATM  677  O   HOH   185      68.589   0.914  11.291  1.00  9.10      1CAG 753
+CONECT    4    3  396                                                   1CAG 754
+CONECT   16   17  211                                                   1CAG 755
+CONECT   23   22  415                                                   1CAG 756
+CONECT   35   36  230                                                   1CAG 757
+CONECT   42   41  434                                                   1CAG 758
+CONECT   54   55  249                                                   1CAG 759
+CONECT   61   60  453                                                   1CAG 760
+CONECT   73   74  268                                                   1CAG 761
+CONECT   80   79  644  665                                              1CAG 762
+CONECT   92   93  600                                                   1CAG 763
+CONECT  100   99  492                                                   1CAG 764
+CONECT  112  113  307                                                   1CAG 765
+CONECT  119  118  511                                                   1CAG 766
+CONECT  131  132  326                                                   1CAG 767
+CONECT  138  137  530                                                   1CAG 768
+CONECT  150  151  345                                                   1CAG 769
+CONECT  157  156  549                                                   1CAG 770
+CONECT  169  170  364                                                   1CAG 771
+CONECT  211   16  210                                                   1CAG 772
+CONECT  223  224  403                                                   1CAG 773
+CONECT  230   35  229                                                   1CAG 774
+CONECT  242  243  422                                                   1CAG 775
+CONECT  249   54  248                                                   1CAG 776
+CONECT  261  262  441                                                   1CAG 777
+CONECT  268   73  267                                                   1CAG 778
+CONECT  280  281  665                                                   1CAG 779
+CONECT  288  287  600                                                   1CAG 780
+CONECT  300  301  662                                                   1CAG 781
+CONECT  307  112  306                                                   1CAG 782
+CONECT  319  320  499                                                   1CAG 783
+CONECT  326  131  325                                                   1CAG 784
+CONECT  338  339  518                                                   1CAG 785
+CONECT  345  150  344                                                   1CAG 786
+CONECT  357  358  537                                                   1CAG 787
+CONECT  364  169  363                                                   1CAG 788
+CONECT  376  377  556                                                   1CAG 789
+CONECT  396    4  397                                                   1CAG 790
+CONECT  403  223  402                                                   1CAG 791
+CONECT  415   23  416                                                   1CAG 792
+CONECT  422  242  421                                                   1CAG 793
+CONECT  434   42  435                                                   1CAG 794
+CONECT  441  261  440                                                   1CAG 795
+CONECT  453   61  454                                                   1CAG 796
+CONECT  460  459  665                                                   1CAG 797
+CONECT  472  473  644                                                   1CAG 798
+CONECT  480  479  662                                                   1CAG 799
+CONECT  492  100  493                                                   1CAG 800
+CONECT  499  319  498                                                   1CAG 801
+CONECT  511  119  512                                                   1CAG 802
+CONECT  518  338  517                                                   1CAG 803
+CONECT  530  138  531                                                   1CAG 804
+CONECT  537  357  536                                                   1CAG 805
+CONECT  549  157  550                                                   1CAG 806
+CONECT  556  376  555                                                   1CAG 807
+CONECT  569  570  571  572                                              1CAG 808
+CONECT  570  569                                                        1CAG 809
+CONECT  571  569                                                        1CAG 810
+CONECT  572  569                                                        1CAG 811
+CONECT  573  574  575  576                                              1CAG 812
+CONECT  574  573                                                        1CAG 813
+CONECT  575  573                                                        1CAG 814
+CONECT  576  573                                                        1CAG 815
+CONECT  577  578  579  580                                              1CAG 816
+CONECT  578  577                                                        1CAG 817
+CONECT  579  577                                                        1CAG 818
+CONECT  580  577                                                        1CAG 819
+CONECT  581  582  583  584                                              1CAG 820
+CONECT  582  581                                                        1CAG 821
+CONECT  583  581                                                        1CAG 822
+CONECT  584  581                                                        1CAG 823
+CONECT  585  586  587  588                                              1CAG 824
+CONECT  586  585                                                        1CAG 825
+CONECT  587  585                                                        1CAG 826
+CONECT  588  585                                                        1CAG 827
+CONECT  589  590  591  592                                              1CAG 828
+CONECT  590  589                                                        1CAG 829
+CONECT  591  589                                                        1CAG 830
+CONECT  592  589                                                        1CAG 831
+CONECT  600   92  288                                                   1CAG 832
+CONECT  600   92  288                                                   1CAG 833
+CONECT  644   80  472                                                   1CAG 834
+CONECT  644   80  472                                                   1CAG 835
+CONECT  662  300  480                                                   1CAG 836
+CONECT  662  300  480                                                   1CAG 837
+CONECT  665   80  280  460                                              1CAG 838
+CONECT  665   80  280  460                                              1CAG 839
+CONECT  665   80  280  460                                              1CAG 840
+MASTER       33    4    6    3    0    0    0    6  674    3   87    9  1CAG 841
+END                                                                     1CAG 842
