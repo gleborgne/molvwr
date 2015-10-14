@@ -33,7 +33,7 @@ module Molvwr.ViewModes {
 			//this.useLensEffect();
 		}
 		
-		sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial){
+		sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects : boolean){
 			if(Molvwr.ViewModes.sphereSpecularTexture){
 				material.specularTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereSpecularTexture, context.scene);
 				(<any>material.specularTexture).uScale = Molvwr.ViewModes.sphereTextureScale || 1;
@@ -47,7 +47,7 @@ module Molvwr.ViewModes {
 			}
 		}
 		
-		cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial){
+		cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects : boolean){
 			
 		}
 		

@@ -1,8 +1,8 @@
 ﻿declare module Molvwr {
     interface IViewMode {
         createScene(context: BabylonContext): any;
-        sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial): any;
-        cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial): any;
+        sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects: boolean): any;
+        cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects: boolean): any;
     }
     class BabylonContext {
         engine: BABYLON.Engine;
@@ -14,7 +14,7 @@
         constructor(canvas: any, viewMode?: any);
         exportScreenshot(): string;
         dispose(): void;
-        getMaterial(atomMat: BABYLON.StandardMaterial): void;
+        sphereMaterial(atomMat: BABYLON.StandardMaterial, useEffects: boolean): void;
         createScene(): void;
     }
 }
@@ -139,7 +139,7 @@ declare module Molvwr.Renderer {
         render(molecule: any, completedCallback: any): void;
         prepareMeshes(molecule: any): void;
         createMesh(atomkind: any): BABYLON.Mesh;
-        createSphere(atomkind: any, segments: any, useTexture: any, overridecolor: any): BABYLON.Mesh;
+        createSphere(atomkind: any, segments: any, useEffects: any, overridecolor: any): BABYLON.Mesh;
         runBatch(offset: any, size: any, molecule: any, completedCallback: any): void;
         renderAtom(atom: any, index: any): any;
     }
@@ -163,8 +163,8 @@ declare module Molvwr.ViewModes {
     class Standard implements Molvwr.IViewMode {
         constructor();
         createScene(context: BabylonContext): void;
-        sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial): void;
-        cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial): void;
+        sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects: boolean): void;
+        cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects: boolean): void;
     }
 }
 
@@ -179,8 +179,8 @@ declare module Molvwr.ViewModes {
         emisivefresnel: BABYLON.FresnelParameters;
         constructor(viewoptions?: ToonViewModeOptions);
         createScene(context: BabylonContext): void;
-        sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial): void;
-        cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial): void;
+        sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects: boolean): void;
+        cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects: boolean): void;
     }
 }
 
@@ -191,8 +191,8 @@ declare module Molvwr.ViewModes {
     class Experiments implements Molvwr.IViewMode {
         constructor();
         createScene(context: BabylonContext): void;
-        sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial): void;
-        cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial): void;
+        sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects: boolean): void;
+        cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects: boolean): void;
         useAmbientOcclusion(context: BabylonContext): void;
         useHDR(context: BabylonContext): void;
         useLensEffect(context: BabylonContext): void;

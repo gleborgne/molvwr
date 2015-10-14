@@ -27,11 +27,11 @@ module Molvwr.Renderer {
 			if (this.config.sphereLOD){
 				console.log("sphere " + atomkind.symbol + "use LOD " + this.config.sphereLOD.length);
 				var rootConf = this.config.sphereLOD[0];
-				var rootMesh = this.createSphere(atomkind, rootConf.segments, rootConf.texture, rootConf.color);
+				var rootMesh = this.createSphere(atomkind, rootConf.segments, rootConf.effects, rootConf.color);
 				for (var i=1, l=this.config.sphereLOD.length; i<l ; i++){
 					var conf = this.config.sphereLOD[i];
 					if (conf.segments){
-						var childSphere = this.createSphere(atomkind, conf.segments, conf.texture, conf.color);
+						var childSphere = this.createSphere(atomkind, conf.segments, conf.effects, conf.color);
 						rootMesh.addLODLevel(conf.depth, childSphere);
 					} else{
 						rootMesh.addLODLevel(conf.depth, null);
@@ -52,7 +52,7 @@ module Molvwr.Renderer {
 			// knot00.addLODLevel(55, null);
 		}
 		
-		createSphere(atomkind, segments, useTexture, overridecolor){
+		createSphere(atomkind, segments, useEffects, overridecolor){
 			var sphere = BABYLON.Mesh.CreateSphere("spheretemplate", segments, atomkind.radius * this.config.atomScaleFactor, this.ctx.scene);
 			sphere.setEnabled(false);
 			sphere.isPickable = false;
@@ -64,9 +64,8 @@ module Molvwr.Renderer {
 			atomMat.specularColor = new BABYLON.Color3(0.1,0.1,0.1);
 			atomMat.emissiveColor = new BABYLON.Color3(0.2,0.2,0.2);
 			
-			if (useTexture){
-				this.ctx.getMaterial(atomMat);
-			}
+			this.ctx.sphereMaterial(atomMat, useEffects);
+			
 			sphere.material = atomMat;
 			
 			return sphere;

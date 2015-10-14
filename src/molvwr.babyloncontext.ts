@@ -1,8 +1,8 @@
 module Molvwr {
 	export interface IViewMode{
 		createScene(context: BabylonContext);
-		sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial);
-		cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial);
+		sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects : boolean);
+		cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects : boolean);
 	}
 	
 	export class BabylonContext {
@@ -37,9 +37,9 @@ module Molvwr {
 			this.engine.dispose();
 		}
 
-		getMaterial(atomMat: BABYLON.StandardMaterial) {
+		sphereMaterial(atomMat: BABYLON.StandardMaterial, useEffects : boolean) {
 			if (this.viewMode){
-				this.viewMode.sphereMaterial(this, atomMat);
+				this.viewMode.sphereMaterial(this, atomMat, useEffects);
 			}
 		}
 

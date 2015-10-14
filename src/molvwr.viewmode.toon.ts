@@ -19,7 +19,7 @@ module Molvwr.ViewModes {
 		}
 		
 		createScene(context: BabylonContext){
-			context.scene.clearColor = new BABYLON.Color3(0.9, 0.9, 0.95);
+			context.scene.clearColor = new BABYLON.Color3(0.95, 0.95, 1);
 			context.scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
 			context.scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
 			context.scene.fogDensity = 0.01;
@@ -40,12 +40,14 @@ module Molvwr.ViewModes {
 			light.specular = new BABYLON.Color3(0.5,0.5,0.5);
 		}
 		
-		sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial){
-			material.emissiveFresnelParameters = this.emisivefresnel;
+		sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects : boolean){
+			if (useEffects)
+				material.emissiveFresnelParameters = this.emisivefresnel;
+				
 			material.specularColor = new BABYLON.Color3(0.4,0.4,0.4);
 			material.emissiveColor = new BABYLON.Color3(0.3,0.3,0.3);
 			
-			if (this.options.texture){
+			if (useEffects && this.options.texture){
 				if(Molvwr.ViewModes.sphereSpecularTexture){
 					material.specularTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereSpecularTexture, context.scene);
 					(<any>material.specularTexture).uScale = Molvwr.ViewModes.sphereTextureScale || 1;
@@ -60,7 +62,7 @@ module Molvwr.ViewModes {
 			}
 		}
 		
-		cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial){
+		cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects : boolean){
 			
 		}
 	}

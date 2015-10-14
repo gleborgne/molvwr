@@ -27,7 +27,7 @@ module Molvwr.Config {
 			atomScaleFactor: 3,
 			cylinderScale : 0.6,
 			sphereSegments : 16,
-			sphereLOD : [{ depth : 0, segments : 32, texture : true}, { depth : 5, segments : 24, texture : true}, { depth : 10, segments : 16, texture : true}, {depth: 20, segments : 12, texture : true}, {depth: 40, segments : 6, texture : true}, {depth: 80, segments : 4} ]
+			sphereLOD : [{ depth : 0, segments : 32, effects : true}, { depth : 5, segments : 24, effects : true}, { depth : 10, segments : 16, effects : true}, {depth: 20, segments : 12, effects : true}, {depth: 40, segments : 6, effects : true}, {depth: 60, segments : 6}, {depth: 80, segments : 4} ]
 		};
 	}
 	
@@ -39,8 +39,8 @@ module Molvwr.Config {
 			cylinderScale : 0.5,
 			sphereSegments : 16,
 			cylinderSegments : 8,
-			cylinderLOD : [{ depth : 0, segments : 20, texture : true}, { depth : 5, segments : 12, texture : true}, {depth: 20, segments : 8, texture : true}, {depth: 60, segments : 4, texture : true}],
-			sphereLOD : [{ depth : 0, segments : 32, texture : true}, { depth : 5, segments : 24, texture : true}, { depth : 10, segments : 16, texture : true}, {depth: 20, segments : 12, texture : true}, {depth: 40, segments : 6, texture : true}, {depth: 80, segments : 4} ]
+			cylinderLOD : [{ depth : 0, segments : 20, effects : true}, { depth : 5, segments : 12, effects : true}, {depth: 20, segments : 8, effects : true}, {depth: 60, segments : 4, effects : true}],
+			sphereLOD : [{ depth : 0, segments : 32, effects : true}, { depth : 5, segments : 24, effects : true}, { depth : 10, segments : 16, effects : true}, {depth: 20, segments : 12, effects : true}, {depth: 40, segments : 6, effects : true}, {depth: 60, segments : 6}, {depth: 80, segments : 4} ]
 		};
 	}
 }

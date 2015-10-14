@@ -79,7 +79,7 @@ gulp.task('webserver', function() {
   gulp.src('demo website')
     .pipe(webserver({
       livereload: true,
-      open: 'http://localhost:1338/index.html',
+      open: 'http://localhost:1339/index.html',
       port: 1339,
       fallback: 'index.html'
     }));
