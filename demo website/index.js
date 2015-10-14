@@ -273,7 +273,11 @@
 	var savepic = document.getElementById("savepic");
 	var screencapturepanel = document.getElementById("screencapture-panel");
 	var screencaptureImg = document.getElementById("screencapture");
+
 	var viewer = new Molvwr.Viewer(root);
+	Molvwr.ViewModes.sphereBumpTexture = 'textures/174_norm.jpg';
+	Molvwr.ViewModes.sphereSpecularTexture = 'textures/174.jpg';
+	Molvwr.ViewModes.sphereTextureScale = 6;
 
 	var viewpanelctrl = new ChoicePanel(viewmodepanel, viewmodetitle, viewer, viewmodes, function(ctrl, item){
 		loadingstate.classList.add("visible");

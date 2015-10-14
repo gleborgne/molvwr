@@ -1,7 +1,7 @@
 ﻿var Molvwr;
 (function (Molvwr) {
     var BabylonContext = (function () {
-        function BabylonContext(canvas) {
+        function BabylonContext(canvas, viewMode) {
             var _this = this;
             this.canvas = canvas;
             this.engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true });
@@ -10,6 +10,10 @@
                 if (_this.scene)
                     _this.scene.render();
             });
+            this.viewMode = viewMode;
+            if (!this.viewMode) {
+                this.viewMode = new Molvwr.ViewModes.Toon();
+            }
         }
         BabylonContext.prototype.exportScreenshot = function () {
             return this.canvas.toDataURL("image/png");
@@ -18,20 +22,9 @@
             this.engine.dispose();
         };
         BabylonContext.prototype.getMaterial = function (atomMat) {
-            var texturescale = 12;
-            var texture = "174";
-            // atomMat.diffuseTexture   = new BABYLON.Texture('textures/' + texture + '.jpg', this.scene);
-            // (<any>atomMat.diffuseTexture).uScale = texturescale;
-            // (<any>atomMat.diffuseTexture).vScale = texturescale;
-            atomMat.specularTexture = new BABYLON.Texture('textures/' + texture + '.jpg', this.scene);
-            atomMat.specularTexture.uScale = texturescale;
-            atomMat.specularTexture.vScale = texturescale;
-            atomMat.bumpTexture = new BABYLON.Texture('textures/' + texture + '_norm.jpg', this.scene);
-            atomMat.bumpTexture.uScale = texturescale;
-            atomMat.bumpTexture.vScale = texturescale;
-            // atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
-            // atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
-            return atomMat;
+            if (this.viewMode) {
+                this.viewMode.sphereMaterial(this, atomMat);
+            }
         };
         BabylonContext.prototype.createScene = function () {
             if (this.scene)
@@ -39,66 +32,9 @@
             console.log("create babylon scene");
             var scene = new BABYLON.Scene(this.engine);
             this.scene = scene;
-            scene.clearColor = new BABYLON.Color3(100, 100, 100);
-            scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
-            scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
-            scene.fogDensity = 0.01;
-            var camera = new BABYLON.ArcRotateCamera('Camera', 1, .8, 28, new BABYLON.Vector3(0, 0, 0), scene);
-            camera.wheelPrecision = 10;
-            camera.pinchPrecision = 7;
-            camera.panningSensibility = 70;
-            camera.setTarget(BABYLON.Vector3.Zero());
-            camera.attachControl(this.canvas, true);
-            this.camera = camera;
-            //var light = new BABYLON.Light("simplelight", scene);
-            var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
-            light.intensity = 0.7;
-            light.groundColor = new BABYLON.Color3(0.4, 0.4, 0.4);
-            light.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
-            //this.useAmbientOcclusion();
-            //this.useHDR();
-            //this.useLensEffect();
-        };
-        BabylonContext.prototype.useAmbientOcclusion = function () {
-            var ssao = new BABYLON.SSAORenderingPipeline('ssaopipeline', this.scene, 0.75);
-            this.scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("ssaopipeline", this.camera);
-            //this.scene.postProcessRenderPipelineManager.detachCamerasFromRenderPipeline("ssaopipeline", this.camera);
-        };
-        BabylonContext.prototype.useHDR = function () {
-            var hdr = new BABYLON.HDRRenderingPipeline("hdr", this.scene, 1.0, null, [this.camera]);
-            // About gaussian blur : http://homepages.inf.ed.ac.uk/rbf/HIPR2/gsmooth.htm
-            hdr.brightThreshold = 1.2; // Minimum luminance needed to compute HDR
-            hdr.gaussCoeff = 0.3; // Gaussian coefficient = gaussCoeff * theEffectOutput;
-            hdr.gaussMean = 1; // The Gaussian blur mean
-            hdr.gaussStandDev = 0.8; // Standard Deviation of the gaussian blur.
-            hdr.exposure = 1; // Controls the overall intensity of the pipeline
-            hdr.minimumLuminance = 0.5; // Minimum luminance that the post-process can output. Luminance is >= 0
-            hdr.maximumLuminance = 1e10; //Maximum luminance that the post-process can output. Must be suprerior to minimumLuminance 
-            hdr.luminanceDecreaseRate = 0.5; // Decrease rate: white to dark
-            hdr.luminanceIncreaserate = 0.5; // Increase rate: dark to white
-            this.scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("hdr", [this.camera]);
-            //this.scene.postProcessRenderPipelineManager.detachCamerasFromRenderPipeline("hdr", [this.camera]);
-        };
-        BabylonContext.prototype.useLensEffect = function () {
-            var lensEffect = new BABYLON.LensRenderingPipeline('lens', {
-                edge_blur: 0.2,
-                chromatic_aberration: 0.2,
-                distortion: 0.2,
-                dof_focus_depth: 100 / this.camera.maxZ,
-                dof_aperture: 1.0,
-                grain_amount: 0.2,
-                dof_pentagon: true,
-                dof_gain: 1.0,
-                dof_threshold: 1.0,
-            }, this.scene, 1.0, [this.camera]);
-        };
-        BabylonContext.prototype.testScene = function () {
-            // Our built-in 'sphere' shape. Params: name, subdivs, size, scene
-            var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, this.scene);
-            // Move the sphere upward 1/2 its height
-            sphere.position.y = 1;
-            // Our built-in 'ground' shape. Params: name, width, depth, subdivs, scene
-            var ground = BABYLON.Mesh.CreateGround("ground1", 6, 6, 2, this.scene);
+            if (this.viewMode) {
+                this.viewMode.createScene(this);
+            }
         };
         return BabylonContext;
     })();
@@ -685,7 +621,7 @@ var Molvwr;
                 //console.log("render cyl " + segments);
                 var cylinder = BABYLON.Mesh.CreateCylinder("bondtemplate" + binding.key, binding.d, diameter, diameter, segments, 1, this.ctx.scene, false);
                 var atomMat = new BABYLON.StandardMaterial('materialFor' + binding.key, this.ctx.scene);
-                atomMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
+                atomMat.diffuseColor = new BABYLON.Color3(0.4, 0.4, 0.4);
                 atomMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
                 atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
                 atomMat.emissiveFresnelParameters = new BABYLON.FresnelParameters();
@@ -867,16 +803,6 @@ var Molvwr;
                 atomMat.ambientColor = new BABYLON.Color3(0, 0, 1);
                 atomMat.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
                 atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-                //atomMat.reflectionFresnelParameters = new BABYLON.FresnelParameters();
-                //atomMat.reflectionFresnelParameters.bias = 0.1;
-                atomMat.emissiveFresnelParameters = new BABYLON.FresnelParameters();
-                atomMat.emissiveFresnelParameters.bias = 0.6;
-                atomMat.emissiveFresnelParameters.power = 1;
-                atomMat.emissiveFresnelParameters.leftColor = BABYLON.Color3.Black();
-                atomMat.emissiveFresnelParameters.rightColor = BABYLON.Color3.White();
-                //atomMat.opacityFresnelParameters = new BABYLON.FresnelParameters();
-                //atomMat.opacityFresnelParameters.leftColor = BABYLON.Color3.White();
-                //atomMat.opacityFresnelParameters.rightColor = BABYLON.Color3.Black();
                 if (useTexture) {
                     this.ctx.getMaterial(atomMat);
                 }
@@ -1012,4 +938,190 @@ var Molvwr;
         })();
         Renderer.Sticks = Sticks;
     })(Renderer = Molvwr.Renderer || (Molvwr.Renderer = {}));
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
+    var ViewModes;
+    (function (ViewModes) {
+        var Standard = (function () {
+            function Standard() {
+            }
+            Standard.prototype.createScene = function (context) {
+                context.scene.clearColor = new BABYLON.Color3(0.9, 0.9, 0.95);
+                context.scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
+                context.scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
+                context.scene.fogDensity = 0.01;
+                var camera = new BABYLON.ArcRotateCamera('Camera', 1, .8, 28, new BABYLON.Vector3(0, 0, 0), context.scene);
+                camera.wheelPrecision = 10;
+                camera.pinchPrecision = 7;
+                camera.panningSensibility = 70;
+                camera.setTarget(BABYLON.Vector3.Zero());
+                camera.attachControl(context.canvas, true);
+                context.camera = camera;
+                //var light = new BABYLON.Light("simplelight", scene);
+                var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), context.scene);
+                light.intensity = 0.7;
+                light.groundColor = new BABYLON.Color3(0.4, 0.4, 0.4);
+                light.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+            };
+            Standard.prototype.sphereMaterial = function (context, material) {
+                if (Molvwr.ViewModes.sphereSpecularTexture) {
+                    material.specularTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereSpecularTexture, context.scene);
+                    material.specularTexture.uScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                    material.specularTexture.vScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                }
+                if (Molvwr.ViewModes.sphereBumpTexture) {
+                    material.bumpTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereBumpTexture, context.scene);
+                    material.bumpTexture.uScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                    material.bumpTexture.vScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                }
+            };
+            Standard.prototype.cylinderMaterial = function (context, material) {
+            };
+            return Standard;
+        })();
+        ViewModes.Standard = Standard;
+    })(ViewModes = Molvwr.ViewModes || (Molvwr.ViewModes = {}));
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
+    var ViewModes;
+    (function (ViewModes) {
+        var Toon = (function () {
+            function Toon(viewoptions) {
+                if (viewoptions === void 0) { viewoptions = { texture: false, bias: 0.3, power: 1 }; }
+                this.options = viewoptions;
+                this.emisivefresnel = new BABYLON.FresnelParameters();
+                this.emisivefresnel.bias = this.options.bias;
+                this.emisivefresnel.power = this.options.power;
+                this.emisivefresnel.leftColor = BABYLON.Color3.Black();
+                this.emisivefresnel.rightColor = BABYLON.Color3.White();
+            }
+            Toon.prototype.createScene = function (context) {
+                context.scene.clearColor = new BABYLON.Color3(0.9, 0.9, 0.95);
+                context.scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
+                context.scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
+                context.scene.fogDensity = 0.01;
+                var camera = new BABYLON.ArcRotateCamera('Camera', 1, .8, 28, new BABYLON.Vector3(0, 0, 0), context.scene);
+                camera.wheelPrecision = 10;
+                camera.pinchPrecision = 7;
+                camera.panningSensibility = 70;
+                camera.setTarget(BABYLON.Vector3.Zero());
+                camera.attachControl(context.canvas, true);
+                context.camera = camera;
+                //var light = new BABYLON.Light("simplelight", scene);
+                var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), context.scene);
+                light.intensity = 0.7;
+                light.groundColor = new BABYLON.Color3(0.4, 0.4, 0.4);
+                light.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+            };
+            Toon.prototype.sphereMaterial = function (context, material) {
+                material.emissiveFresnelParameters = this.emisivefresnel;
+                material.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
+                material.emissiveColor = new BABYLON.Color3(0.3, 0.3, 0.3);
+                if (this.options.texture) {
+                    if (Molvwr.ViewModes.sphereSpecularTexture) {
+                        material.specularTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereSpecularTexture, context.scene);
+                        material.specularTexture.uScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                        material.specularTexture.vScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                    }
+                    if (Molvwr.ViewModes.sphereBumpTexture) {
+                        material.bumpTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereBumpTexture, context.scene);
+                        material.bumpTexture.uScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                        material.bumpTexture.vScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                    }
+                }
+            };
+            Toon.prototype.cylinderMaterial = function (context, material) {
+            };
+            return Toon;
+        })();
+        ViewModes.Toon = Toon;
+    })(ViewModes = Molvwr.ViewModes || (Molvwr.ViewModes = {}));
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
+    var ViewModes;
+    (function (ViewModes) {
+        ViewModes.sphereBumpTexture = null;
+        ViewModes.sphereSpecularTexture = null;
+        ViewModes.sphereTextureScale = 1;
+        var Experiments = (function () {
+            function Experiments() {
+            }
+            Experiments.prototype.createScene = function (context) {
+                context.scene.clearColor = new BABYLON.Color3(0.9, 0.9, 0.95);
+                context.scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
+                context.scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
+                context.scene.fogDensity = 0.01;
+                var camera = new BABYLON.ArcRotateCamera('Camera', 1, .8, 28, new BABYLON.Vector3(0, 0, 0), context.scene);
+                camera.wheelPrecision = 10;
+                camera.pinchPrecision = 7;
+                camera.panningSensibility = 70;
+                camera.setTarget(BABYLON.Vector3.Zero());
+                camera.attachControl(context.canvas, true);
+                context.camera = camera;
+                //var light = new BABYLON.Light("simplelight", scene);
+                var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), context.scene);
+                light.intensity = 0.7;
+                light.groundColor = new BABYLON.Color3(0.4, 0.4, 0.4);
+                light.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+                //this.useAmbientOcclusion();
+                //this.useHDR();
+                //this.useLensEffect();
+            };
+            Experiments.prototype.sphereMaterial = function (context, material) {
+                if (Molvwr.ViewModes.sphereSpecularTexture) {
+                    material.specularTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereSpecularTexture, context.scene);
+                    material.specularTexture.uScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                    material.specularTexture.vScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                }
+                if (Molvwr.ViewModes.sphereBumpTexture) {
+                    material.bumpTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereBumpTexture, context.scene);
+                    material.bumpTexture.uScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                    material.bumpTexture.vScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                }
+            };
+            Experiments.prototype.cylinderMaterial = function (context, material) {
+            };
+            Experiments.prototype.useAmbientOcclusion = function (context) {
+                var ssao = new BABYLON.SSAORenderingPipeline('ssaopipeline', context.scene, 0.75);
+                context.scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("ssaopipeline", context.camera);
+                //this.scene.postProcessRenderPipelineManager.detachCamerasFromRenderPipeline("ssaopipeline", this.camera);
+            };
+            Experiments.prototype.useHDR = function (context) {
+                var hdr = new BABYLON.HDRRenderingPipeline("hdr", context.scene, 1.0, null, [context.camera]);
+                // About gaussian blur : http://homepages.inf.ed.ac.uk/rbf/HIPR2/gsmooth.htm
+                hdr.brightThreshold = 1.2; // Minimum luminance needed to compute HDR
+                hdr.gaussCoeff = 0.3; // Gaussian coefficient = gaussCoeff * theEffectOutput;
+                hdr.gaussMean = 1; // The Gaussian blur mean
+                hdr.gaussStandDev = 0.8; // Standard Deviation of the gaussian blur.
+                hdr.exposure = 1; // Controls the overall intensity of the pipeline
+                hdr.minimumLuminance = 0.5; // Minimum luminance that the post-process can output. Luminance is >= 0
+                hdr.maximumLuminance = 1e10; //Maximum luminance that the post-process can output. Must be suprerior to minimumLuminance 
+                hdr.luminanceDecreaseRate = 0.5; // Decrease rate: white to dark
+                hdr.luminanceIncreaserate = 0.5; // Increase rate: dark to white
+                context.scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("hdr", [context.camera]);
+                //this.scene.postProcessRenderPipelineManager.detachCamerasFromRenderPipeline("hdr", [this.camera]);
+            };
+            Experiments.prototype.useLensEffect = function (context) {
+                var lensEffect = new BABYLON.LensRenderingPipeline('lens', {
+                    edge_blur: 0.2,
+                    chromatic_aberration: 0.2,
+                    distortion: 0.2,
+                    dof_focus_depth: 100 / context.camera.maxZ,
+                    dof_aperture: 1.0,
+                    grain_amount: 0.2,
+                    dof_pentagon: true,
+                    dof_gain: 1.0,
+                    dof_threshold: 1.0,
+                }, context.scene, 1.0, [context.camera]);
+            };
+            return Experiments;
+        })();
+        ViewModes.Experiments = Experiments;
+    })(ViewModes = Molvwr.ViewModes || (Molvwr.ViewModes = {}));
 })(Molvwr || (Molvwr = {}));

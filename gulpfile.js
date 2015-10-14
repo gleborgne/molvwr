@@ -80,7 +80,7 @@ gulp.task('webserver', function() {
     .pipe(webserver({
       livereload: true,
       open: 'http://localhost:1338/index.html',
-      port: 1338,
+      port: 1339,
       fallback: 'index.html'
     }));
 });

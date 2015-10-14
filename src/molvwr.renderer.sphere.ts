@@ -64,19 +64,6 @@ module Molvwr.Renderer {
 			atomMat.specularColor = new BABYLON.Color3(0.1,0.1,0.1);
 			atomMat.emissiveColor = new BABYLON.Color3(0.2,0.2,0.2);
 			
-			//atomMat.reflectionFresnelParameters = new BABYLON.FresnelParameters();
-			//atomMat.reflectionFresnelParameters.bias = 0.1;
-		
-			atomMat.emissiveFresnelParameters = new BABYLON.FresnelParameters();
-			atomMat.emissiveFresnelParameters.bias = 0.6;
-			atomMat.emissiveFresnelParameters.power = 1;
-			atomMat.emissiveFresnelParameters.leftColor = BABYLON.Color3.Black();
-			atomMat.emissiveFresnelParameters.rightColor = BABYLON.Color3.White();
-		
-			//atomMat.opacityFresnelParameters = new BABYLON.FresnelParameters();
-			//atomMat.opacityFresnelParameters.leftColor = BABYLON.Color3.White();
-			//atomMat.opacityFresnelParameters.rightColor = BABYLON.Color3.Black();
-			
 			if (useTexture){
 				this.ctx.getMaterial(atomMat);
 			}

@@ -53,7 +53,7 @@ module Molvwr.Renderer {
 			//console.log("render cyl " + segments);
 			var cylinder = BABYLON.Mesh.CreateCylinder("bondtemplate" + binding.key, binding.d, diameter, diameter, segments, 1, this.ctx.scene, false);
         	var atomMat = new BABYLON.StandardMaterial('materialFor' + binding.key, this.ctx.scene);
-			atomMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
+			atomMat.diffuseColor = new BABYLON.Color3(0.4, 0.4, 0.4);
 			atomMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
 			atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
 			
