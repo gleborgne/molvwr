@@ -31,10 +31,11 @@
             <pre>&lt;div class="mol mol-left" data-molvwr="mol.sdf"&gt;&lt;/div&gt;</pre>
             Now you just need to call "Molvwr.process()" to have your bloc turning into a 3D molecule
             <pre>&lt;script type="text/javascript"&gt;
-    document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener("DOMContentLoaded", function() {
     Molvwr.process();
   });
 &lt;/script&gt;</pre>
+            The "process" function can be called without parameters, or you could explicitely provide an HTML element (or an array of elements).
           </div>
         </div>
         <div class="clear"></div>
@@ -50,6 +51,9 @@
           </div>
         </div>
         <div class="clear"></div>
+        <div class="outro">
+          If you want to use Molvwr in your website, request feature, or file a bug, visit our <a target="_blank" href="https://www.github.com/gleborgne/molvwr">github page</a>.
+        </div>
         <script type="text/javascript">
             document.addEventListener("DOMContentLoaded", function() {
                 Molvwr.process();
