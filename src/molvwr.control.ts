@@ -207,6 +207,7 @@ module Molvwr {
             }
 		}
 
+
 		private _postProcessMolecule(molecule) {
 			molecule.batchSize = Math.min(50, (molecule.atoms.length / 4) >> 0);
 			this._center(molecule);
