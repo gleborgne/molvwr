@@ -13,7 +13,7 @@ Molvwr supports "xyz", "mol", "sdf", and "pdb" files. If you want an additional 
 ## How to embed Molvwr in your website
 Embedding Molvwr into your site is very easy. The most simple way is to add the script "molvwr-bundle.js" to your page, just like this:<br/>
 ```html
-&lt;script src="lib/molvwr-bundle.js"&gt;&lt;/script&gt;
+<script src="lib/molvwr-bundle.js"></script>
 ```
 
 This script contains a bundle of Molvwr, [Babylon.js](http://www.babylonjs.com) (a WebGL 3D Engine) and hand.js (a polyfill for pointer events that enables touch interaction).<br/>
@@ -21,15 +21,15 @@ You could also add the different files separately if you would like to use Babyl
             
 When your script is ready, add a bloc in your page with a "data-molvwr" attribute containing the path of your molecule file :
 ```html
-&lt;div class="mol mol-left" data-molvwr="mol.sdf"&gt;&lt;/div&gt;
+<div class="mol mol-left" data-molvwr="mol.sdf"></div>
 ```
 
 Now you just need to call "Molvwr.process()" to have your bloc turning into a 3D molecule
 ```html
-&lt;script type="text/javascript"&gt;
+<script type="text/javascript">
   document.addEventListener("DOMContentLoaded", function() {
     Molvwr.process();
   });
-&lt;/script&gt;</pre>
+</script>
 ````
 The "process" function can be called without parameters, or you could explicitely provide an HTML element (or an array of elements).
