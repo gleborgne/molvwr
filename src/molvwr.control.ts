@@ -1,4 +1,48 @@
+var __global = this;
+
 module Molvwr {
+	export function process(){
+		if (!__global.BABYLON){
+			console.error("Babylon.js is not present, please add a reference to Babylon.js script");
+			return;
+		}
+		
+		var elements: HTMLElement[];
+		if (arguments[0]){
+			if (arguments[0].length){
+				elements = arguments[0];
+			}else{
+				elements = [arguments[0]];
+			}
+		}
+		
+		elements.forEach((e) =>{
+			if (e && e.style){
+				if ((<any>e).molvwr){
+					(<any>e).molvwr.dispose();
+				}
+				var moleculeUrl = e.getAttribute("data-molvwr");
+				var format = e.getAttribute("data-molvwr-format");
+				var view = e.getAttribute("data-molvwr-view");
+				
+				if (!moleculeUrl){
+					console.error("please specify a molecule url by adding a data-molvwr attribute");
+					return;
+				}
+				
+				if (!format){
+					console.error("molecule file format not found or not specified for " + moleculeUrl);
+					return;
+				}
+				
+				if (moleculeUrl && format){
+					var viewer = new Viewer(e);
+					viewer.loadContentFromUrl(moleculeUrl, format);
+				}
+			}
+		});
+	}
+	
 	export class Viewer {
 		element: HTMLElement;
 		canvas: HTMLCanvasElement;
@@ -7,15 +51,26 @@ module Molvwr {
 		molecule: any;
 
 		constructor(element: HTMLElement, config?: Molvwr.Config.IMolvwrConfig) {
+			if (!__global.BABYLON){
+				throw new Error("Babylon.js is not present, please add a reference to Babylon.js script");
+			}
 			if (!element)
 				throw new Error("you must provide an element to host the viewer")
 			this.config = config || Molvwr.Config.defaultConfig();
 			this.element = element;
+			(<any>this.element).molvwr = this;
 			this.canvas = <HTMLCanvasElement>document.createElement("CANVAS");
 			this.canvas.setAttribute("touch-action", "manipulation");
 			this.element.appendChild(this.canvas);
 			this.context = new BabylonContext(this.canvas);
-
+		}
+		
+		dispose(){
+			this.context.dispose();
+			this.context = null;
+			this.element = null;
+			this.canvas = null;
+			this.element.innerHTML = "";
 		}
 
 		private _loadContentFromString(content: string, contentFormat: string, completedcallback) {
@@ -25,7 +80,7 @@ module Molvwr {
 				if (molecule) {
 					this._postProcessMolecule(molecule);
 
-					this.renderMolecule(molecule, completedcallback);
+					this._renderMolecule(molecule, completedcallback);
 				} else {
 					console.warn("no molecule from parser " + contentFormat);
 				}
@@ -34,9 +89,9 @@ module Molvwr {
 			}
 		}
 
-		renderMolecule(molecule, completedcallback) {
+		private _renderMolecule(molecule, completedcallback) {
 			this.molecule = molecule;
-			this.createContext();
+			this._createContext();
 			setTimeout(() => {
 				if (this.config.renderers) {
 					var completedCount = 0;
@@ -70,11 +125,11 @@ module Molvwr {
 		setOptions(options, completedcallback) {
 			this.config = options;
 			if (this.molecule) {
-				this.renderMolecule(this.molecule, completedcallback);
+				this._renderMolecule(this.molecule, completedcallback);
 			}
 		}
 
-		createContext() {
+		private _createContext() {
 			if (this.context)
 				this.context.dispose();
 			this.context = new BabylonContext(this.canvas);
@@ -85,13 +140,36 @@ module Molvwr {
 			return this.context.exportScreenshot();
 		}
 		
-		loadContentFromString(content: string, contentFormat: string, completedcallback) {
-			this.createContext();
+		static endsWith(str, suffix) {
+			return str.indexOf(suffix, str.length - suffix.length) !== -1;
+		};
+
+		static getMoleculeFileFormat(filename : string): string {
+			if (Viewer.endsWith(filename, ".pdb"))
+				return "pdb";
+			if (Viewer.endsWith(filename, ".mol") || Viewer.endsWith(filename, ".sdf"))
+				return "mol";
+			if (Viewer.endsWith(filename, ".xyz"))
+				return "xyz";
+				
+			return null;
+		}
+		
+		loadContentFromString(content: string, contentFormat: string, completedcallback?) {
+			this._createContext();
 			this._loadContentFromString(content, contentFormat, completedcallback);
 		}
 
-		loadContentFromUrl(url: string, contentFormat: string, completedcallback) {
-			this.createContext();
+		loadContentFromUrl(url: string, contentFormat?: string, completedcallback?) {
+			if (!contentFormat){
+				contentFormat = Viewer.getMoleculeFileFormat(url);
+			}
+			
+			if (!contentFormat){
+				console.error("molecule file format not found or not specified");
+			}
+			
+			this._createContext();
 			try {
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = () => {
