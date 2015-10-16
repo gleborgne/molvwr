@@ -82,26 +82,92 @@ var Molvwr;
     })(Config = Molvwr.Config || (Molvwr.Config = {}));
 })(Molvwr || (Molvwr = {}));
 
+var __global = this;
 var Molvwr;
 (function (Molvwr) {
+    function process() {
+        if (!__global.BABYLON) {
+            console.error("Babylon.js is not present, please add a reference to Babylon.js script");
+            return;
+        }
+        var elements;
+        if (arguments[0]) {
+            if (arguments[0].length) {
+                elements = arguments[0];
+            }
+            else {
+                elements = [arguments[0]];
+            }
+        }
+        else {
+            elements = document.querySelectorAll("*[data-molvwr]");
+        }
+        for (var i = 0, l = elements.length; i < l; i++) {
+            var e = elements[i];
+            if (e && e.style) {
+                if (e.molvwr) {
+                    e.molvwr.dispose();
+                }
+                var moleculeUrl = e.getAttribute("data-molvwr");
+                var format = e.getAttribute("data-molvwr-format");
+                var view = e.getAttribute("data-molvwr-view");
+                if (!format) {
+                    format = Viewer.getMoleculeFileFormat(moleculeUrl);
+                }
+                if (!moleculeUrl) {
+                    console.error("please specify a molecule url by adding a data-molvwr attribute");
+                    return;
+                }
+                if (!format) {
+                    console.error("molecule file format not found or not specified for " + moleculeUrl);
+                    return;
+                }
+                var options = null;
+                if (view == "spheres") {
+                    options = Molvwr.Config.spheres();
+                }
+                else if (view == "ballsandsticks") {
+                    options = Molvwr.Config.ballsAndSticks();
+                }
+                if (moleculeUrl && format) {
+                    var viewer = new Viewer(e, options);
+                    viewer.loadContentFromUrl(moleculeUrl, format);
+                }
+            }
+        }
+    }
+    Molvwr.process = process;
     var Viewer = (function () {
         function Viewer(element, config) {
+            if (!__global.BABYLON) {
+                throw new Error("Babylon.js is not present, please add a reference to Babylon.js script");
+            }
             if (!element)
                 throw new Error("you must provide an element to host the viewer");
             this.config = config || Molvwr.Config.defaultConfig();
             this.element = element;
+            this.element.molvwr = this;
             this.canvas = document.createElement("CANVAS");
             this.canvas.setAttribute("touch-action", "manipulation");
+            this.canvas.style.width = "100%";
+            this.canvas.style.height = "100%";
             this.element.appendChild(this.canvas);
             this.context = new Molvwr.BabylonContext(this.canvas);
         }
+        Viewer.prototype.dispose = function () {
+            this.context.dispose();
+            this.context = null;
+            this.element = null;
+            this.canvas = null;
+            this.element.innerHTML = "";
+        };
         Viewer.prototype._loadContentFromString = function (content, contentFormat, completedcallback) {
             var parser = Molvwr.Parser[contentFormat];
             if (parser) {
                 var molecule = parser.parse(content);
                 if (molecule) {
                     this._postProcessMolecule(molecule);
-                    this.renderMolecule(molecule, completedcallback);
+                    this._renderMolecule(molecule, completedcallback);
                 }
                 else {
                     console.warn("no molecule from parser " + contentFormat);
@@ -111,10 +177,10 @@ var Molvwr;
                 console.warn("no parser for " + contentFormat);
             }
         };
-        Viewer.prototype.renderMolecule = function (molecule, completedcallback) {
+        Viewer.prototype._renderMolecule = function (molecule, completedcallback) {
             var _this = this;
             this.molecule = molecule;
-            this.createContext();
+            this._createContext();
             setTimeout(function () {
                 if (_this.config.renderers) {
                     var completedCount = 0;
@@ -146,10 +212,10 @@ var Molvwr;
         Viewer.prototype.setOptions = function (options, completedcallback) {
             this.config = options;
             if (this.molecule) {
-                this.renderMolecule(this.molecule, completedcallback);
+                this._renderMolecule(this.molecule, completedcallback);
             }
         };
-        Viewer.prototype.createContext = function () {
+        Viewer.prototype._createContext = function () {
             if (this.context)
                 this.context.dispose();
             this.context = new Molvwr.BabylonContext(this.canvas);
@@ -158,13 +224,32 @@ var Molvwr;
         Viewer.prototype.exportScreenshot = function () {
             return this.context.exportScreenshot();
         };
+        Viewer.endsWith = function (str, suffix) {
+            return str.indexOf(suffix, str.length - suffix.length) !== -1;
+        };
+        ;
+        Viewer.getMoleculeFileFormat = function (filename) {
+            if (Viewer.endsWith(filename, ".pdb"))
+                return "pdb";
+            if (Viewer.endsWith(filename, ".mol") || Viewer.endsWith(filename, ".sdf"))
+                return "mol";
+            if (Viewer.endsWith(filename, ".xyz"))
+                return "xyz";
+            return null;
+        };
         Viewer.prototype.loadContentFromString = function (content, contentFormat, completedcallback) {
-            this.createContext();
+            this._createContext();
             this._loadContentFromString(content, contentFormat, completedcallback);
         };
         Viewer.prototype.loadContentFromUrl = function (url, contentFormat, completedcallback) {
             var _this = this;
-            this.createContext();
+            if (!contentFormat) {
+                contentFormat = Viewer.getMoleculeFileFormat(url);
+            }
+            if (!contentFormat) {
+                console.error("molecule file format not found or not specified");
+            }
+            this._createContext();
             try {
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function () {

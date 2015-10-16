@@ -46,6 +46,19 @@ var tsMolvwrProject = ts.createProject({
     noEmitOnError: false
 });
 
+gulp.task('copylib', function () {
+	gulp.src(['lib/**/*'])		
+		.pipe(gulp.dest("dist"))
+		.pipe(gulp.dest("demo website/lib"));
+});
+
+gulp.task('package', ['compile-molvwr'], function () {
+	gulp.src(['dist/molvwr.js', 'lib/babylon.js', 'lib/hand.js'], { base: '.' })
+		.pipe(concat('molvwr-bundle.js'))
+		.pipe(gulp.dest("dist"))
+		.pipe(gulp.dest("demo website/lib"));
+});
+
 gulp.task('compile-molvwr', function () {
 	var tsResult = gulp.src([
 		'src/**/*.ts',
@@ -55,7 +68,7 @@ gulp.task('compile-molvwr', function () {
 	.pipe(ts(tsMolvwrProject));
 
     return merge([
-        tsResult.dts.pipe(flatten()).pipe(concat('molvwr.d.ts')).pipe(bom()).pipe(gulp.dest('demo website/molvwr')),
+        tsResult.dts.pipe(flatten()).pipe(concat('molvwr.d.ts')).pipe(bom()).pipe(gulp.dest('dist')),
         tsResult.js
             .pipe(concat('molvwr.js'))
         	//.pipe(sourcemaps.write(".",{
@@ -71,7 +84,8 @@ gulp.task('compile-molvwr', function () {
             //    }
             //}))
             .pipe(bom())
-        	.pipe(gulp.dest('demo website/molvwr'))
+            .pipe(gulp.dest('dist'))
+        	.pipe(gulp.dest('demo website/lib'))
     ]);
 });
 
@@ -85,13 +99,13 @@ gulp.task('webserver', function() {
     }));
 });
 
-gulp.task('build', ['clean', 'compile-molvwr'], function () {
+gulp.task('build', ['clean', 'package', 'copylib'], function () {
 });
 
 gulp.task('watch', function() {
 	gulp.start('webserver');
     gulp.watch(['demo website/**/*.less'], ['styles']);
-    gulp.watch(['src/**/*.ts'], ['compile-molvwr']);
+    gulp.watch(['src/**/*.ts'], ['package']);
 });
 
 gulp.task('default', ['build'], function() {

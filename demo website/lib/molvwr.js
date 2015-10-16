@@ -1,0 +1,1208 @@
+﻿var Molvwr;
+(function (Molvwr) {
+    var BabylonContext = (function () {
+        function BabylonContext(canvas, viewMode) {
+            var _this = this;
+            this.canvas = canvas;
+            this.engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true });
+            this.atomsMaterials = {};
+            this.engine.runRenderLoop(function () {
+                if (_this.scene)
+                    _this.scene.render();
+            });
+            this.viewMode = viewMode;
+            if (!this.viewMode) {
+                this.viewMode = new Molvwr.ViewModes.Toon();
+            }
+        }
+        BabylonContext.prototype.exportScreenshot = function () {
+            return this.canvas.toDataURL("image/png");
+        };
+        BabylonContext.prototype.dispose = function () {
+            this.engine.dispose();
+        };
+        BabylonContext.prototype.sphereMaterial = function (atomMat, useEffects) {
+            if (this.viewMode) {
+                this.viewMode.sphereMaterial(this, atomMat, useEffects);
+            }
+        };
+        BabylonContext.prototype.createScene = function () {
+            if (this.scene)
+                this.scene.dispose();
+            console.log("create babylon scene");
+            var scene = new BABYLON.Scene(this.engine);
+            this.scene = scene;
+            if (this.viewMode) {
+                this.viewMode.createScene(this);
+            }
+        };
+        return BabylonContext;
+    })();
+    Molvwr.BabylonContext = BabylonContext;
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
+    var Config;
+    (function (Config) {
+        function defaultConfig() {
+            return {
+                allowLOD: false,
+                renderers: ['Sphere'],
+                atomScaleFactor: 3,
+                cylinderScale: 0.6,
+                sphereSegments: 16
+            };
+        }
+        Config.defaultConfig = defaultConfig;
+        function spheres() {
+            return {
+                allowLOD: true,
+                renderers: ['Sphere'],
+                atomScaleFactor: 3,
+                cylinderScale: 0.6,
+                sphereSegments: 16,
+                sphereLOD: [{ depth: 0, segments: 32, effects: true }, { depth: 5, segments: 24, effects: true }, { depth: 10, segments: 16, effects: true }, { depth: 20, segments: 12, effects: true }, { depth: 40, segments: 6, effects: true }, { depth: 60, segments: 6 }, { depth: 80, segments: 4 }]
+            };
+        }
+        Config.spheres = spheres;
+        function ballsAndSticks() {
+            return {
+                allowLOD: true,
+                renderers: ['BondsCylinder', 'Sphere'],
+                atomScaleFactor: 1.3,
+                cylinderScale: 0.4,
+                sphereSegments: 16,
+                cylinderSegments: 8,
+                cylinderLOD: [{ depth: 0, segments: 20, effects: true }, { depth: 5, segments: 12, effects: true }, { depth: 20, segments: 8, effects: true }, { depth: 60, segments: 4, effects: true }],
+                sphereLOD: [{ depth: 0, segments: 32, effects: true }, { depth: 5, segments: 24, effects: true }, { depth: 10, segments: 16, effects: true }, { depth: 20, segments: 12, effects: true }, { depth: 40, segments: 6, effects: true }, { depth: 60, segments: 6 }, { depth: 80, segments: 4 }]
+            };
+        }
+        Config.ballsAndSticks = ballsAndSticks;
+    })(Config = Molvwr.Config || (Molvwr.Config = {}));
+})(Molvwr || (Molvwr = {}));
+
+var __global = this;
+var Molvwr;
+(function (Molvwr) {
+    function process() {
+        if (!__global.BABYLON) {
+            console.error("Babylon.js is not present, please add a reference to Babylon.js script");
+            return;
+        }
+        var elements;
+        if (arguments[0]) {
+            if (arguments[0].length) {
+                elements = arguments[0];
+            }
+            else {
+                elements = [arguments[0]];
+            }
+        }
+        else {
+            elements = document.querySelectorAll("*[data-molvwr]");
+        }
+        for (var i = 0, l = elements.length; i < l; i++) {
+            var e = elements[i];
+            if (e && e.style) {
+                if (e.molvwr) {
+                    e.molvwr.dispose();
+                }
+                var moleculeUrl = e.getAttribute("data-molvwr");
+                var format = e.getAttribute("data-molvwr-format");
+                var view = e.getAttribute("data-molvwr-view");
+                if (!format) {
+                    format = Viewer.getMoleculeFileFormat(moleculeUrl);
+                }
+                if (!moleculeUrl) {
+                    console.error("please specify a molecule url by adding a data-molvwr attribute");
+                    return;
+                }
+                if (!format) {
+                    console.error("molecule file format not found or not specified for " + moleculeUrl);
+                    return;
+                }
+                var options = null;
+                if (view == "spheres") {
+                    options = Molvwr.Config.spheres();
+                }
+                else if (view == "ballsandsticks") {
+                    options = Molvwr.Config.ballsAndSticks();
+                }
+                if (moleculeUrl && format) {
+                    var viewer = new Viewer(e, options);
+                    viewer.loadContentFromUrl(moleculeUrl, format);
+                }
+            }
+        }
+    }
+    Molvwr.process = process;
+    var Viewer = (function () {
+        function Viewer(element, config) {
+            if (!__global.BABYLON) {
+                throw new Error("Babylon.js is not present, please add a reference to Babylon.js script");
+            }
+            if (!element)
+                throw new Error("you must provide an element to host the viewer");
+            this.config = config || Molvwr.Config.defaultConfig();
+            this.element = element;
+            this.element.molvwr = this;
+            this.canvas = document.createElement("CANVAS");
+            this.canvas.setAttribute("touch-action", "manipulation");
+            this.canvas.style.width = "100%";
+            this.canvas.style.height = "100%";
+            this.element.appendChild(this.canvas);
+            this.context = new Molvwr.BabylonContext(this.canvas);
+        }
+        Viewer.prototype.dispose = function () {
+            this.context.dispose();
+            this.context = null;
+            this.element = null;
+            this.canvas = null;
+            this.element.innerHTML = "";
+        };
+        Viewer.prototype._loadContentFromString = function (content, contentFormat, completedcallback) {
+            var parser = Molvwr.Parser[contentFormat];
+            if (parser) {
+                var molecule = parser.parse(content);
+                if (molecule) {
+                    this._postProcessMolecule(molecule);
+                    this._renderMolecule(molecule, completedcallback);
+                }
+                else {
+                    console.warn("no molecule from parser " + contentFormat);
+                }
+            }
+            else {
+                console.warn("no parser for " + contentFormat);
+            }
+        };
+        Viewer.prototype._renderMolecule = function (molecule, completedcallback) {
+            var _this = this;
+            this.molecule = molecule;
+            this._createContext();
+            setTimeout(function () {
+                if (_this.config.renderers) {
+                    var completedCount = 0;
+                    var nbrenderers = _this.config.renderers.length;
+                    var incCompleted = function () {
+                        completedCount++;
+                        if (completedCount == nbrenderers) {
+                            console.log("render complete");
+                            if (completedcallback)
+                                completedcallback();
+                        }
+                    };
+                    _this.config.renderers.forEach(function (rendererName) {
+                        var rendererClass = Molvwr.Renderer[rendererName];
+                        if (rendererClass) {
+                            var renderer = new rendererClass(_this, _this.context, _this.config);
+                            renderer.render(_this.molecule, function () {
+                                incCompleted();
+                            });
+                        }
+                        else {
+                            incCompleted();
+                            console.warn("no renderer for " + rendererName);
+                        }
+                    });
+                }
+            }, 50);
+        };
+        Viewer.prototype.setOptions = function (options, completedcallback) {
+            this.config = options;
+            if (this.molecule) {
+                this._renderMolecule(this.molecule, completedcallback);
+            }
+        };
+        Viewer.prototype._createContext = function () {
+            if (this.context)
+                this.context.dispose();
+            this.context = new Molvwr.BabylonContext(this.canvas);
+            this.context.createScene();
+        };
+        Viewer.prototype.exportScreenshot = function () {
+            return this.context.exportScreenshot();
+        };
+        Viewer.endsWith = function (str, suffix) {
+            return str.indexOf(suffix, str.length - suffix.length) !== -1;
+        };
+        ;
+        Viewer.getMoleculeFileFormat = function (filename) {
+            if (Viewer.endsWith(filename, ".pdb"))
+                return "pdb";
+            if (Viewer.endsWith(filename, ".mol") || Viewer.endsWith(filename, ".sdf"))
+                return "mol";
+            if (Viewer.endsWith(filename, ".xyz"))
+                return "xyz";
+            return null;
+        };
+        Viewer.prototype.loadContentFromString = function (content, contentFormat, completedcallback) {
+            this._createContext();
+            this._loadContentFromString(content, contentFormat, completedcallback);
+        };
+        Viewer.prototype.loadContentFromUrl = function (url, contentFormat, completedcallback) {
+            var _this = this;
+            if (!contentFormat) {
+                contentFormat = Viewer.getMoleculeFileFormat(url);
+            }
+            if (!contentFormat) {
+                console.error("molecule file format not found or not specified");
+            }
+            this._createContext();
+            try {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4) {
+                        if (xhr.status == 200) {
+                            _this._loadContentFromString(xhr.responseText, contentFormat, completedcallback);
+                        }
+                        else {
+                            console.warn("cannot get content from " + url + " " + xhr.status + " " + xhr.statusText);
+                            completedcallback();
+                        }
+                    }
+                };
+                xhr.open("GET", url, true);
+                xhr.send(null);
+            }
+            catch (e) {
+                console.error(e);
+                completedcallback();
+            }
+        };
+        Viewer.prototype._postProcessMolecule = function (molecule) {
+            this._center(molecule);
+            this._calculateAtomsBonds(molecule);
+        };
+        Viewer.prototype._calculateAtomsBonds = function (molecule) {
+            console.time("check bounds");
+            var bonds = [];
+            var nbatoms = molecule.atoms.length;
+            molecule.kinds = molecule.kinds || {};
+            molecule.bondkinds = molecule.bondkinds || {};
+            molecule.atoms.forEach(function (atom, index) {
+                if (!molecule.kinds[atom.kind.symbol]) {
+                    molecule.kinds[atom.kind.symbol] = { kind: atom.kind };
+                }
+                for (var i = index + 1; i < nbatoms; i++) {
+                    var siblingAtom = molecule.atoms[i];
+                    var l = new BABYLON.Vector3(atom.x, atom.y, atom.z);
+                    var m = new BABYLON.Vector3(siblingAtom.x, siblingAtom.y, siblingAtom.z);
+                    var d = BABYLON.Vector3.Distance(l, m);
+                    if (d < 1.3 * (atom.kind.radius + siblingAtom.kind.radius)) {
+                        if (!molecule.bondkinds[atom.kind.symbol + "#" + siblingAtom.kind.symbol]) {
+                            molecule.bondkinds[atom.kind.symbol + "#" + siblingAtom.kind.symbol] = { d: d, key: atom.kind.symbol + "#" + siblingAtom.kind.symbol, kindA: atom.kind, kindB: siblingAtom.kind };
+                        }
+                        bonds.push({
+                            d: d,
+                            atomA: atom,
+                            atomB: siblingAtom,
+                            cutoff: d / (atom.kind.radius + siblingAtom.kind.radius)
+                        });
+                    }
+                }
+            });
+            molecule.bonds = bonds;
+            console.timeEnd("check bounds");
+            console.log("found " + bonds.length + " bonds");
+        };
+        Viewer.prototype._getCentroid = function (molecule) {
+            var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity, minZ = Infinity, maxZ = -Infinity;
+            molecule.atoms.forEach(function (atom) {
+                if (atom.x > maxX)
+                    maxX = atom.x;
+                if (atom.x < minX)
+                    minX = atom.x;
+                if (atom.y > maxY)
+                    maxY = atom.y;
+                if (atom.y < minY)
+                    minY = atom.y;
+                if (atom.z > maxZ)
+                    maxZ = atom.z;
+                if (atom.z < minZ)
+                    minZ = atom.z;
+            });
+            return {
+                x: (minX + maxX) / 2,
+                y: (minY + maxY) / 2,
+                z: (minZ + maxZ) / 2,
+            };
+        };
+        Viewer.prototype._center = function (molecule) {
+            var shift = this._getCentroid(molecule);
+            molecule.atoms.forEach(function (atom) {
+                atom.x -= shift.x;
+                atom.y -= shift.y;
+                atom.z -= shift.z;
+                console.log(atom.kind.symbol + " " + atom.x + "," + atom.y + "," + atom.z);
+            });
+        };
+        return Viewer;
+    })();
+    Molvwr.Viewer = Viewer;
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
+    var Elements;
+    (function (Elements) {
+        Elements.elements = [
+            { 'symbol': 'Xx', 'name': 'unknown', 'mass': 1.00000000, 'radius': 1.0000, 'color': [1.000, 0.078, 0.576], 'number': 0 },
+            { 'symbol': 'H', 'name': 'hydrogen', 'mass': 1.00794000, 'radius': 0.3100, 'color': [1.000, 1.000, 1.000], 'number': 1 },
+            { 'symbol': 'He', 'name': 'helium', 'mass': 4.00260200, 'radius': 0.2800, 'color': [0.851, 1.000, 1.000], 'number': 2 },
+            { 'symbol': 'Li', 'name': 'lithium', 'mass': 6.94100000, 'radius': 1.2800, 'color': [0.800, 0.502, 1.000], 'number': 3 },
+            { 'symbol': 'Be', 'name': 'beryllium', 'mass': 9.01218200, 'radius': 0.9600, 'color': [0.761, 1.000, 0.000], 'number': 4 },
+            { 'symbol': 'B', 'name': 'boron', 'mass': 10.81100000, 'radius': 0.8400, 'color': [1.000, 0.710, 0.710], 'number': 5 },
+            { 'symbol': 'C', 'name': 'carbon', 'mass': 12.01070000, 'radius': 0.7300, 'color': [0.565, 0.565, 0.565], 'number': 6 },
+            { 'symbol': 'N', 'name': 'nitrogen', 'mass': 14.00670000, 'radius': 0.7100, 'color': [0.188, 0.314, 0.973], 'number': 7 },
+            { 'symbol': 'O', 'name': 'oxygen', 'mass': 15.99940000, 'radius': 0.6600, 'color': [1.000, 0.051, 0.051], 'number': 8 },
+            { 'symbol': 'F', 'name': 'fluorine', 'mass': 18.99840320, 'radius': 0.5700, 'color': [0.565, 0.878, 0.314], 'number': 9 },
+            { 'symbol': 'Ne', 'name': 'neon', 'mass': 20.17970000, 'radius': 0.5800, 'color': [0.702, 0.890, 0.961], 'number': 10 },
+            { 'symbol': 'Na', 'name': 'sodium', 'mass': 22.98976928, 'radius': 1.6600, 'color': [0.671, 0.361, 0.949], 'number': 11 },
+            { 'symbol': 'Mg', 'name': 'magnesium', 'mass': 24.30500000, 'radius': 1.4100, 'color': [0.541, 1.000, 0.000], 'number': 12 },
+            { 'symbol': 'Al', 'name': 'aluminum', 'mass': 26.98153860, 'radius': 1.2100, 'color': [0.749, 0.651, 0.651], 'number': 13 },
+            { 'symbol': 'Si', 'name': 'silicon', 'mass': 28.08550000, 'radius': 1.1100, 'color': [0.941, 0.784, 0.627], 'number': 14 },
+            { 'symbol': 'P', 'name': 'phosphorus', 'mass': 30.97376200, 'radius': 1.0700, 'color': [1.000, 0.502, 0.000], 'number': 15 },
+            { 'symbol': 'S', 'name': 'sulfur', 'mass': 32.06500000, 'radius': 1.0500, 'color': [1.000, 1.000, 0.188], 'number': 16 },
+            { 'symbol': 'Cl', 'name': 'chlorine', 'mass': 35.45300000, 'radius': 1.0200, 'color': [0.122, 0.941, 0.122], 'number': 17 },
+            { 'symbol': 'Ar', 'name': 'argon', 'mass': 39.94800000, 'radius': 1.0600, 'color': [0.502, 0.820, 0.890], 'number': 18 },
+            { 'symbol': 'K', 'name': 'potassium', 'mass': 39.09830000, 'radius': 2.0300, 'color': [0.561, 0.251, 0.831], 'number': 19 },
+            { 'symbol': 'Ca', 'name': 'calcium', 'mass': 40.07800000, 'radius': 1.7600, 'color': [0.239, 1.000, 0.000], 'number': 20 },
+            { 'symbol': 'Sc', 'name': 'scandium', 'mass': 44.95591200, 'radius': 1.7000, 'color': [0.902, 0.902, 0.902], 'number': 21 },
+            { 'symbol': 'Ti', 'name': 'titanium', 'mass': 47.86700000, 'radius': 1.6000, 'color': [0.749, 0.761, 0.780], 'number': 22 },
+            { 'symbol': 'V', 'name': 'vanadium', 'mass': 50.94150000, 'radius': 1.5300, 'color': [0.651, 0.651, 0.671], 'number': 23 },
+            { 'symbol': 'Cr', 'name': 'chromium', 'mass': 51.99610000, 'radius': 1.3900, 'color': [0.541, 0.600, 0.780], 'number': 24 },
+            { 'symbol': 'Mn', 'name': 'manganese', 'mass': 54.93804500, 'radius': 1.3900, 'color': [0.611, 0.478, 0.780], 'number': 25 },
+            { 'symbol': 'Fe', 'name': 'iron', 'mass': 55.84500000, 'radius': 1.3200, 'color': [0.878, 0.400, 0.200], 'number': 26 },
+            { 'symbol': 'Co', 'name': 'cobalt', 'mass': 58.69340000, 'radius': 1.2600, 'color': [0.941, 0.565, 0.627], 'number': 27 },
+            { 'symbol': 'Ni', 'name': 'nickel', 'mass': 58.93319500, 'radius': 1.2400, 'color': [0.314, 0.816, 0.314], 'number': 28 },
+            { 'symbol': 'Cu', 'name': 'copper', 'mass': 63.54600000, 'radius': 1.3200, 'color': [0.784, 0.502, 0.200], 'number': 29 },
+            { 'symbol': 'Zn', 'name': 'zinc', 'mass': 65.38000000, 'radius': 1.2200, 'color': [0.490, 0.502, 0.690], 'number': 30 },
+            { 'symbol': 'Ga', 'name': 'gallium', 'mass': 69.72300000, 'radius': 1.2200, 'color': [0.761, 0.561, 0.561], 'number': 31 },
+            { 'symbol': 'Ge', 'name': 'germanium', 'mass': 72.64000000, 'radius': 1.2000, 'color': [0.400, 0.561, 0.561], 'number': 32 },
+            { 'symbol': 'As', 'name': 'arsenic', 'mass': 74.92160000, 'radius': 1.1900, 'color': [0.741, 0.502, 0.890], 'number': 33 },
+            { 'symbol': 'Se', 'name': 'selenium', 'mass': 78.96000000, 'radius': 1.2000, 'color': [1.000, 0.631, 0.000], 'number': 34 },
+            { 'symbol': 'Br', 'name': 'bromine', 'mass': 79.90400000, 'radius': 1.2000, 'color': [0.651, 0.161, 0.161], 'number': 35 },
+            { 'symbol': 'Kr', 'name': 'krypton', 'mass': 83.79800000, 'radius': 1.1600, 'color': [0.361, 0.722, 0.820], 'number': 36 },
+            { 'symbol': 'Rb', 'name': 'rubidium', 'mass': 85.46780000, 'radius': 2.2000, 'color': [0.439, 0.180, 0.690], 'number': 37 },
+            { 'symbol': 'Sr', 'name': 'strontium', 'mass': 87.62000000, 'radius': 1.9500, 'color': [0.000, 1.000, 0.000], 'number': 38 },
+            { 'symbol': 'Y', 'name': 'yttrium', 'mass': 88.90585000, 'radius': 1.9000, 'color': [0.580, 1.000, 1.000], 'number': 39 },
+            { 'symbol': 'Zr', 'name': 'zirconium', 'mass': 91.22400000, 'radius': 1.7500, 'color': [0.580, 0.878, 0.878], 'number': 40 },
+            { 'symbol': 'Nb', 'name': 'niobium', 'mass': 92.90638000, 'radius': 1.6400, 'color': [0.451, 0.761, 0.788], 'number': 41 },
+            { 'symbol': 'Mo', 'name': 'molybdenum', 'mass': 95.96000000, 'radius': 1.5400, 'color': [0.329, 0.710, 0.710], 'number': 42 },
+            { 'symbol': 'Tc', 'name': 'technetium', 'mass': 98.00000000, 'radius': 1.4700, 'color': [0.231, 0.620, 0.620], 'number': 43 },
+            { 'symbol': 'Ru', 'name': 'ruthenium', 'mass': 101.07000000, 'radius': 1.4600, 'color': [0.141, 0.561, 0.561], 'number': 44 },
+            { 'symbol': 'Rh', 'name': 'rhodium', 'mass': 102.90550000, 'radius': 1.4200, 'color': [0.039, 0.490, 0.549], 'number': 45 },
+            { 'symbol': 'Pd', 'name': 'palladium', 'mass': 106.42000000, 'radius': 1.3900, 'color': [0.000, 0.412, 0.522], 'number': 46 },
+            { 'symbol': 'Ag', 'name': 'silver', 'mass': 107.86820000, 'radius': 1.4500, 'color': [0.753, 0.753, 0.753], 'number': 47 },
+            { 'symbol': 'Cd', 'name': 'cadmium', 'mass': 112.41100000, 'radius': 1.4400, 'color': [1.000, 0.851, 0.561], 'number': 48 },
+            { 'symbol': 'In', 'name': 'indium', 'mass': 114.81800000, 'radius': 1.4200, 'color': [0.651, 0.459, 0.451], 'number': 49 },
+            { 'symbol': 'Sn', 'name': 'tin', 'mass': 118.71000000, 'radius': 1.3900, 'color': [0.400, 0.502, 0.502], 'number': 50 },
+            { 'symbol': 'Sb', 'name': 'antimony', 'mass': 121.76000000, 'radius': 1.3900, 'color': [0.620, 0.388, 0.710], 'number': 51 },
+            { 'symbol': 'Te', 'name': 'tellurium', 'mass': 127.60000000, 'radius': 1.3800, 'color': [0.831, 0.478, 0.000], 'number': 52 },
+            { 'symbol': 'I', 'name': 'iodine', 'mass': 126.90470000, 'radius': 1.3900, 'color': [0.580, 0.000, 0.580], 'number': 53 },
+            { 'symbol': 'Xe', 'name': 'xenon', 'mass': 131.29300000, 'radius': 1.4000, 'color': [0.259, 0.620, 0.690], 'number': 54 },
+            { 'symbol': 'Cs', 'name': 'cesium', 'mass': 132.90545190, 'radius': 2.4400, 'color': [0.341, 0.090, 0.561], 'number': 55 },
+            { 'symbol': 'Ba', 'name': 'barium', 'mass': 137.32700000, 'radius': 2.1500, 'color': [0.000, 0.788, 0.000], 'number': 56 },
+            { 'symbol': 'La', 'name': 'lanthanum', 'mass': 138.90547000, 'radius': 2.0700, 'color': [0.439, 0.831, 1.000], 'number': 57 },
+            { 'symbol': 'Ce', 'name': 'cerium', 'mass': 140.11600000, 'radius': 2.0400, 'color': [1.000, 1.000, 0.780], 'number': 58 },
+            { 'symbol': 'Pr', 'name': 'praseodymium', 'mass': 140.90765000, 'radius': 2.0300, 'color': [0.851, 1.000, 0.780], 'number': 59 },
+            { 'symbol': 'Nd', 'name': 'neodymium', 'mass': 144.24200000, 'radius': 2.0100, 'color': [0.780, 1.000, 0.780], 'number': 60 },
+            { 'symbol': 'Pm', 'name': 'promethium', 'mass': 145.00000000, 'radius': 1.9900, 'color': [0.639, 1.000, 0.780], 'number': 61 },
+            { 'symbol': 'Sm', 'name': 'samarium', 'mass': 150.36000000, 'radius': 1.9800, 'color': [0.561, 1.000, 0.780], 'number': 62 },
+            { 'symbol': 'Eu', 'name': 'europium', 'mass': 151.96400000, 'radius': 1.9800, 'color': [0.380, 1.000, 0.780], 'number': 63 },
+            { 'symbol': 'Gd', 'name': 'gadolinium', 'mass': 157.25000000, 'radius': 1.9600, 'color': [0.271, 1.000, 0.780], 'number': 64 },
+            { 'symbol': 'Tb', 'name': 'terbium', 'mass': 158.92535000, 'radius': 1.9400, 'color': [0.189, 1.000, 0.780], 'number': 65 },
+            { 'symbol': 'Dy', 'name': 'dysprosium', 'mass': 162.50000000, 'radius': 1.9200, 'color': [0.122, 1.000, 0.780], 'number': 66 },
+            { 'symbol': 'Ho', 'name': 'holmium', 'mass': 164.93032000, 'radius': 1.9200, 'color': [0.000, 1.000, 0.612], 'number': 67 },
+            { 'symbol': 'Er', 'name': 'erbium', 'mass': 167.25900000, 'radius': 1.8900, 'color': [0.000, 0.902, 0.459], 'number': 68 },
+            { 'symbol': 'Tm', 'name': 'thulium', 'mass': 168.93421000, 'radius': 1.9000, 'color': [0.000, 0.831, 0.322], 'number': 69 },
+            { 'symbol': 'Yb', 'name': 'ytterbium', 'mass': 173.05400000, 'radius': 1.8700, 'color': [0.000, 0.749, 0.220], 'number': 70 },
+            { 'symbol': 'Lu', 'name': 'lutetium', 'mass': 174.96680000, 'radius': 1.8700, 'color': [0.000, 0.671, 0.141], 'number': 71 },
+            { 'symbol': 'Hf', 'name': 'hafnium', 'mass': 178.49000000, 'radius': 1.7500, 'color': [0.302, 0.761, 1.000], 'number': 72 },
+            { 'symbol': 'Ta', 'name': 'tantalum', 'mass': 180.94788000, 'radius': 1.7000, 'color': [0.302, 0.651, 1.000], 'number': 73 },
+            { 'symbol': 'W', 'name': 'tungsten', 'mass': 183.84000000, 'radius': 1.6200, 'color': [0.129, 0.580, 0.839], 'number': 74 },
+            { 'symbol': 'Re', 'name': 'rhenium', 'mass': 186.20700000, 'radius': 1.5100, 'color': [0.149, 0.490, 0.671], 'number': 75 },
+            { 'symbol': 'Os', 'name': 'osmium', 'mass': 190.23000000, 'radius': 1.4400, 'color': [0.149, 0.400, 0.588], 'number': 76 },
+            { 'symbol': 'Ir', 'name': 'iridium', 'mass': 192.21700000, 'radius': 1.4100, 'color': [0.090, 0.329, 0.529], 'number': 77 },
+            { 'symbol': 'Pt', 'name': 'platinum', 'mass': 195.08400000, 'radius': 1.3600, 'color': [0.816, 0.816, 0.878], 'number': 78 },
+            { 'symbol': 'Au', 'name': 'gold', 'mass': 196.96656900, 'radius': 1.3600, 'color': [1.000, 0.820, 0.137], 'number': 79 },
+            { 'symbol': 'Hg', 'name': 'mercury', 'mass': 200.59000000, 'radius': 1.3200, 'color': [0.722, 0.722, 0.816], 'number': 80 },
+            { 'symbol': 'Tl', 'name': 'thallium', 'mass': 204.38330000, 'radius': 1.4500, 'color': [0.651, 0.329, 0.302], 'number': 81 },
+            { 'symbol': 'Pb', 'name': 'lead', 'mass': 207.20000000, 'radius': 1.4600, 'color': [0.341, 0.349, 0.380], 'number': 82 },
+            { 'symbol': 'Bi', 'name': 'bismuth', 'mass': 208.98040000, 'radius': 1.4800, 'color': [0.620, 0.310, 0.710], 'number': 83 },
+            { 'symbol': 'Po', 'name': 'polonium', 'mass': 210.00000000, 'radius': 1.4000, 'color': [0.671, 0.361, 0.000], 'number': 84 },
+            { 'symbol': 'At', 'name': 'astatine', 'mass': 210.00000000, 'radius': 1.5000, 'color': [0.459, 0.310, 0.271], 'number': 85 },
+            { 'symbol': 'Rn', 'name': 'radon', 'mass': 220.00000000, 'radius': 1.5000, 'color': [0.259, 0.510, 0.588], 'number': 86 },
+            { 'symbol': 'Fr', 'name': 'francium', 'mass': 223.00000000, 'radius': 2.6000, 'color': [0.259, 0.000, 0.400], 'number': 87 },
+            { 'symbol': 'Ra', 'name': 'radium', 'mass': 226.00000000, 'radius': 2.2100, 'color': [0.000, 0.490, 0.000], 'number': 88 },
+            { 'symbol': 'Ac', 'name': 'actinium', 'mass': 227.00000000, 'radius': 2.1500, 'color': [0.439, 0.671, 0.980], 'number': 89 },
+            { 'symbol': 'Th', 'name': 'thorium', 'mass': 231.03588000, 'radius': 2.0600, 'color': [0.000, 0.729, 1.000], 'number': 90 },
+            { 'symbol': 'Pa', 'name': 'protactinium', 'mass': 232.03806000, 'radius': 2.0000, 'color': [0.000, 0.631, 1.000], 'number': 91 },
+            { 'symbol': 'U', 'name': 'uranium', 'mass': 237.00000000, 'radius': 1.9600, 'color': [0.000, 0.561, 1.000], 'number': 92 },
+            { 'symbol': 'Np', 'name': 'neptunium', 'mass': 238.02891000, 'radius': 1.9000, 'color': [0.000, 0.502, 1.000], 'number': 93 },
+            { 'symbol': 'Pu', 'name': 'plutonium', 'mass': 243.00000000, 'radius': 1.8700, 'color': [0.000, 0.420, 1.000], 'number': 94 },
+            { 'symbol': 'Am', 'name': 'americium', 'mass': 244.00000000, 'radius': 1.8000, 'color': [0.329, 0.361, 0.949], 'number': 95 },
+            { 'symbol': 'Cm', 'name': 'curium', 'mass': 247.00000000, 'radius': 1.6900, 'color': [0.471, 0.361, 0.890], 'number': 96 },
+            { 'symbol': 'Bk', 'name': 'berkelium', 'mass': 247.00000000, 'radius': 1.6600, 'color': [0.541, 0.310, 0.890], 'number': 97 },
+            { 'symbol': 'Cf', 'name': 'californium', 'mass': 251.00000000, 'radius': 1.6800, 'color': [0.631, 0.212, 0.831], 'number': 98 },
+            { 'symbol': 'Es', 'name': 'einsteinium', 'mass': 252.00000000, 'radius': 1.6500, 'color': [0.702, 0.122, 0.831], 'number': 99 },
+            { 'symbol': 'Fm', 'name': 'fermium', 'mass': 257.00000000, 'radius': 1.6700, 'color': [0.702, 0.122, 0.729], 'number': 100 },
+            { 'symbol': 'Md', 'name': 'mendelevium', 'mass': 258.00000000, 'radius': 1.7300, 'color': [0.702, 0.051, 0.651], 'number': 101 },
+            { 'symbol': 'No', 'name': 'nobelium', 'mass': 259.00000000, 'radius': 1.7600, 'color': [0.741, 0.051, 0.529], 'number': 102 },
+            { 'symbol': 'Lr', 'name': 'lawrencium', 'mass': 262.00000000, 'radius': 1.6100, 'color': [0.780, 0.000, 0.400], 'number': 103 },
+            { 'symbol': 'Rf', 'name': 'rutherfordium', 'mass': 261.00000000, 'radius': 1.5700, 'color': [0.800, 0.000, 0.349], 'number': 104 },
+            { 'symbol': 'Db', 'name': 'dubnium', 'mass': 262.00000000, 'radius': 1.4900, 'color': [0.820, 0.000, 0.310], 'number': 105 },
+            { 'symbol': 'Sg', 'name': 'seaborgium', 'mass': 266.00000000, 'radius': 1.4300, 'color': [0.851, 0.000, 0.271], 'number': 106 },
+            { 'symbol': 'Bh', 'name': 'bohrium', 'mass': 264.00000000, 'radius': 1.4100, 'color': [0.878, 0.000, 0.220], 'number': 107 },
+            { 'symbol': 'Hs', 'name': 'hassium', 'mass': 277.00000000, 'radius': 1.3400, 'color': [0.902, 0.000, 0.180], 'number': 108 },
+            { 'symbol': 'Mt', 'name': 'meitnerium', 'mass': 268.00000000, 'radius': 1.2900, 'color': [0.922, 0.000, 0.149], 'number': 10, },
+            { 'symbol': 'Ds', 'name': 'Ds', 'mass': 271.00000000, 'radius': 1.2800, 'color': [0.922, 0.000, 0.149], 'number': 110 },
+            { 'symbol': 'Uuu', 'name': 'Uuu', 'mass': 272.00000000, 'radius': 1.2100, 'color': [0.922, 0.000, 0.149], 'number': 11, },
+            { 'symbol': 'Uub', 'name': 'Uub', 'mass': 285.00000000, 'radius': 1.2200, 'color': [0.922, 0.000, 0.149], 'number': 112 },
+            { 'symbol': 'Uut', 'name': 'Uut', 'mass': 284.00000000, 'radius': 1.3600, 'color': [0.922, 0.000, 0.149], 'number': 113 },
+            { 'symbol': 'Uuq', 'name': 'Uuq', 'mass': 289.00000000, 'radius': 1.4300, 'color': [0.922, 0.000, 0.149], 'number': 114 },
+            { 'symbol': 'Uup', 'name': 'Uup', 'mass': 288.00000000, 'radius': 1.6200, 'color': [0.922, 0.000, 0.149], 'number': 115 },
+            { 'symbol': 'Uuh', 'name': 'Uuh', 'mass': 292.00000000, 'radius': 1.7500, 'color': [0.922, 0.000, 0.149], 'number': 116 },
+            { 'symbol': 'Uus', 'name': 'Uus', 'mass': 294.00000000, 'radius': 1.6500, 'color': [0.922, 0.000, 0.149], 'number': 117 },
+            { 'symbol': 'Uuo', 'name': 'Uuo', 'mass': 296.00000000, 'radius': 1.5700, 'color': [0.922, 0.000, 0.149], 'number': 118 }
+        ];
+        Elements.elementsBySymbol = {};
+        Elements.elements.forEach(function (e) {
+            Elements.elementsBySymbol[e.symbol] = e;
+        });
+        Elements.elementsByNumber = {};
+        Elements.elements.forEach(function (e) {
+            Elements.elementsByNumber[e.number] = e;
+        });
+        Elements.MIN_ATOM_RADIUS = Infinity;
+        Elements.MAX_ATOM_RADIUS = -Infinity;
+        Elements.elements.forEach(function (e) {
+            Elements.MIN_ATOM_RADIUS = Math.min(Elements.MIN_ATOM_RADIUS, e.radius);
+            Elements.MAX_ATOM_RADIUS = Math.max(Elements.MAX_ATOM_RADIUS, e.radius);
+        });
+    })(Elements = Molvwr.Elements || (Molvwr.Elements = {}));
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
+    var Parser;
+    (function (Parser) {
+        function getFloat(s) {
+            if (!s)
+                return 0;
+            return parseFloat(s.trim());
+        }
+        Parser.mol = {
+            parse: function (content) {
+                console.log("parsing mol content");
+                //console.log(content);
+                var molecule = {
+                    atoms: [],
+                    title: null
+                };
+                var lines = content.split('\n');
+                molecule.title = lines[1];
+                for (var i = 0, l = lines.length; i < l; i++) {
+                    if (lines[i].indexOf("  ") == 0) {
+                        var lineElements = lines[i].split(" ").filter(function (s) {
+                            var tmp = s.trim();
+                            if (tmp && tmp.length)
+                                return true;
+                            else
+                                return false;
+                        });
+                        if (lineElements.length && lineElements.length >= 4) {
+                            var symbol = lineElements[3].trim();
+                            var x = getFloat(lineElements[0]);
+                            var y = getFloat(lineElements[1]);
+                            var z = getFloat(lineElements[2]);
+                            var atomKind = Molvwr.Elements.elementsBySymbol[symbol];
+                            if (atomKind) {
+                                console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
+                                molecule.atoms.push({
+                                    kind: atomKind,
+                                    x: x,
+                                    y: y,
+                                    z: z,
+                                    bonds: []
+                                });
+                            }
+                            else {
+                                console.warn("atom not found " + symbol);
+                            }
+                        }
+                    }
+                }
+                console.log("found " + molecule.atoms.length);
+                return molecule;
+            }
+        };
+    })(Parser = Molvwr.Parser || (Molvwr.Parser = {}));
+})(Molvwr || (Molvwr = {}));
+
+//see http://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ANISOU for reference
+var Molvwr;
+(function (Molvwr) {
+    var Parser;
+    (function (Parser) {
+        function getFloat(s) {
+            if (!s)
+                return 0;
+            return parseFloat(s.trim());
+        }
+        Parser.pdb = {
+            parse: function (content) {
+                console.log("parsing pdb content");
+                //console.log(content);
+                var molecule = {
+                    atoms: [],
+                    title: null
+                };
+                var lines = content.split('\n');
+                for (var i = 0, l = lines.length; i < l; i++) {
+                    var line = lines[i];
+                    if (line.indexOf("HETATM") == 0 || line.indexOf("ATOM") == 0) {
+                        this.parseHETATM(molecule, line);
+                    }
+                }
+                console.log("found " + molecule.title + " " + molecule.atoms.length);
+                return molecule;
+            },
+            parseHETATM: function (molecule, line) {
+                var symbol = line.substr(12, 2).trim();
+                if (isNaN(symbol[0]) === false) {
+                    symbol = symbol.substr(1);
+                }
+                var atomKind = Molvwr.Elements.elementsBySymbol[symbol];
+                if (atomKind) {
+                    var x = parseFloat(line.substr(30, 8).trim());
+                    var y = parseFloat(line.substr(38, 8).trim());
+                    var z = parseFloat(line.substr(46, 8).trim());
+                    //console.log(symbol + " " + x + "," + y + "," + z);
+                    molecule.atoms.push({
+                        kind: atomKind,
+                        x: x,
+                        y: y,
+                        z: z,
+                        bonds: []
+                    });
+                }
+                else {
+                    console.warn("atom not found " + symbol);
+                }
+            }
+        };
+    })(Parser = Molvwr.Parser || (Molvwr.Parser = {}));
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
+    var Parser;
+    (function (Parser) {
+        function getFloat(s) {
+            if (!s)
+                return 0;
+            return parseFloat(s.trim());
+        }
+        Parser.xyz = {
+            parse: function (content) {
+                console.log("parsing xyz content");
+                //console.log(content);
+                var molecule = {
+                    atoms: [],
+                    title: null
+                };
+                var lines = content.split('\n');
+                molecule.title = lines[1];
+                for (var i = 2, l = lines.length; i < l; i++) {
+                    var lineElements = lines[i].split(" ").filter(function (s) {
+                        var tmp = s.trim();
+                        if (tmp && tmp.length)
+                            return true;
+                        else
+                            return false;
+                    });
+                    if (lineElements.length && lineElements.length >= 4) {
+                        var symbol = lineElements[0].trim();
+                        var x = getFloat(lineElements[1]);
+                        var y = getFloat(lineElements[2]);
+                        var z = getFloat(lineElements[3]);
+                        var atomKind = Molvwr.Elements.elementsBySymbol[symbol];
+                        if (atomKind) {
+                            //console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
+                            molecule.atoms.push({
+                                kind: atomKind,
+                                x: x,
+                                y: y,
+                                z: z,
+                                bonds: []
+                            });
+                        }
+                        else {
+                            console.warn("atom not found " + symbol);
+                        }
+                    }
+                }
+                console.log("found " + molecule.title + " " + molecule.atoms.length);
+                return molecule;
+            }
+        };
+    })(Parser = Molvwr.Parser || (Molvwr.Parser = {}));
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
+    var Renderer;
+    (function (Renderer) {
+        var BondsCylinder = (function () {
+            function BondsCylinder(viewer, ctx, config) {
+                this.meshes = {};
+                this.ctx = ctx;
+                this.config = config;
+                this.viewer = viewer;
+            }
+            BondsCylinder.prototype.render = function (molecule, completedCallback) {
+                var cfg = this.config;
+                var meshes = [];
+                var diameter = Molvwr.Elements.MIN_ATOM_RADIUS * this.config.cylinderScale * this.config.atomScaleFactor;
+                var nbbonds = molecule.bonds.length;
+                console.log("rendering " + nbbonds + " bonds as cylinder");
+                this.prepareBonds(molecule, diameter);
+                this.runBatch(0, 50, molecule, diameter, completedCallback);
+            };
+            BondsCylinder.prototype.prepareBonds = function (molecule, diameter) {
+                for (var n in molecule.bondkinds) {
+                    this.meshes[n] = this.createMesh(molecule.bondkinds[n], diameter);
+                }
+            };
+            BondsCylinder.prototype.createMesh = function (binding, diameter) {
+                console.log("create bind mesh " + binding.key);
+                if (this.config.cylinderLOD) {
+                    console.log("cylinder LOD " + this.config.cylinderLOD.length);
+                    var rootConf = this.config.cylinderLOD[0];
+                    var rootMesh = this.createCylinder(binding, diameter, rootConf.segments, rootConf.texture, rootConf.color);
+                    for (var i = 1, l = this.config.cylinderLOD.length; i < l; i++) {
+                        var conf = this.config.cylinderLOD[i];
+                        if (conf.segments) {
+                            var childCylinder = this.createCylinder(binding, diameter, conf.segments, conf.texture, conf.color);
+                            rootMesh.addLODLevel(conf.depth, childCylinder);
+                        }
+                        else {
+                            rootMesh.addLODLevel(conf.depth, null);
+                        }
+                    }
+                    return rootMesh;
+                }
+                else {
+                    return this.createCylinder(binding, diameter, this.config.cylinderSegments, true, null);
+                }
+            };
+            BondsCylinder.prototype.createCylinder = function (binding, diameter, segments, texture, coloroverride) {
+                //console.log("render cyl " + segments);
+                var cylinder = BABYLON.Mesh.CreateCylinder("bondtemplate" + binding.key, binding.d, diameter, diameter, segments, 1, this.ctx.scene, false);
+                var atomMat = new BABYLON.StandardMaterial('materialFor' + binding.key, this.ctx.scene);
+                atomMat.diffuseColor = new BABYLON.Color3(0.4, 0.4, 0.4);
+                atomMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
+                atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+                atomMat.emissiveFresnelParameters = new BABYLON.FresnelParameters();
+                atomMat.emissiveFresnelParameters.bias = 0.6;
+                atomMat.emissiveFresnelParameters.power = 1;
+                atomMat.emissiveFresnelParameters.leftColor = BABYLON.Color3.Black();
+                atomMat.emissiveFresnelParameters.rightColor = BABYLON.Color3.White();
+                //atomMat.bumpTexture = new BABYLON.Texture('textures/bump.png', this.ctx.scene);
+                //(<any>atomMat.bumpTexture).uScale = 6;
+                //(<any>atomMat.bumpTexture).vScale = 6;
+                //atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
+                //atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
+                cylinder.material = atomMat;
+                cylinder.isPickable = false;
+                cylinder.setEnabled(false);
+                return cylinder;
+            };
+            BondsCylinder.prototype.runBatch = function (offset, size, molecule, diameter, completedCallback) {
+                var _this = this;
+                setTimeout(function () {
+                    console.log("batch rendering bonds " + offset + "/" + molecule.bonds.length);
+                    var items = molecule.bonds.slice(offset, offset + size);
+                    items.forEach(function (b, index) {
+                        var key = b.atomA.kind.symbol + "#" + b.atomB.kind.symbol;
+                        var mesh = _this.meshes[key];
+                        var cylinder = mesh.createInstance("bond" + index);
+                        _this.alignCylinderToBinding(b, cylinder);
+                    });
+                    if (items.length < size) {
+                        console.log("batch end " + items.length);
+                        if (completedCallback)
+                            completedCallback();
+                    }
+                    else {
+                        _this.runBatch(offset + size, size, molecule, diameter, completedCallback);
+                    }
+                }, 10);
+            };
+            BondsCylinder.prototype.alignCylinderToBinding = function (b, cylinder) {
+                var pointA = new BABYLON.Vector3(b.atomA.x, b.atomA.y, b.atomA.z);
+                var pointB = new BABYLON.Vector3(b.atomB.x, b.atomB.y, b.atomB.z);
+                // First of all we have to set the pivot not in the center of the cylinder:
+                cylinder.setPivotMatrix(BABYLON.Matrix.Translation(0, -b.d / 2, 0));
+                // Then move the cylinder to red sphere
+                cylinder.position = pointB;
+                // Then find the vector between spheres
+                var v1 = pointB.subtract(pointA);
+                v1.normalize();
+                var v2 = new BABYLON.Vector3(0, 1, 0);
+                // Using cross we will have a vector perpendicular to both vectors
+                var axis = BABYLON.Vector3.Cross(v2, v1);
+                axis.normalize();
+                // Angle between vectors
+                var angle = BABYLON.Vector3.Dot(v1, v2);
+                angle = Math.acos(angle);
+                // Then using axis rotation the result is obvious
+                cylinder.rotationQuaternion = BABYLON.Quaternion.RotationAxis(axis, angle);
+                if (this.vectorEqualsCloseEnough(v1, v2.negate())) {
+                    cylinder.position = pointA;
+                }
+                return cylinder;
+            };
+            BondsCylinder.prototype.vectorEqualsCloseEnough = function (v1, v2, tolerance) {
+                if (tolerance === void 0) { tolerance = 0.00002; }
+                if (typeof (v2) !== 'object') {
+                    throw ("v2 is supposed to be an object");
+                }
+                if (typeof (v1) !== 'object') {
+                    throw ("v1 is supposed to be an object");
+                }
+                if (v1.x < v2.x - tolerance || v1.x > v2.x + tolerance) {
+                    return false;
+                }
+                if (v1.y < v2.y - tolerance || v1.y > v2.y + tolerance) {
+                    return false;
+                }
+                if (v1.z < v2.z - tolerance || v1.z > v2.z + tolerance) {
+                    return false;
+                }
+                return true;
+            };
+            return BondsCylinder;
+        })();
+        Renderer.BondsCylinder = BondsCylinder;
+    })(Renderer = Molvwr.Renderer || (Molvwr.Renderer = {}));
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
+    var Renderer;
+    (function (Renderer) {
+        var BondsLines = (function () {
+            function BondsLines(viewer, ctx, config) {
+                this.meshes = {};
+                this.ctx = ctx;
+                this.config = config;
+                this.viewer = viewer;
+            }
+            BondsLines.prototype.render = function (molecule, completedCallback) {
+                var _this = this;
+                var cfg = this.config;
+                var meshes = [];
+                console.log("rendering bonds as lines");
+                molecule.bonds.forEach(function (b, index) {
+                    var line = BABYLON.Mesh.CreateLines("bond-" + index, [
+                        new BABYLON.Vector3(b.atomA.x, b.atomA.y, b.atomA.z),
+                        new BABYLON.Vector3(b.atomB.x, b.atomB.y, b.atomB.z),
+                    ], _this.ctx.scene, false);
+                    line.color = new BABYLON.Color3(0.5, 0.5, 0.5);
+                    meshes.push(line);
+                });
+                if (completedCallback)
+                    completedCallback();
+            };
+            return BondsLines;
+        })();
+        Renderer.BondsLines = BondsLines;
+    })(Renderer = Molvwr.Renderer || (Molvwr.Renderer = {}));
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
+    var Renderer;
+    (function (Renderer) {
+        var Sphere = (function () {
+            function Sphere(viewer, ctx, config) {
+                this.meshes = {};
+                this.ctx = ctx;
+                this.config = config;
+                this.viewer = viewer;
+            }
+            Sphere.prototype.render = function (molecule, completedCallback) {
+                this.prepareMeshes(molecule);
+                console.log("sphere rendering");
+                this.runBatch(0, 100, molecule, completedCallback);
+            };
+            Sphere.prototype.prepareMeshes = function (molecule) {
+                for (var n in molecule.kinds) {
+                    this.meshes[n] = this.createMesh(molecule.kinds[n].kind);
+                }
+            };
+            Sphere.prototype.createMesh = function (atomkind) {
+                if (this.config.sphereLOD) {
+                    console.log("sphere " + atomkind.symbol + "use LOD " + this.config.sphereLOD.length);
+                    var rootConf = this.config.sphereLOD[0];
+                    var rootMesh = this.createSphere(atomkind, rootConf.segments, rootConf.effects, rootConf.color);
+                    for (var i = 1, l = this.config.sphereLOD.length; i < l; i++) {
+                        var conf = this.config.sphereLOD[i];
+                        if (conf.segments) {
+                            var childSphere = this.createSphere(atomkind, conf.segments, conf.effects, conf.color);
+                            rootMesh.addLODLevel(conf.depth, childSphere);
+                        }
+                        else {
+                            rootMesh.addLODLevel(conf.depth, null);
+                        }
+                    }
+                    return rootMesh;
+                }
+                else {
+                    return this.createSphere(atomkind, this.config.sphereSegments, true, null);
+                }
+                // var knot00 = BABYLON.Mesh.CreateTorusKnot("knot0", 0.5, 0.2, 128, 64, 2, 3, scene);
+                // var knot01 = BABYLON.Mesh.CreateTorusKnot("knot1", 0.5, 0.2, 32, 16, 2, 3, scene);
+                // var knot02 = BABYLON.Mesh.CreateTorusKnot("knot2", 0.5, 0.2, 24, 12, 2, 3, scene);
+                // var knot03 = BABYLON.Mesh.CreateTorusKnot("knot3", 0.5, 0.2, 16, 8, 2, 3, scene);
+                // 
+                // knot00.addLODLevel(15, knot01);
+                // knot00.addLODLevel(30, knot02);
+                // knot00.addLODLevel(45, knot03);
+                // knot00.addLODLevel(55, null);
+            };
+            Sphere.prototype.createSphere = function (atomkind, segments, useEffects, overridecolor) {
+                var sphere = BABYLON.Mesh.CreateSphere("spheretemplate", segments, atomkind.radius * this.config.atomScaleFactor, this.ctx.scene);
+                sphere.setEnabled(false);
+                sphere.isPickable = false;
+                var atomMat = new BABYLON.StandardMaterial('materialFor' + atomkind.symbol, this.ctx.scene);
+                var color = overridecolor || atomkind.color;
+                atomMat.diffuseColor = new BABYLON.Color3(color[0], color[1], color[2]);
+                atomMat.ambientColor = new BABYLON.Color3(0, 0, 1);
+                atomMat.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
+                atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+                this.ctx.sphereMaterial(atomMat, useEffects);
+                sphere.material = atomMat;
+                return sphere;
+            };
+            Sphere.prototype.runBatch = function (offset, size, molecule, completedCallback) {
+                var _this = this;
+                setTimeout(function () {
+                    //				console.log("batch rendering bonds " + offset + "/" + molecule.bonds.length);
+                    var items = molecule.atoms.slice(offset, offset + size);
+                    items.forEach(function (atom, index) {
+                        _this.renderAtom(atom, index);
+                    });
+                    if (items.length < size) {
+                        //					console.log("batch end " + items.length);
+                        if (completedCallback)
+                            completedCallback();
+                    }
+                    else {
+                        _this.runBatch(offset + size, size, molecule, completedCallback);
+                    }
+                }, 10);
+            };
+            Sphere.prototype.renderAtom = function (atom, index) {
+                var cfg = this.config;
+                var mesh = this.meshes[atom.kind.symbol];
+                if (!mesh) {
+                    console.warn("no mesh for " + atom.kind.symbol);
+                }
+                var sphere = mesh.createInstance("sphere" + index);
+                // sphere = BABYLON.Mesh.CreateSphere("sphere" + index, cfg.sphereSegments, atomKind.radius * cfg.scale * cfg.atomScaleFactor, this.ctx.scene);
+                // sphere.material = this.ctx.getMaterial(atom.symbol);
+                sphere.pickable = false;
+                sphere.position.x = atom.x;
+                sphere.position.y = atom.y;
+                sphere.position.z = atom.z;
+                return sphere;
+            };
+            return Sphere;
+        })();
+        Renderer.Sphere = Sphere;
+    })(Renderer = Molvwr.Renderer || (Molvwr.Renderer = {}));
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
+    var Renderer;
+    (function (Renderer) {
+        var Sticks = (function () {
+            function Sticks(viewer, ctx, config) {
+                this.meshes = {};
+                this.ctx = ctx;
+                this.config = config;
+                this.viewer = viewer;
+            }
+            Sticks.prototype.render = function (molecule, completedCallback) {
+                var _this = this;
+                var cfg = this.config;
+                var meshes = [];
+                console.log("rendering bonds as cylinder");
+                var diameter = Molvwr.Elements.MIN_ATOM_RADIUS * this.config.cylinderScale * this.config.atomScaleFactor;
+                molecule.bonds.forEach(function (b, index) {
+                    var cylinder = _this.getCylinderForBinding(diameter, b, index);
+                    cylinder.pickable = false;
+                    _this.alignCylinderToBinding(b, cylinder);
+                });
+                if (completedCallback)
+                    completedCallback();
+            };
+            Sticks.prototype.getCylinderForBinding = function (diameter, binding, index) {
+                var key = binding.atomA.kind.symbol + "#" + binding.atomB.kind.symbol;
+                if (this.meshes[key])
+                    return this.meshes[key].createInstance("bond" + index);
+                var cylinder = BABYLON.Mesh.CreateCylinder("bond" + index, binding.d, diameter, diameter, this.config.sphereSegments, 1, this.ctx.scene, false);
+                this.meshes[key] = cylinder;
+                var atomMat = new BABYLON.StandardMaterial('materialFor' + key, this.ctx.scene);
+                atomMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
+                atomMat.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
+                atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+                atomMat.bumpTexture = new BABYLON.Texture('bump.png', this.ctx.scene);
+                atomMat.bumpTexture.uScale = 6;
+                atomMat.bumpTexture.vScale = 6;
+                atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
+                atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
+                cylinder.material = atomMat;
+                return cylinder;
+            };
+            Sticks.prototype.alignCylinderToBinding = function (b, cylinder) {
+                var pointA = new BABYLON.Vector3(b.atomA.x, b.atomA.y, b.atomA.z);
+                var pointB = new BABYLON.Vector3(b.atomB.x, b.atomB.y, b.atomB.z);
+                // First of all we have to set the pivot not in the center of the cylinder:
+                cylinder.setPivotMatrix(BABYLON.Matrix.Translation(0, -b.d / 2, 0));
+                // Then move the cylinder to red sphere
+                cylinder.position = pointB;
+                // Then find the vector between spheres
+                var v1 = pointB.subtract(pointA);
+                v1.normalize();
+                var v2 = new BABYLON.Vector3(0, 1, 0);
+                // Using cross we will have a vector perpendicular to both vectors
+                var axis = BABYLON.Vector3.Cross(v2, v1);
+                axis.normalize();
+                // Angle between vectors
+                var angle = BABYLON.Vector3.Dot(v1, v2);
+                angle = Math.acos(angle);
+                // Then using axis rotation the result is obvious
+                cylinder.rotationQuaternion = BABYLON.Quaternion.RotationAxis(axis, angle);
+                if (this.vectorEqualsCloseEnough(v1, v2.negate())) {
+                    cylinder.position = pointA;
+                }
+                return cylinder;
+            };
+            Sticks.prototype.vectorEqualsCloseEnough = function (v1, v2, tolerance) {
+                if (tolerance === void 0) { tolerance = 0.00002; }
+                if (typeof (v2) !== 'object') {
+                    throw ("v2 is supposed to be an object");
+                }
+                if (typeof (v1) !== 'object') {
+                    throw ("v1 is supposed to be an object");
+                }
+                if (v1.x < v2.x - tolerance || v1.x > v2.x + tolerance) {
+                    return false;
+                }
+                if (v1.y < v2.y - tolerance || v1.y > v2.y + tolerance) {
+                    return false;
+                }
+                if (v1.z < v2.z - tolerance || v1.z > v2.z + tolerance) {
+                    return false;
+                }
+                return true;
+            };
+            return Sticks;
+        })();
+        Renderer.Sticks = Sticks;
+    })(Renderer = Molvwr.Renderer || (Molvwr.Renderer = {}));
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
+    var ViewModes;
+    (function (ViewModes) {
+        var Standard = (function () {
+            function Standard() {
+            }
+            Standard.prototype.createScene = function (context) {
+                context.scene.clearColor = new BABYLON.Color3(0.9, 0.9, 0.95);
+                context.scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
+                context.scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
+                context.scene.fogDensity = 0.01;
+                var camera = new BABYLON.ArcRotateCamera('Camera', 1, .8, 28, new BABYLON.Vector3(0, 0, 0), context.scene);
+                camera.wheelPrecision = 10;
+                camera.pinchPrecision = 7;
+                camera.panningSensibility = 70;
+                camera.setTarget(BABYLON.Vector3.Zero());
+                camera.attachControl(context.canvas, true);
+                context.camera = camera;
+                //var light = new BABYLON.Light("simplelight", scene);
+                var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), context.scene);
+                light.intensity = 0.7;
+                light.groundColor = new BABYLON.Color3(0.4, 0.4, 0.4);
+                light.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+            };
+            Standard.prototype.sphereMaterial = function (context, material, useEffects) {
+                if (Molvwr.ViewModes.sphereSpecularTexture) {
+                    material.specularTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereSpecularTexture, context.scene);
+                    material.specularTexture.uScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                    material.specularTexture.vScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                }
+                if (Molvwr.ViewModes.sphereBumpTexture) {
+                    material.bumpTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereBumpTexture, context.scene);
+                    material.bumpTexture.uScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                    material.bumpTexture.vScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                }
+            };
+            Standard.prototype.cylinderMaterial = function (context, material, useEffects) {
+            };
+            return Standard;
+        })();
+        ViewModes.Standard = Standard;
+    })(ViewModes = Molvwr.ViewModes || (Molvwr.ViewModes = {}));
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
+    var ViewModes;
+    (function (ViewModes) {
+        var Toon = (function () {
+            function Toon(viewoptions) {
+                if (viewoptions === void 0) { viewoptions = { texture: false, bias: 0.3, power: 1 }; }
+                this.options = viewoptions;
+                this.emisivefresnel = new BABYLON.FresnelParameters();
+                this.emisivefresnel.bias = this.options.bias;
+                this.emisivefresnel.power = this.options.power;
+                this.emisivefresnel.leftColor = BABYLON.Color3.Black();
+                this.emisivefresnel.rightColor = BABYLON.Color3.White();
+            }
+            Toon.prototype.createScene = function (context) {
+                context.scene.clearColor = new BABYLON.Color3(0.95, 0.95, 1);
+                context.scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
+                context.scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
+                context.scene.fogDensity = 0.01;
+                var camera = new BABYLON.ArcRotateCamera('Camera', 1, .8, 28, new BABYLON.Vector3(0, 0, 0), context.scene);
+                camera.wheelPrecision = 10;
+                camera.pinchPrecision = 7;
+                camera.panningSensibility = 70;
+                camera.setTarget(BABYLON.Vector3.Zero());
+                camera.attachControl(context.canvas, true);
+                context.camera = camera;
+                //var light = new BABYLON.Light("simplelight", scene);
+                var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), context.scene);
+                light.intensity = 0.7;
+                light.groundColor = new BABYLON.Color3(0.4, 0.4, 0.4);
+                light.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+            };
+            Toon.prototype.sphereMaterial = function (context, material, useEffects) {
+                if (useEffects)
+                    material.emissiveFresnelParameters = this.emisivefresnel;
+                material.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
+                material.emissiveColor = new BABYLON.Color3(0.3, 0.3, 0.3);
+                if (useEffects && this.options.texture) {
+                    if (Molvwr.ViewModes.sphereSpecularTexture) {
+                        material.specularTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereSpecularTexture, context.scene);
+                        material.specularTexture.uScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                        material.specularTexture.vScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                    }
+                    if (Molvwr.ViewModes.sphereBumpTexture) {
+                        material.bumpTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereBumpTexture, context.scene);
+                        material.bumpTexture.uScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                        material.bumpTexture.vScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                    }
+                }
+            };
+            Toon.prototype.cylinderMaterial = function (context, material, useEffects) {
+            };
+            return Toon;
+        })();
+        ViewModes.Toon = Toon;
+    })(ViewModes = Molvwr.ViewModes || (Molvwr.ViewModes = {}));
+})(Molvwr || (Molvwr = {}));
+
+var Molvwr;
+(function (Molvwr) {
+    var ViewModes;
+    (function (ViewModes) {
+        ViewModes.sphereBumpTexture = null;
+        ViewModes.sphereSpecularTexture = null;
+        ViewModes.sphereTextureScale = 1;
+        var Experiments = (function () {
+            function Experiments() {
+            }
+            Experiments.prototype.createScene = function (context) {
+                context.scene.clearColor = new BABYLON.Color3(0.9, 0.9, 0.95);
+                context.scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
+                context.scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
+                context.scene.fogDensity = 0.01;
+                var camera = new BABYLON.ArcRotateCamera('Camera', 1, .8, 28, new BABYLON.Vector3(0, 0, 0), context.scene);
+                camera.wheelPrecision = 10;
+                camera.pinchPrecision = 7;
+                camera.panningSensibility = 70;
+                camera.setTarget(BABYLON.Vector3.Zero());
+                camera.attachControl(context.canvas, true);
+                context.camera = camera;
+                //var light = new BABYLON.Light("simplelight", scene);
+                var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), context.scene);
+                light.intensity = 0.7;
+                light.groundColor = new BABYLON.Color3(0.4, 0.4, 0.4);
+                light.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+                //this.useAmbientOcclusion();
+                //this.useHDR();
+                //this.useLensEffect();
+            };
+            Experiments.prototype.sphereMaterial = function (context, material, useEffects) {
+                if (Molvwr.ViewModes.sphereSpecularTexture) {
+                    material.specularTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereSpecularTexture, context.scene);
+                    material.specularTexture.uScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                    material.specularTexture.vScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                }
+                if (Molvwr.ViewModes.sphereBumpTexture) {
+                    material.bumpTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereBumpTexture, context.scene);
+                    material.bumpTexture.uScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                    material.bumpTexture.vScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                }
+            };
+            Experiments.prototype.cylinderMaterial = function (context, material, useEffects) {
+            };
+            Experiments.prototype.useAmbientOcclusion = function (context) {
+                var ssao = new BABYLON.SSAORenderingPipeline('ssaopipeline', context.scene, 0.75);
+                context.scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("ssaopipeline", context.camera);
+                //this.scene.postProcessRenderPipelineManager.detachCamerasFromRenderPipeline("ssaopipeline", this.camera);
+            };
+            Experiments.prototype.useHDR = function (context) {
+                var hdr = new BABYLON.HDRRenderingPipeline("hdr", context.scene, 1.0, null, [context.camera]);
+                // About gaussian blur : http://homepages.inf.ed.ac.uk/rbf/HIPR2/gsmooth.htm
+                hdr.brightThreshold = 1.2; // Minimum luminance needed to compute HDR
+                hdr.gaussCoeff = 0.3; // Gaussian coefficient = gaussCoeff * theEffectOutput;
+                hdr.gaussMean = 1; // The Gaussian blur mean
+                hdr.gaussStandDev = 0.8; // Standard Deviation of the gaussian blur.
+                hdr.exposure = 1; // Controls the overall intensity of the pipeline
+                hdr.minimumLuminance = 0.5; // Minimum luminance that the post-process can output. Luminance is >= 0
+                hdr.maximumLuminance = 1e10; //Maximum luminance that the post-process can output. Must be suprerior to minimumLuminance 
+                hdr.luminanceDecreaseRate = 0.5; // Decrease rate: white to dark
+                hdr.luminanceIncreaserate = 0.5; // Increase rate: dark to white
+                context.scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("hdr", [context.camera]);
+                //this.scene.postProcessRenderPipelineManager.detachCamerasFromRenderPipeline("hdr", [this.camera]);
+            };
+            Experiments.prototype.useLensEffect = function (context) {
+                var lensEffect = new BABYLON.LensRenderingPipeline('lens', {
+                    edge_blur: 0.2,
+                    chromatic_aberration: 0.2,
+                    distortion: 0.2,
+                    dof_focus_depth: 100 / context.camera.maxZ,
+                    dof_aperture: 1.0,
+                    grain_amount: 0.2,
+                    dof_pentagon: true,
+                    dof_gain: 1.0,
+                    dof_threshold: 1.0,
+                }, context.scene, 1.0, [context.camera]);
+            };
+            return Experiments;
+        })();
+        ViewModes.Experiments = Experiments;
+    })(ViewModes = Molvwr.ViewModes || (Molvwr.ViewModes = {}));
+})(Molvwr || (Molvwr = {}));

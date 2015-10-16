@@ -35,7 +35,9 @@ declare module Molvwr.Config {
     function ballsAndSticks(): IMolvwrConfig;
 }
 
+declare var __global: any;
 declare module Molvwr {
+    function process(): void;
     class Viewer {
         element: HTMLElement;
         canvas: HTMLCanvasElement;
@@ -43,13 +45,16 @@ declare module Molvwr {
         context: BabylonContext;
         molecule: any;
         constructor(element: HTMLElement, config?: Molvwr.Config.IMolvwrConfig);
+        dispose(): void;
         private _loadContentFromString(content, contentFormat, completedcallback);
-        renderMolecule(molecule: any, completedcallback: any): void;
+        private _renderMolecule(molecule, completedcallback);
         setOptions(options: any, completedcallback: any): void;
-        createContext(): void;
+        private _createContext();
         exportScreenshot(): string;
-        loadContentFromString(content: string, contentFormat: string, completedcallback: any): void;
-        loadContentFromUrl(url: string, contentFormat: string, completedcallback: any): void;
+        static endsWith(str: any, suffix: any): boolean;
+        static getMoleculeFileFormat(filename: string): string;
+        loadContentFromString(content: string, contentFormat: string, completedcallback?: any): void;
+        loadContentFromUrl(url: string, contentFormat?: string, completedcallback?: any): void;
         private _postProcessMolecule(molecule);
         private _calculateAtomsBonds(molecule);
         private _getCentroid(molecule);

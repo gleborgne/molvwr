@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Molvwr</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">    
+    <link href='https://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="embedexample.css" />
+    <link rel="stylesheet" href="font/outicons-basic.css" />
+	  <script src="lib/molvwr-bundle.js"></script>
+  </head>
+  <body>     
+        <h1>MOLVWR</h1>
+        <h2>a WebGL molecule viewer built with Babylon.js</h2>
+
+        <div class="intro">
+          
+        </div>
+        <div class="contentbloc">
+          <div class="mol-left">
+            <div class="mol" data-molvwr="molsamples/mol/triglyceride.sdf"></div>
+            <div class="legend">triglyceride</div>
+          </div>
+          <div class="contenttext">
+            Embedding Molvwr into your site is very easy. The most simple way is to add the script "molvwr-bundle.js" to your page, just like this:<br/>
+            <pre>&lt;script src="lib/molvwr-bundle.js"&gt;&lt;/script&gt;</pre>
+
+            This script contains a bundle of <a target="_blank" href="https://www.github.com/gleborgne/molvwr">Molvwr</a>, <a href="http://www.babylonjs.com/" target"_blank">Babylon.js</a> (a WebGL 3D Engine) and hand.js (a polyfill for pointer events that enables touch interaction).<br/>
+            You could also add the different files separately if you would like to use Babylon somewhere else in your site.<br/>
+            <br/>
+            When your script is ready, add a bloc in your page with a "data-molvwr" attribute containing the path of your molecule file :<br/>
+            <pre>&lt;div class="mol mol-left" data-molvwr="mol.sdf"&gt;&lt;/div&gt;</pre>
+            Now you just need to call "Molvwr.process()" to have your bloc turning into a 3D molecule
+            <pre>&lt;script type="text/javascript"&gt;
+    document.addEventListener("DOMContentLoaded", function() {
+    Molvwr.process();
+  });
+&lt;/script&gt;</pre>
+          </div>
+        </div>
+        <div class="clear"></div>
+        <div class="contentbloc">
+          <div class="mol-right">
+            <div class="mol" data-molvwr="molsamples/mol/vitamin_B12_cyanocobalamin.txt" data-molvwr-format="mol" data-molvwr-view="ballsandsticks"></div>
+            <div class="legend">vitamin B12</div>
+          </div>
+          <div class="contenttext">
+            You could use some other parameters to customize experience a little bit. First you could add a "data-molvwr-format" to specify the molecule format. Molvwr currently support "mol", "sdf", and "xyz" formats.<br/>
+            <br/>
+            You could also specify how the molecule get rendered with "data-molvwr-view". By default, atoms are rendered as "spheres" but you could also use "ballsandsticks".
+          </div>
+        </div>
+        <div class="clear"></div>
+        <script type="text/javascript">
+            document.addEventListener("DOMContentLoaded", function() {
+                Molvwr.process();
+            });
+        </script>
+  </body>
+</html>

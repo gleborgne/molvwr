@@ -7,16 +7,19 @@ module Molvwr {
 			return;
 		}
 		
-		var elements: HTMLElement[];
+		var elements;
 		if (arguments[0]){
 			if (arguments[0].length){
 				elements = arguments[0];
 			}else{
 				elements = [arguments[0]];
 			}
+		}else{
+			elements = document.querySelectorAll("*[data-molvwr]");
 		}
 		
-		elements.forEach((e) =>{
+		for (var i=0, l=elements.length; i<l ; i++){
+			var e= <HTMLElement>elements[i];
 			if (e && e.style){
 				if ((<any>e).molvwr){
 					(<any>e).molvwr.dispose();
@@ -25,6 +28,9 @@ module Molvwr {
 				var format = e.getAttribute("data-molvwr-format");
 				var view = e.getAttribute("data-molvwr-view");
 				
+				if (!format){
+					format = Viewer.getMoleculeFileFormat(moleculeUrl);
+				}
 				if (!moleculeUrl){
 					console.error("please specify a molecule url by adding a data-molvwr attribute");
 					return;
@@ -35,12 +41,19 @@ module Molvwr {
 					return;
 				}
 				
+				var options = null;
+				if (view == "spheres"){
+					options = Molvwr.Config.spheres();
+				}
+				else if (view == "ballsandsticks"){
+					options = Molvwr.Config.ballsAndSticks();
+				}
 				if (moleculeUrl && format){
-					var viewer = new Viewer(e);
+					var viewer = new Viewer(e, options);
 					viewer.loadContentFromUrl(moleculeUrl, format);
 				}
 			}
-		});
+		}
 	}
 	
 	export class Viewer {
@@ -61,6 +74,8 @@ module Molvwr {
 			(<any>this.element).molvwr = this;
 			this.canvas = <HTMLCanvasElement>document.createElement("CANVAS");
 			this.canvas.setAttribute("touch-action", "manipulation");
+			this.canvas.style.width= "100%";
+			this.canvas.style.height= "100%";
 			this.element.appendChild(this.canvas);
 			this.context = new BabylonContext(this.canvas);
 		}
