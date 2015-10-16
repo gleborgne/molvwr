@@ -18,7 +18,7 @@ module Molvwr.ViewModes {
 			camera.pinchPrecision = 7;
 			camera.panningSensibility = 70;
 			camera.setTarget(BABYLON.Vector3.Zero());
-			camera.attachControl(context.canvas, true);
+			camera.attachControl(context.canvas, false);
 			context.camera = camera;
 			
 			//var light = new BABYLON.Light("simplelight", scene);

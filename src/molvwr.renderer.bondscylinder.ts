@@ -18,7 +18,8 @@ module Molvwr.Renderer {
 			var nbbonds = molecule.bonds.length;
 			console.log("rendering " + nbbonds + " bonds as cylinder");
 			this.prepareBonds(molecule, diameter);
-			this.runBatch(0, 50, molecule, diameter, completedCallback); 
+			
+			this.runBatch(0, molecule.batchSize, molecule, diameter, completedCallback); 
 		}
 		
 		prepareBonds(molecule, diameter){
@@ -93,7 +94,7 @@ module Molvwr.Renderer {
 				}else{
 					this.runBatch(offset+size, size, molecule, diameter, completedCallback);
 				}
-			},10);
+			},5);
 		}
 
 		alignCylinderToBinding(b, cylinder) {

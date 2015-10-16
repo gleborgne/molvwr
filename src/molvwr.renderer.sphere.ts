@@ -14,7 +14,7 @@ module Molvwr.Renderer {
 		render(molecule, completedCallback){
 			this.prepareMeshes(molecule);
 			console.log("sphere rendering");
-			this.runBatch(0,100,molecule, completedCallback);
+			this.runBatch(0, molecule.batchSize,molecule, completedCallback);
 		}
 		
 		prepareMeshes(molecule){
@@ -86,7 +86,7 @@ module Molvwr.Renderer {
 				}else{
 					this.runBatch(offset+size, size, molecule, completedCallback);
 				}
-			},10);
+			},5);
 		}
 		
 		renderAtom(atom, index){

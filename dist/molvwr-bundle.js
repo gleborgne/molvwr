@@ -272,6 +272,7 @@ var Molvwr;
             }
         };
         Viewer.prototype._postProcessMolecule = function (molecule) {
+            molecule.batchSize = Math.min(50, (molecule.atoms.length / 4) >> 0);
             this._center(molecule);
             this._calculateAtomsBonds(molecule);
         };
@@ -670,7 +671,7 @@ var Molvwr;
                 var nbbonds = molecule.bonds.length;
                 console.log("rendering " + nbbonds + " bonds as cylinder");
                 this.prepareBonds(molecule, diameter);
-                this.runBatch(0, 50, molecule, diameter, completedCallback);
+                this.runBatch(0, molecule.batchSize, molecule, diameter, completedCallback);
             };
             BondsCylinder.prototype.prepareBonds = function (molecule, diameter) {
                 for (var n in molecule.bondkinds) {
@@ -740,7 +741,7 @@ var Molvwr;
                     else {
                         _this.runBatch(offset + size, size, molecule, diameter, completedCallback);
                     }
-                }, 10);
+                }, 5);
             };
             BondsCylinder.prototype.alignCylinderToBinding = function (b, cylinder) {
                 var pointA = new BABYLON.Vector3(b.atomA.x, b.atomA.y, b.atomA.z);
@@ -838,7 +839,7 @@ var Molvwr;
             Sphere.prototype.render = function (molecule, completedCallback) {
                 this.prepareMeshes(molecule);
                 console.log("sphere rendering");
-                this.runBatch(0, 100, molecule, completedCallback);
+                this.runBatch(0, molecule.batchSize, molecule, completedCallback);
             };
             Sphere.prototype.prepareMeshes = function (molecule) {
                 for (var n in molecule.kinds) {
@@ -905,7 +906,7 @@ var Molvwr;
                     else {
                         _this.runBatch(offset + size, size, molecule, completedCallback);
                     }
-                }, 10);
+                }, 5);
             };
             Sphere.prototype.renderAtom = function (atom, index) {
                 var cfg = this.config;
@@ -1089,7 +1090,7 @@ var Molvwr;
                 camera.pinchPrecision = 7;
                 camera.panningSensibility = 70;
                 camera.setTarget(BABYLON.Vector3.Zero());
-                camera.attachControl(context.canvas, true);
+                camera.attachControl(context.canvas, false);
                 context.camera = camera;
                 //var light = new BABYLON.Light("simplelight", scene);
                 var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), context.scene);
@@ -1143,7 +1144,7 @@ var Molvwr;
                 camera.pinchPrecision = 7;
                 camera.panningSensibility = 70;
                 camera.setTarget(BABYLON.Vector3.Zero());
-                camera.attachControl(context.canvas, true);
+                camera.attachControl(context.canvas, false);
                 context.camera = camera;
                 //var light = new BABYLON.Light("simplelight", scene);
                 var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), context.scene);
