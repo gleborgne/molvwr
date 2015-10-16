@@ -45,21 +45,7 @@ module Molvwr.ViewModes {
 				material.emissiveFresnelParameters = this.emisivefresnel;
 				
 			material.specularColor = new BABYLON.Color3(0.4,0.4,0.4);
-			material.emissiveColor = new BABYLON.Color3(0.3,0.3,0.3);
-			
-			if (useEffects && this.options.texture){
-				if(Molvwr.ViewModes.sphereSpecularTexture){
-					material.specularTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereSpecularTexture, context.scene);
-					(<any>material.specularTexture).uScale = Molvwr.ViewModes.sphereTextureScale || 1;
-					(<any>material.specularTexture).vScale = Molvwr.ViewModes.sphereTextureScale || 1;
-				}
-					
-				if (Molvwr.ViewModes.sphereBumpTexture){
-					material.bumpTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereBumpTexture, context.scene);
-					(<any>material.bumpTexture).uScale = Molvwr.ViewModes.sphereTextureScale || 1;
-					(<any>material.bumpTexture).vScale = Molvwr.ViewModes.sphereTextureScale || 1;
-				}
-			}
+			material.emissiveColor = new BABYLON.Color3(0.3,0.3,0.3);			
 		}
 		
 		cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects : boolean){

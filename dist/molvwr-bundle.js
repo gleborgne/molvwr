@@ -1,19 +1,14 @@
 var Molvwr;
 (function (Molvwr) {
     var BabylonContext = (function () {
-        function BabylonContext(canvas, viewMode) {
+        function BabylonContext(canvas) {
             var _this = this;
             this.canvas = canvas;
             this.engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true });
-            this.atomsMaterials = {};
             this.engine.runRenderLoop(function () {
                 if (_this.scene)
                     _this.scene.render();
             });
-            this.viewMode = viewMode;
-            if (!this.viewMode) {
-                this.viewMode = new Molvwr.ViewModes.Toon();
-            }
         }
         BabylonContext.prototype.exportScreenshot = function () {
             return this.canvas.toDataURL("image/png");
@@ -22,8 +17,8 @@ var Molvwr;
             this.engine.dispose();
         };
         BabylonContext.prototype.sphereMaterial = function (atomMat, useEffects) {
-            if (this.viewMode) {
-                this.viewMode.sphereMaterial(this, atomMat, useEffects);
+            if (this.viewmode) {
+                this.viewmode.sphereMaterial(this, atomMat, useEffects);
             }
         };
         BabylonContext.prototype.createScene = function () {
@@ -32,8 +27,8 @@ var Molvwr;
             console.log("create babylon scene");
             var scene = new BABYLON.Scene(this.engine);
             this.scene = scene;
-            if (this.viewMode) {
-                this.viewMode.createScene(this);
+            if (this.viewmode) {
+                this.viewmode.createScene(this);
             }
         };
         return BabylonContext;
@@ -138,7 +133,7 @@ var Molvwr;
     }
     Molvwr.process = process;
     var Viewer = (function () {
-        function Viewer(element, config) {
+        function Viewer(element, config, viewmode) {
             if (!__global.BABYLON) {
                 throw new Error("Babylon.js is not present, please add a reference to Babylon.js script");
             }
@@ -153,6 +148,10 @@ var Molvwr;
             this.canvas.style.height = "100%";
             this.element.appendChild(this.canvas);
             this.context = new Molvwr.BabylonContext(this.canvas);
+            this.viewmode = viewmode;
+            if (!this.viewmode) {
+                this.viewmode = new Molvwr.ViewModes.Standard();
+            }
         }
         Viewer.prototype.dispose = function () {
             this.context.dispose();
@@ -211,20 +210,26 @@ var Molvwr;
         };
         Viewer.prototype.setOptions = function (options, completedcallback) {
             this.config = options;
+            this.refresh(completedcallback);
+        };
+        Viewer.prototype.setViewMode = function (viewmode, completedcallback) {
+            this.viewmode = viewmode;
+            this.refresh(completedcallback);
+        };
+        Viewer.prototype.refresh = function (completedcallback) {
             if (this.molecule) {
                 this._renderMolecule(this.molecule, completedcallback);
             }
-        };
-        Viewer.prototype.setViewMode = function (viewmode, completedcallback) {
-            this.context.viewMode = viewmode;
-            if (this.molecule) {
-                this._renderMolecule(this.molecule, completedcallback);
+            else {
+                if (completedcallback)
+                    completedcallback();
             }
         };
         Viewer.prototype._createContext = function () {
             if (this.context)
                 this.context.dispose();
             this.context = new Molvwr.BabylonContext(this.canvas);
+            this.context.viewmode = this.viewmode;
             this.context.createScene();
         };
         Viewer.prototype.exportScreenshot = function () {
@@ -527,7 +532,7 @@ var Molvwr;
                             var z = getFloat(lineElements[2]);
                             var atomKind = Molvwr.Elements.elementsBySymbol[symbol];
                             if (atomKind) {
-                                console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
+                                //console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
                                 molecule.atoms.push({
                                     kind: atomKind,
                                     x: x,
@@ -675,7 +680,7 @@ var Molvwr;
                 var meshes = [];
                 var diameter = Molvwr.Elements.MIN_ATOM_RADIUS * this.config.cylinderScale * this.config.atomScaleFactor;
                 var nbbonds = molecule.bonds.length;
-                console.log("rendering " + nbbonds + " bonds as cylinder");
+                //console.log("rendering " + nbbonds + " bonds as cylinder");
                 this.prepareBonds(molecule, diameter);
                 this.runBatch(0, molecule.batchSize, molecule, diameter, completedCallback);
             };
@@ -685,9 +690,9 @@ var Molvwr;
                 }
             };
             BondsCylinder.prototype.createMesh = function (binding, diameter) {
-                console.log("create bind mesh " + binding.key);
+                //console.log("create bind mesh " + binding.key);
                 if (this.config.cylinderLOD) {
-                    console.log("cylinder LOD " + this.config.cylinderLOD.length);
+                    //console.log("cylinder LOD " + this.config.cylinderLOD.length)
                     var rootConf = this.config.cylinderLOD[0];
                     var rootMesh = this.createCylinder(binding, diameter, rootConf.segments, rootConf.texture, rootConf.color);
                     for (var i = 1, l = this.config.cylinderLOD.length; i < l; i++) {
@@ -854,7 +859,7 @@ var Molvwr;
             };
             Sphere.prototype.createMesh = function (atomkind) {
                 if (this.config.sphereLOD) {
-                    console.log("sphere " + atomkind.symbol + "use LOD " + this.config.sphereLOD.length);
+                    //console.log("sphere " + atomkind.symbol + " use LOD " + this.config.sphereLOD.length);
                     var rootConf = this.config.sphereLOD[0];
                     var rootMesh = this.createSphere(atomkind, rootConf.segments, rootConf.effects, rootConf.color);
                     for (var i = 1, l = this.config.sphereLOD.length; i < l; i++) {
@@ -872,15 +877,6 @@ var Molvwr;
                 else {
                     return this.createSphere(atomkind, this.config.sphereSegments, true, null);
                 }
-                // var knot00 = BABYLON.Mesh.CreateTorusKnot("knot0", 0.5, 0.2, 128, 64, 2, 3, scene);
-                // var knot01 = BABYLON.Mesh.CreateTorusKnot("knot1", 0.5, 0.2, 32, 16, 2, 3, scene);
-                // var knot02 = BABYLON.Mesh.CreateTorusKnot("knot2", 0.5, 0.2, 24, 12, 2, 3, scene);
-                // var knot03 = BABYLON.Mesh.CreateTorusKnot("knot3", 0.5, 0.2, 16, 8, 2, 3, scene);
-                // 
-                // knot00.addLODLevel(15, knot01);
-                // knot00.addLODLevel(30, knot02);
-                // knot00.addLODLevel(45, knot03);
-                // knot00.addLODLevel(55, null);
             };
             Sphere.prototype.createSphere = function (atomkind, segments, useEffects, overridecolor) {
                 var sphere = BABYLON.Mesh.CreateSphere("spheretemplate", segments, atomkind.radius * this.config.atomScaleFactor, this.ctx.scene);
@@ -889,9 +885,6 @@ var Molvwr;
                 var atomMat = new BABYLON.StandardMaterial('materialFor' + atomkind.symbol, this.ctx.scene);
                 var color = overridecolor || atomkind.color;
                 atomMat.diffuseColor = new BABYLON.Color3(color[0], color[1], color[2]);
-                atomMat.ambientColor = new BABYLON.Color3(0, 0, 1);
-                atomMat.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
-                atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
                 this.ctx.sphereMaterial(atomMat, useEffects);
                 sphere.material = atomMat;
                 return sphere;
@@ -1032,39 +1025,90 @@ var Molvwr;
     var ViewModes;
     (function (ViewModes) {
         var Standard = (function () {
-            function Standard() {
+            function Standard(viewoptions) {
+                this.options = viewoptions;
+                if (!viewoptions) {
+                    console.log("default viewmode config");
+                    this.options = Molvwr.ViewModes.Standard.defaultConfig();
+                }
+                if (!this.options.sphere)
+                    this.options.sphere = {};
+                if (!this.options.cylinder)
+                    this.options.cylinder = {};
             }
+            Standard.defaultConfig = function () {
+                var res = {
+                    texture: false,
+                    emisivefresnel: new BABYLON.FresnelParameters(),
+                    cylinder: {},
+                    sphere: {}
+                };
+                res.emisivefresnel.bias = 0.3;
+                res.emisivefresnel.power = 1;
+                res.emisivefresnel.leftColor = BABYLON.Color3.Black();
+                res.emisivefresnel.rightColor = BABYLON.Color3.White();
+                return res;
+            };
+            Standard.prototype.getColor = function (config, defaultColor) {
+                if (config && config.length >= 3) {
+                    return new BABYLON.Color3(config[0], config[1], config[2]);
+                }
+                else {
+                    return new BABYLON.Color3(defaultColor[0], defaultColor[1], defaultColor[2]);
+                }
+            };
             Standard.prototype.createScene = function (context) {
-                context.scene.clearColor = new BABYLON.Color3(0.9, 0.9, 0.95);
+                context.scene.clearColor = this.getColor(this.options.clearColor, [0.9, 0.9, 0.95]);
                 context.scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
-                context.scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
-                context.scene.fogDensity = 0.01;
+                context.scene.fogColor = this.getColor(this.options.fogColor, [0.9, 0.9, 0.85]);
+                context.scene.fogDensity = this.options.fogDensity || 0.01;
                 var camera = new BABYLON.ArcRotateCamera('Camera', 1, .8, 28, new BABYLON.Vector3(0, 0, 0), context.scene);
-                camera.wheelPrecision = 10;
-                camera.pinchPrecision = 7;
-                camera.panningSensibility = 70;
+                camera.wheelPrecision = this.options.wheelPrecision || 10;
+                camera.pinchPrecision = this.options.pinchPrecision || 7;
+                camera.panningSensibility = this.options.panningSensibility || 70;
                 camera.setTarget(BABYLON.Vector3.Zero());
-                camera.attachControl(context.canvas, true);
+                camera.attachControl(context.canvas, false);
                 context.camera = camera;
                 //var light = new BABYLON.Light("simplelight", scene);
                 var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), context.scene);
                 light.intensity = 0.7;
-                light.groundColor = new BABYLON.Color3(0.4, 0.4, 0.4);
-                light.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+                light.groundColor = this.getColor(this.options.groundColor, [0.4, 0.4, 0.4]);
+                light.specular = this.getColor(this.options.specular, [0.5, 0.5, 0.5]);
+            };
+            Standard.prototype.applyTexture = function (context, material, texture) {
+                if (texture.specularTexture) {
+                    material.specularTexture = new BABYLON.Texture(texture.specularTexture, context.scene);
+                    material.specularTexture.uScale = texture.textureScale || 1;
+                    material.specularTexture.vScale = texture.textureScale || 1;
+                }
+                if (texture.bumpTexture) {
+                    material.bumpTexture = new BABYLON.Texture(texture.bumpTexture, context.scene);
+                    material.bumpTexture.uScale = texture.textureScale || 1;
+                    material.bumpTexture.vScale = texture.textureScale || 1;
+                }
             };
             Standard.prototype.sphereMaterial = function (context, material, useEffects) {
-                if (Molvwr.ViewModes.sphereSpecularTexture) {
-                    material.specularTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereSpecularTexture, context.scene);
-                    material.specularTexture.uScale = Molvwr.ViewModes.sphereTextureScale || 1;
-                    material.specularTexture.vScale = Molvwr.ViewModes.sphereTextureScale || 1;
-                }
-                if (Molvwr.ViewModes.sphereBumpTexture) {
-                    material.bumpTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereBumpTexture, context.scene);
-                    material.bumpTexture.uScale = Molvwr.ViewModes.sphereTextureScale || 1;
-                    material.bumpTexture.vScale = Molvwr.ViewModes.sphereTextureScale || 1;
+                material.ambientColor = new BABYLON.Color3(0, 0, 1);
+                material.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
+                material.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+                if (useEffects) {
+                    if (this.options.emisivefresnel) {
+                        material.emissiveFresnelParameters = this.options.emisivefresnel;
+                    }
+                    if (this.options.sphere) {
+                        this.applyTexture(context, material, this.options.sphere);
+                    }
                 }
             };
             Standard.prototype.cylinderMaterial = function (context, material, useEffects) {
+                if (useEffects) {
+                    if (this.options.emisivefresnel) {
+                        material.emissiveFresnelParameters = this.options.emisivefresnel;
+                    }
+                    if (this.options.cylinder) {
+                        this.applyTexture(context, material, this.options.cylinder);
+                    }
+                }
             };
             return Standard;
         })();
@@ -1109,18 +1153,6 @@ var Molvwr;
                     material.emissiveFresnelParameters = this.emisivefresnel;
                 material.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
                 material.emissiveColor = new BABYLON.Color3(0.3, 0.3, 0.3);
-                if (useEffects && this.options.texture) {
-                    if (Molvwr.ViewModes.sphereSpecularTexture) {
-                        material.specularTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereSpecularTexture, context.scene);
-                        material.specularTexture.uScale = Molvwr.ViewModes.sphereTextureScale || 1;
-                        material.specularTexture.vScale = Molvwr.ViewModes.sphereTextureScale || 1;
-                    }
-                    if (Molvwr.ViewModes.sphereBumpTexture) {
-                        material.bumpTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereBumpTexture, context.scene);
-                        material.bumpTexture.uScale = Molvwr.ViewModes.sphereTextureScale || 1;
-                        material.bumpTexture.vScale = Molvwr.ViewModes.sphereTextureScale || 1;
-                    }
-                }
             };
             Toon.prototype.cylinderMaterial = function (context, material, useEffects) {
             };
@@ -1134,9 +1166,6 @@ var Molvwr;
 (function (Molvwr) {
     var ViewModes;
     (function (ViewModes) {
-        ViewModes.sphereBumpTexture = null;
-        ViewModes.sphereSpecularTexture = null;
-        ViewModes.sphereTextureScale = 1;
         var Experiments = (function () {
             function Experiments() {
             }
@@ -1162,16 +1191,6 @@ var Molvwr;
                 //this.useLensEffect();
             };
             Experiments.prototype.sphereMaterial = function (context, material, useEffects) {
-                if (Molvwr.ViewModes.sphereSpecularTexture) {
-                    material.specularTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereSpecularTexture, context.scene);
-                    material.specularTexture.uScale = Molvwr.ViewModes.sphereTextureScale || 1;
-                    material.specularTexture.vScale = Molvwr.ViewModes.sphereTextureScale || 1;
-                }
-                if (Molvwr.ViewModes.sphereBumpTexture) {
-                    material.bumpTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereBumpTexture, context.scene);
-                    material.bumpTexture.uScale = Molvwr.ViewModes.sphereTextureScale || 1;
-                    material.bumpTexture.vScale = Molvwr.ViewModes.sphereTextureScale || 1;
-                }
             };
             Experiments.prototype.cylinderMaterial = function (context, material, useEffects) {
             };

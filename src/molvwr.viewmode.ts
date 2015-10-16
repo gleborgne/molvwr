@@ -1,7 +1,4 @@
 module Molvwr.ViewModes {
-	export var sphereBumpTexture : string = null;
-	export var sphereSpecularTexture : string = null;
-	export var sphereTextureScale : number = 1;
 	
 	export class Experiments implements Molvwr.IViewMode {
 		constructor(){
@@ -34,17 +31,7 @@ module Molvwr.ViewModes {
 		}
 		
 		sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects : boolean){
-			if(Molvwr.ViewModes.sphereSpecularTexture){
-				material.specularTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereSpecularTexture, context.scene);
-				(<any>material.specularTexture).uScale = Molvwr.ViewModes.sphereTextureScale || 1;
-				(<any>material.specularTexture).vScale = Molvwr.ViewModes.sphereTextureScale || 1;
-			}
-				
-			if (Molvwr.ViewModes.sphereBumpTexture){
-				material.bumpTexture = new BABYLON.Texture(Molvwr.ViewModes.sphereBumpTexture, context.scene);
-				(<any>material.bumpTexture).uScale = Molvwr.ViewModes.sphereTextureScale || 1;
-				(<any>material.bumpTexture).vScale = Molvwr.ViewModes.sphereTextureScale || 1;
-			}
+			
 		}
 		
 		cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects : boolean){

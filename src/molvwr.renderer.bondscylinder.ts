@@ -16,7 +16,7 @@ module Molvwr.Renderer {
 			var meshes = [];
 			var diameter = Molvwr.Elements.MIN_ATOM_RADIUS * this.config.cylinderScale * this.config.atomScaleFactor;
 			var nbbonds = molecule.bonds.length;
-			console.log("rendering " + nbbonds + " bonds as cylinder");
+			//console.log("rendering " + nbbonds + " bonds as cylinder");
 			this.prepareBonds(molecule, diameter);
 			
 			this.runBatch(0, molecule.batchSize, molecule, diameter, completedCallback); 
@@ -29,9 +29,9 @@ module Molvwr.Renderer {
 		}
 		
 		createMesh(binding, diameter){
-			console.log("create bind mesh " + binding.key);
+			//console.log("create bind mesh " + binding.key);
 			if (this.config.cylinderLOD){
-				console.log("cylinder LOD " + this.config.cylinderLOD.length)
+				//console.log("cylinder LOD " + this.config.cylinderLOD.length)
 				var rootConf = this.config.cylinderLOD[0];
 				var rootMesh = this.createCylinder(binding, diameter, rootConf.segments, rootConf.texture, rootConf.color);
 				for (var i=1, l=this.config.cylinderLOD.length; i<l ; i++){

@@ -10,23 +10,15 @@ module Molvwr {
 		scene: BABYLON.Scene;
 		camera: BABYLON.Camera;
 		canvas: HTMLCanvasElement;
-		atomsMaterials: any;
-		viewMode : IViewMode;
+		viewmode : IViewMode;
 		
-		constructor(canvas, viewMode?) {
+		constructor(canvas) {
 			this.canvas = canvas;
 			this.engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true });
-			this.atomsMaterials = {};
 			this.engine.runRenderLoop(() => {
 				if (this.scene)
 					this.scene.render();
-			});
-			
-			this.viewMode = viewMode;
-			
-			if (!this.viewMode){
-				this.viewMode = new Molvwr.ViewModes.Toon();
-			}
+			});						
 		}
 
 		exportScreenshot() {
@@ -38,8 +30,8 @@ module Molvwr {
 		}
 
 		sphereMaterial(atomMat: BABYLON.StandardMaterial, useEffects : boolean) {
-			if (this.viewMode){
-				this.viewMode.sphereMaterial(this, atomMat, useEffects);
+			if (this.viewmode){
+				this.viewmode.sphereMaterial(this, atomMat, useEffects);
 			}
 		}
 
@@ -52,8 +44,8 @@ module Molvwr {
 			var scene = new BABYLON.Scene(this.engine);
 			this.scene = scene;
 			
-			if (this.viewMode){
-				this.viewMode.createScene(this);
+			if (this.viewmode){
+				this.viewmode.createScene(this);
 			}
 		}
 	}

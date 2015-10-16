@@ -9,9 +9,8 @@
         scene: BABYLON.Scene;
         camera: BABYLON.Camera;
         canvas: HTMLCanvasElement;
-        atomsMaterials: any;
-        viewMode: IViewMode;
-        constructor(canvas: any, viewMode?: any);
+        viewmode: IViewMode;
+        constructor(canvas: any);
         exportScreenshot(): string;
         dispose(): void;
         sphereMaterial(atomMat: BABYLON.StandardMaterial, useEffects: boolean): void;
@@ -42,14 +41,16 @@ declare module Molvwr {
         element: HTMLElement;
         canvas: HTMLCanvasElement;
         config: Molvwr.Config.IMolvwrConfig;
+        viewmode: IViewMode;
         context: BabylonContext;
         molecule: any;
-        constructor(element: HTMLElement, config?: Molvwr.Config.IMolvwrConfig);
+        constructor(element: HTMLElement, config?: Molvwr.Config.IMolvwrConfig, viewmode?: IViewMode);
         dispose(): void;
         private _loadContentFromString(content, contentFormat, completedcallback);
         private _renderMolecule(molecule, completedcallback);
         setOptions(options: any, completedcallback?: any): void;
         setViewMode(viewmode: IViewMode, completedcallback?: any): void;
+        refresh(completedcallback: any): void;
         private _createContext();
         exportScreenshot(): string;
         static endsWith(str: any, suffix: any): boolean;
@@ -166,9 +167,36 @@ declare module Molvwr.Renderer {
 }
 
 declare module Molvwr.ViewModes {
+    interface StandardViewModeOptions {
+        texture?: boolean;
+        onpreparescene?: (ctx: BabylonContext) => void;
+        clearColor?: number[];
+        fogDensity?: number;
+        fogColor?: number[];
+        groundColor?: number[];
+        specular?: number[];
+        wheelPrecision?: number;
+        pinchPrecision?: number;
+        panningSensibility?: number;
+        emisivefresnel?: BABYLON.FresnelParameters;
+        sphere?: {
+            specularTexture?: string;
+            bumpTexture?: string;
+            textureScale?: number;
+        };
+        cylinder?: {
+            specularTexture?: string;
+            bumpTexture?: string;
+            textureScale?: number;
+        };
+    }
     class Standard implements Molvwr.IViewMode {
-        constructor();
+        options: StandardViewModeOptions;
+        constructor(viewoptions?: StandardViewModeOptions);
+        static defaultConfig(): StandardViewModeOptions;
+        getColor(config: any, defaultColor: any): BABYLON.Color3;
         createScene(context: BabylonContext): void;
+        applyTexture(context: BabylonContext, material: BABYLON.StandardMaterial, texture: any): void;
         sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects: boolean): void;
         cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects: boolean): void;
     }
@@ -191,9 +219,6 @@ declare module Molvwr.ViewModes {
 }
 
 declare module Molvwr.ViewModes {
-    var sphereBumpTexture: string;
-    var sphereSpecularTexture: string;
-    var sphereTextureScale: number;
     class Experiments implements Molvwr.IViewMode {
         constructor();
         createScene(context: BabylonContext): void;

@@ -25,7 +25,7 @@ module Molvwr.Renderer {
 		
 		createMesh(atomkind){			
 			if (this.config.sphereLOD){
-				console.log("sphere " + atomkind.symbol + "use LOD " + this.config.sphereLOD.length);
+				//console.log("sphere " + atomkind.symbol + " use LOD " + this.config.sphereLOD.length);
 				var rootConf = this.config.sphereLOD[0];
 				var rootMesh = this.createSphere(atomkind, rootConf.segments, rootConf.effects, rootConf.color);
 				for (var i=1, l=this.config.sphereLOD.length; i<l ; i++){
@@ -41,15 +41,6 @@ module Molvwr.Renderer {
 			}else{
 				return this.createSphere(atomkind, this.config.sphereSegments, true, null);
 			}
-			// var knot00 = BABYLON.Mesh.CreateTorusKnot("knot0", 0.5, 0.2, 128, 64, 2, 3, scene);
-			// var knot01 = BABYLON.Mesh.CreateTorusKnot("knot1", 0.5, 0.2, 32, 16, 2, 3, scene);
-			// var knot02 = BABYLON.Mesh.CreateTorusKnot("knot2", 0.5, 0.2, 24, 12, 2, 3, scene);
-			// var knot03 = BABYLON.Mesh.CreateTorusKnot("knot3", 0.5, 0.2, 16, 8, 2, 3, scene);
-			// 
-			// knot00.addLODLevel(15, knot01);
-			// knot00.addLODLevel(30, knot02);
-			// knot00.addLODLevel(45, knot03);
-			// knot00.addLODLevel(55, null);
 		}
 		
 		createSphere(atomkind, segments, useEffects, overridecolor){
@@ -59,10 +50,7 @@ module Molvwr.Renderer {
 			
 			var atomMat = new BABYLON.StandardMaterial('materialFor' + atomkind.symbol, this.ctx.scene);
 			var color = overridecolor || atomkind.color;
-			atomMat.diffuseColor = new BABYLON.Color3(color[0], color[1], color[2]);
-			atomMat.ambientColor = new BABYLON.Color3(0, 0, 1);
-			atomMat.specularColor = new BABYLON.Color3(0.1,0.1,0.1);
-			atomMat.emissiveColor = new BABYLON.Color3(0.2,0.2,0.2);
+			atomMat.diffuseColor = new BABYLON.Color3(color[0], color[1], color[2]);			
 			
 			this.ctx.sphereMaterial(atomMat, useEffects);
 			

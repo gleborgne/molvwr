@@ -60,10 +60,11 @@ module Molvwr {
 		element: HTMLElement;
 		canvas: HTMLCanvasElement;
 		config: Molvwr.Config.IMolvwrConfig;
+		viewmode : IViewMode;
 		context: BabylonContext;
 		molecule: any;
 
-		constructor(element: HTMLElement, config?: Molvwr.Config.IMolvwrConfig) {
+		constructor(element: HTMLElement, config?: Molvwr.Config.IMolvwrConfig, viewmode? : IViewMode) {
 			if (!__global.BABYLON){
 				throw new Error("Babylon.js is not present, please add a reference to Babylon.js script");
 			}
@@ -78,6 +79,11 @@ module Molvwr {
 			this.canvas.style.height= "100%";
 			this.element.appendChild(this.canvas);
 			this.context = new BabylonContext(this.canvas);
+			this.viewmode = viewmode;
+			
+			if (!this.viewmode){
+				this.viewmode = new Molvwr.ViewModes.Standard();
+			}
 		}
 		
 		dispose(){
@@ -107,6 +113,7 @@ module Molvwr {
 		private _renderMolecule(molecule, completedcallback) {
 			this.molecule = molecule;
 			this._createContext();
+			
 			setTimeout(() => {
 				if (this.config.renderers) {
 					var completedCount = 0;
@@ -137,17 +144,22 @@ module Molvwr {
 			}, 50);
 		}
 
+		
 		setOptions(options, completedcallback?) {
 			this.config = options;
-			if (this.molecule) {
-				this._renderMolecule(this.molecule, completedcallback);
-			}
+			this.refresh(completedcallback);
 		}
 		
 		setViewMode(viewmode : IViewMode, completedcallback?) {
-			this.context.viewMode = viewmode;
+			this.viewmode = viewmode;
+			this.refresh(completedcallback);
+		}
+		
+		refresh(completedcallback){
 			if (this.molecule) {
 				this._renderMolecule(this.molecule, completedcallback);
+			}else{
+				if (completedcallback) completedcallback();
 			}
 		}
 
@@ -155,6 +167,7 @@ module Molvwr {
 			if (this.context)
 				this.context.dispose();
 			this.context = new BabylonContext(this.canvas);
+			this.context.viewmode = this.viewmode;
 			this.context.createScene();
 		}
 
