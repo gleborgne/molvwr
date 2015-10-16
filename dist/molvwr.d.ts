@@ -48,7 +48,8 @@ declare module Molvwr {
         dispose(): void;
         private _loadContentFromString(content, contentFormat, completedcallback);
         private _renderMolecule(molecule, completedcallback);
-        setOptions(options: any, completedcallback: any): void;
+        setOptions(options: any, completedcallback?: any): void;
+        setViewMode(viewmode: IViewMode, completedcallback?: any): void;
         private _createContext();
         exportScreenshot(): string;
         static endsWith(str: any, suffix: any): boolean;

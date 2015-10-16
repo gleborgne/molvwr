@@ -137,8 +137,15 @@ module Molvwr {
 			}, 50);
 		}
 
-		setOptions(options, completedcallback) {
+		setOptions(options, completedcallback?) {
 			this.config = options;
+			if (this.molecule) {
+				this._renderMolecule(this.molecule, completedcallback);
+			}
+		}
+		
+		setViewMode(viewmode : IViewMode, completedcallback?) {
+			this.context.viewMode = viewmode;
 			if (this.molecule) {
 				this._renderMolecule(this.molecule, completedcallback);
 			}

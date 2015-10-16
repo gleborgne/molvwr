@@ -215,6 +215,12 @@ var Molvwr;
                 this._renderMolecule(this.molecule, completedcallback);
             }
         };
+        Viewer.prototype.setViewMode = function (viewmode, completedcallback) {
+            this.context.viewMode = viewmode;
+            if (this.molecule) {
+                this._renderMolecule(this.molecule, completedcallback);
+            }
+        };
         Viewer.prototype._createContext = function () {
             if (this.context)
                 this.context.dispose();

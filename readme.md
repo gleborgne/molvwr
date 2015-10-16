@@ -11,6 +11,8 @@ Have a look at our [demo website](http://gleborgne.github.io/molvwr/). We have e
 Molvwr supports "xyz", "mol", "sdf", and "pdb" files. If you want an additional file format, please fill an issue
 
 ## How to embed Molvwr in your website
+You could look at the [sample page](http://gleborgne.github.io/molvwr/embedexample.html) and use F12 developper tools to look at the source. Here is a brief summary.
+
 Embedding Molvwr into your site is very easy. The most simple way is to add the script "molvwr-bundle.js" to your page, just like this:<br/>
 ```html
 <script src="lib/molvwr-bundle.js"></script>
@@ -33,3 +35,6 @@ Now you just need to call "Molvwr.process()" to have your bloc turning into a 3D
 </script>
 ````
 The "process" function can be called without parameters, or you could explicitely provide an HTML element (or an array of elements).
+
+## Advanced integration
+If you want to go deep into the rabbit hole, you could work with Molvwr in advanced ways. It has been designed to be extensible and to tweek rendering if you would like. We will expand documentation in the near future but for now, you could have a look at the source code, and the [molecule catalog sample](http://gleborgne.github.io/molvwr) to get an idea.
