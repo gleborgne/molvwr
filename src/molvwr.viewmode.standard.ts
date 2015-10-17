@@ -113,6 +113,10 @@ module Molvwr.ViewModes {
 		}
 
 		cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects: boolean) {
+			material.ambientColor = new BABYLON.Color3(0, 0, 1);
+			material.specularColor = new BABYLON.Color3(0.2,0.2,0.2);
+			material.emissiveColor = new BABYLON.Color3(0.2,0.2,0.2);
+			
 			if (useEffects) {
 				if (this.options.emisivefresnel) {
 					material.emissiveFresnelParameters = this.options.emisivefresnel;

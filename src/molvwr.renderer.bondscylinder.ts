@@ -33,11 +33,11 @@ module Molvwr.Renderer {
 			if (this.config.cylinderLOD){
 				//console.log("cylinder LOD " + this.config.cylinderLOD.length)
 				var rootConf = this.config.cylinderLOD[0];
-				var rootMesh = this.createCylinder(binding, diameter, rootConf.segments, rootConf.texture, rootConf.color);
+				var rootMesh = this.createCylinder(binding, diameter, 0, rootConf.segments, rootConf.effects, rootConf.color);
 				for (var i=1, l=this.config.cylinderLOD.length; i<l ; i++){
 					var conf = this.config.cylinderLOD[i];
 					if (conf.segments){
-						var childCylinder = this.createCylinder(binding, diameter, conf.segments, conf.texture, conf.color);
+						var childCylinder = this.createCylinder(binding, diameter, i, conf.segments, conf.effects, conf.color);
 						rootMesh.addLODLevel(conf.depth, childCylinder);
 					} else{
 						rootMesh.addLODLevel(conf.depth, null);
@@ -45,20 +45,42 @@ module Molvwr.Renderer {
 				}
 				return rootMesh;
 			}else{
-				return this.createCylinder(binding, diameter, this.config.cylinderSegments, true, null);
+				return this.createCylinder(binding, diameter, 0, this.config.cylinderSegments, true, null);
 			}	
 			
 		}
 		
-		createCylinder(binding, diameter, segments, texture, coloroverride){			
+		createCylinder(binding, diameter:number, lodIndex:number, segments, useeffects, coloroverride){			
 			//console.log("render cyl " + segments);
-			var cylinder = BABYLON.Mesh.CreateCylinder("bondtemplate" + binding.key, binding.d, diameter, diameter, segments, 1, this.ctx.scene, false);
-        	var atomMat = new BABYLON.StandardMaterial('materialFor' + binding.key, this.ctx.scene);
-			atomMat.diffuseColor = new BABYLON.Color3(0.4, 0.4, 0.4);
-			atomMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
-			atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-						
-			cylinder.material = atomMat;
+			var cylinder = BABYLON.Mesh.CreateCylinder("bondtemplate" + binding.key, binding.d, diameter, diameter, segments, 2, this.ctx.scene, false);
+			
+			var rootMat = new BABYLON.StandardMaterial('materialFor' + binding.key + lodIndex, this.ctx.scene);
+			var atomAColor = coloroverride || binding.kindA.color;
+			rootMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
+			this.ctx.cylinderMaterial(rootMat, useeffects);
+			
+        	// var atomAMat = new BABYLON.StandardMaterial('materialFor' + binding.key + binding.kindA.symbol+ "-" + lodIndex, this.ctx.scene);
+			// var atomAColor = coloroverride || binding.kindA.color;
+			// atomAMat.diffuseColor = new BABYLON.Color3(atomAColor[0], atomAColor[1], atomAColor[2]);
+			// this.ctx.cylinderMaterial(atomAMat, useeffects);
+			// 
+			// var atomBMat = new BABYLON.StandardMaterial('materialFor' + binding.key + binding.kindB.symbol+ "-" + lodIndex, this.ctx.scene);
+			// var atomBColor = coloroverride || binding.kindB.color;
+			// atomBMat.diffuseColor = new BABYLON.Color3(atomBColor[0], atomBColor[1], atomBColor[2]);
+			// this.ctx.cylinderMaterial(atomBMat, useeffects);
+			// 
+			// var rootMat = new BABYLON.MultiMaterial('materialFor' + binding.key+ "-" + lodIndex, this.ctx.scene);
+			// rootMat.subMaterials.push(atomAMat);
+			// rootMat.subMaterials.push(atomBMat);
+			// 
+			// var verticesCount = cylinder.getTotalVertices();
+			// var indices = cylinder.getIndices();
+			// var halfindices = ((indices.length/2) >> 0) - 3*segments;
+			// cylinder.subMeshes.push(new BABYLON.SubMesh(0, 0, verticesCount, 0, halfindices, cylinder));
+			// cylinder.subMeshes.push(new BABYLON.SubMesh(1, 0, verticesCount, halfindices, indices.length - halfindices, cylinder));
+			// 
+			
+			cylinder.material = rootMat;
 			cylinder.isPickable = false;
 			cylinder.setEnabled(false);
 			
