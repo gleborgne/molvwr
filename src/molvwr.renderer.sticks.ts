@@ -123,7 +123,7 @@ module Molvwr.Renderer {
 			var indices = capsule.getIndices();
 
 			//console.log("has submeshes ? " + capsule.subMeshes.length + " indices " + indices.length);
-			console.log(indices);
+			//console.log(indices);
 			capsule.subMeshes = [];
 			var halfindices = ((indices.length/2) >> 0) - 3*segments;
 			capsule.subMeshes.push(new BABYLON.SubMesh(0, 0, verticesCount, 0, halfindices, capsule));
@@ -213,7 +213,7 @@ module Molvwr.Renderer {
 					var key = b.atomA.kind.symbol + "#" + b.atomB.kind.symbol;
 					var mesh = this.meshes[key];
 					var cylinder = mesh.createInstance("bond" + index);
-					console.log("create bond " + index);
+					//console.log("create bond " + index);
 					this.alignCylinderToBinding(b.atomA, b.atomB, b.d, cylinder);
 				});
 				

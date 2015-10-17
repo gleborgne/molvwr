@@ -313,7 +313,7 @@ module Molvwr {
 				atom.y -= shift.y;
 				atom.z -= shift.z;
 				
-				console.log(atom.kind.symbol + " " + atom.x + "," + atom.y + "," + atom.z);
+				//console.log(atom.kind.symbol + " " + atom.x + "," + atom.y + "," + atom.z);
 			});									
 		}
 
