@@ -1069,7 +1069,7 @@ var Molvwr;
                 rootMat.subMaterials.push(atomBMat);
                 var verticesCount = capsule.getTotalVertices();
                 var indices = capsule.getIndices();
-                console.log("has submeshes ? " + capsule.subMeshes.length + " indices " + indices.length);
+                //console.log("has submeshes ? " + capsule.subMeshes.length + " indices " + indices.length);
                 console.log(indices);
                 capsule.subMeshes = [];
                 var halfindices = ((indices.length / 2) >> 0) - 3 * segments;
@@ -1102,7 +1102,7 @@ var Molvwr;
                 var radius = diameter / 2;
                 var cylinderSize = binding.d;
                 var halfCylinderSize = cylinderSize / 2;
-                var sphereA = BABYLON.Mesh.CreateSphere("sphereA" + binding.key + "-" + lodIndex, segments, diameter, this.ctx.scene, false);
+                var sphereA = BABYLON.Mesh.CreateSphere("sphereA" + binding.key + "-" + lodIndex, segments * 0.5, diameter, this.ctx.scene, false);
                 sphereA.position.y = -halfCylinderSize;
                 sphereA.material = atomAMat;
                 var cylinderA = BABYLON.Mesh.CreateCylinder("cylinderAtemplate" + binding.key + "-" + lodIndex, cylinderSize / 2, diameter, diameter, segments, 2, this.ctx.scene, false);
@@ -1111,7 +1111,7 @@ var Molvwr;
                 var cylinderB = BABYLON.Mesh.CreateCylinder("cylinderAtemplate" + binding.key + "-" + lodIndex, cylinderSize / 2, diameter, diameter, segments, 2, this.ctx.scene, false);
                 cylinderB.position.y = cylinderSize / 4;
                 cylinderB.material = atomBMat;
-                var sphereB = BABYLON.Mesh.CreateSphere("sphereB" + binding.key + "-" + lodIndex, segments, diameter, this.ctx.scene, false);
+                var sphereB = BABYLON.Mesh.CreateSphere("sphereB" + binding.key + "-" + lodIndex, segments * 0.5, diameter, this.ctx.scene, false);
                 sphereB.position.y = halfCylinderSize;
                 sphereB.material = atomBMat;
                 var sphereACSG = BABYLON.CSG.FromMesh(sphereA);
@@ -1154,14 +1154,14 @@ var Molvwr;
                 }, 5);
             };
             Sticks.prototype.alignCylinderToBinding = function (atomA, atomB, distance, cylinder) {
-                console.log("position items to " + atomB.x + "/" + atomB.y + "/" + atomB.z);
+                //console.log("position items to " + atomB.x + "/" + atomB.y  + "/" +  atomB.z)
                 var pointA = new BABYLON.Vector3(atomA.x, atomA.y, atomA.z);
                 var pointB = new BABYLON.Vector3(atomB.x, atomB.y, atomB.z);
                 var v1 = pointB.subtract(pointA);
                 v1.normalize();
                 var v2 = new BABYLON.Vector3(0, 1, 0);
                 if (this.vectorEqualsCloseEnough(v1, v2.negate())) {
-                    console.log("must invert...");
+                    //console.log("must invert...")
                     var v2 = new BABYLON.Vector3(1, 0, 0);
                     var axis = BABYLON.Vector3.Cross(v2, v1);
                     axis.normalize();

@@ -122,7 +122,7 @@ module Molvwr.Renderer {
 			var verticesCount = capsule.getTotalVertices();
 			var indices = capsule.getIndices();
 
-			console.log("has submeshes ? " + capsule.subMeshes.length + " indices " + indices.length);
+			//console.log("has submeshes ? " + capsule.subMeshes.length + " indices " + indices.length);
 			console.log(indices);
 			capsule.subMeshes = [];
 			var halfindices = ((indices.length/2) >> 0) - 3*segments;
@@ -163,7 +163,7 @@ module Molvwr.Renderer {
 			var cylinderSize = binding.d;
 			var halfCylinderSize = cylinderSize/2;
 			
-			var sphereA = BABYLON.Mesh.CreateSphere("sphereA" + binding.key+ "-" + lodIndex, segments, diameter, this.ctx.scene, false);
+			var sphereA = BABYLON.Mesh.CreateSphere("sphereA" + binding.key+ "-" + lodIndex, segments * 0.5, diameter, this.ctx.scene, false);
 			sphereA.position.y = -halfCylinderSize;
 			sphereA.material = atomAMat;
 			
@@ -175,7 +175,7 @@ module Molvwr.Renderer {
 			cylinderB.position.y = cylinderSize/4;
 			cylinderB.material = atomBMat;
 			
-			var sphereB = BABYLON.Mesh.CreateSphere("sphereB" + binding.key+ "-" + lodIndex, segments, diameter, this.ctx.scene, false);
+			var sphereB = BABYLON.Mesh.CreateSphere("sphereB" + binding.key+ "-" + lodIndex, segments * 0.5, diameter, this.ctx.scene, false);
 			sphereB.position.y = halfCylinderSize;
 			sphereB.material = atomBMat;
 			
@@ -227,7 +227,7 @@ module Molvwr.Renderer {
 		}
 
 		alignCylinderToBinding(atomA, atomB, distance, cylinder) {
-			console.log("position items to " + atomB.x + "/" + atomB.y  + "/" +  atomB.z)
+			//console.log("position items to " + atomB.x + "/" + atomB.y  + "/" +  atomB.z)
 			var pointA = new BABYLON.Vector3(atomA.x, atomA.y, atomA.z);
 			var pointB = new BABYLON.Vector3(atomB.x, atomB.y, atomB.z);
 			
@@ -236,7 +236,7 @@ module Molvwr.Renderer {
 			var v2 = new BABYLON.Vector3(0, 1, 0);
             
 			if (this.vectorEqualsCloseEnough(v1, v2.negate())) {
-				console.log("must invert...")
+				//console.log("must invert...")
 				var v2 = new BABYLON.Vector3(1, 0, 0);
 				
 				var axis = BABYLON.Vector3.Cross(v2, v1);
