@@ -30,11 +30,11 @@ module Molvwr.Renderer {
 		
 		createMesh(binding, diameter){
 			var processor = this.createStickMergemesh;
-			if (this.config.sphereLOD){
-				var rootConf = this.config.sphereLOD[0];
+			if (this.config.cylinderLOD){
+				var rootConf = this.config.cylinderLOD[0];
 				var rootMesh = processor.apply(this, [binding, diameter, 0, rootConf.segments, rootConf.texture, rootConf.effects, rootConf.color]);
-				for (var i=1, l=this.config.sphereLOD.length; i<l ; i++){
-					var conf = this.config.sphereLOD[i];
+				for (var i=1, l=this.config.cylinderLOD.length; i<l ; i++){
+					var conf = this.config.cylinderLOD[i];
 					if (conf.segments){
 						var childCylinder = processor.apply(this, [binding, diameter, i, conf.segments, conf.texture, conf.effects, conf.color]);
 						rootMesh.addLODLevel(conf.depth, childCylinder);
