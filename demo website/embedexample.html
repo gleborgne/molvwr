@@ -13,7 +13,7 @@
         <h2>a WebGL molecule viewer built with Babylon.js</h2>
 
         <div class="intro">
-          
+          Want to know every crazy things you can do with Molvwr ? checkout the <a href="http://gleborgne.github.io/molvwr">molecule catalog demo</a> !
         </div>
         <div class="contentbloc">
           <div class="mol-left">
@@ -21,7 +21,7 @@
             <div class="legend">triglyceride</div>
           </div>
           <div class="contenttext">
-            Embedding Molvwr into your site is very easy. The most simple way is to add the script "molvwr-bundle.js" to your page, just like this:<br/>
+            Embedding Molvwr into your site is totally free and very easy. The most simple way is to add the script "molvwr-bundle.js" to your page, just like this:<br/>
             <pre>&lt;script src="lib/molvwr-bundle.js"&gt;&lt;/script&gt;</pre>
 
             This script contains a bundle of <a target="_blank" href="https://www.github.com/gleborgne/molvwr">Molvwr</a>, <a href="http://www.babylonjs.com/" target"_blank">Babylon.js</a> (a WebGL 3D Engine) and hand.js (a polyfill for pointer events that enables touch interaction).<br/>
@@ -41,13 +41,13 @@
         <div class="clear"></div>
         <div class="contentbloc">
           <div class="mol-right">
-            <div class="mol" data-molvwr="molsamples/mol/vitamin_B12_cyanocobalamin.txt" data-molvwr-format="mol" data-molvwr-view="ballsandsticks"></div>
+            <div class="mol" data-molvwr="molsamples/mol/vitamin_B12_cyanocobalamin.txt" data-molvwr-format="mol" data-molvwr-view="sticks"></div>
             <div class="legend">vitamin B12</div>
           </div>
           <div class="contenttext">
             You could use some other parameters to customize experience a little bit. First you could add a "data-molvwr-format" to specify the molecule format. Molvwr currently support "mol", "sdf", and "xyz" formats.<br/>
             <br/>
-            You could also specify how the molecule get rendered with "data-molvwr-view". By default, atoms are rendered as "spheres" but you could also use "ballsandsticks".
+            You could also specify how the molecule get rendered with "data-molvwr-view". By default, atoms are rendered as "spheres" but you could also use "sticks" "ballsandsticks".
           </div>
         </div>
         <div class="clear"></div>
