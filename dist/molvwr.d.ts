@@ -14,6 +14,7 @@
         exportScreenshot(): string;
         dispose(): void;
         sphereMaterial(atomMat: BABYLON.StandardMaterial, useEffects: boolean): void;
+        cylinderMaterial(atomMat: BABYLON.StandardMaterial, useEffects: boolean): void;
         createScene(): void;
     }
 }
@@ -31,6 +32,7 @@ declare module Molvwr.Config {
     }
     function defaultConfig(): IMolvwrConfig;
     function spheres(): IMolvwrConfig;
+    function sticks(): IMolvwrConfig;
     function ballsAndSticks(): IMolvwrConfig;
 }
 
@@ -120,7 +122,7 @@ declare module Molvwr.Renderer {
         createMesh(binding: any, diameter: any): BABYLON.Mesh;
         createCylinder(binding: any, diameter: any, segments: any, texture: any, coloroverride: any): BABYLON.Mesh;
         runBatch(offset: any, size: any, molecule: any, diameter: any, completedCallback: any): void;
-        alignCylinderToBinding(b: any, cylinder: any): any;
+        alignCylinderToBinding(atomA: any, atomB: any, distance: any, cylinder: any): void;
         vectorEqualsCloseEnough(v1: any, v2: any, tolerance?: number): boolean;
     }
 }
@@ -160,8 +162,13 @@ declare module Molvwr.Renderer {
         meshes: any;
         constructor(viewer: Molvwr.Viewer, ctx: Molvwr.BabylonContext, config: Molvwr.Config.IMolvwrConfig);
         render(molecule: any, completedCallback: any): void;
-        getCylinderForBinding(diameter: any, binding: any, index: any): any;
-        alignCylinderToBinding(b: any, cylinder: any): any;
+        prepareBonds(molecule: any, diameter: any): void;
+        createMesh(binding: any, diameter: any): any;
+        createStickCylinder(binding: any, diameter: any, lodIndex: any, segments: any, texture: any, useeffects: any, coloroverride: any): BABYLON.Mesh;
+        createStickMergemesh(binding: any, diameter: any, lodIndex: any, segments: any, texture: any, useeffects: any, coloroverride: any): BABYLON.Mesh;
+        createStickCSG(binding: any, diameter: any, lodIndex: any, segments: any, texture: any, useeffects: any, coloroverride: any): BABYLON.Mesh;
+        runBatch(offset: any, size: any, molecule: any, diameter: any, completedCallback: any): void;
+        alignCylinderToBinding(atomA: any, atomB: any, distance: any, cylinder: any): void;
         vectorEqualsCloseEnough(v1: any, v2: any, tolerance?: number): boolean;
     }
 }

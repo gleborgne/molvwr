@@ -229,9 +229,12 @@ module Molvwr {
 
 
 		private _postProcessMolecule(molecule) {
+			console.time("post process");
 			molecule.batchSize = Math.min(50, (molecule.atoms.length / 4) >> 0);
+			molecule.batchSize = Math.max(10, molecule.batchSize);
 			this._center(molecule);
 			this._calculateAtomsBonds(molecule);
+			console.timeEnd("post process");
 		}
 
 		private _calculateAtomsBonds(molecule) {

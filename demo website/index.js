@@ -131,8 +131,9 @@
 	];
 
 	var viewmodes = [
-		{ name : 'spheres', id:"spheres", cfg : Molvwr.Config.spheres},
-		{ name : 'balls and sticks', id:"ballsandsticks", cfg : Molvwr.Config.ballsAndSticks},
+		{ name : 'Spheres', id:"spheres", cfg : Molvwr.Config.spheres},
+		{ name : 'Balls and sticks', id:"ballsandsticks", cfg : Molvwr.Config.ballsAndSticks},
+		{ name : 'Sticks', id:"sticks", cfg : Molvwr.Config.sticks},
 	];
 
 	function hideAllPanels(){

@@ -34,6 +34,12 @@ module Molvwr {
 				this.viewmode.sphereMaterial(this, atomMat, useEffects);
 			}
 		}
+		
+		cylinderMaterial(atomMat: BABYLON.StandardMaterial, useEffects : boolean) {
+			if (this.viewmode){
+				this.viewmode.cylinderMaterial(this, atomMat, useEffects);
+			}
+		}
 
 		createScene() {
 			if (this.scene)

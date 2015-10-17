@@ -57,18 +57,7 @@ module Molvwr.Renderer {
 			atomMat.diffuseColor = new BABYLON.Color3(0.4, 0.4, 0.4);
 			atomMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
 			atomMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-			
-			atomMat.emissiveFresnelParameters = new BABYLON.FresnelParameters();
-			atomMat.emissiveFresnelParameters.bias = 0.6;
-			atomMat.emissiveFresnelParameters.power = 1;
-			atomMat.emissiveFresnelParameters.leftColor = BABYLON.Color3.Black();
-			atomMat.emissiveFresnelParameters.rightColor = BABYLON.Color3.White();
-		
-			//atomMat.bumpTexture = new BABYLON.Texture('textures/bump.png', this.ctx.scene);
-			//(<any>atomMat.bumpTexture).uScale = 6;
-			//(<any>atomMat.bumpTexture).vScale = 6;
-			//atomMat.bumpTexture.wrapU = BABYLON.Texture.MIRROR_ADDRESSMODE;
-			//atomMat.bumpTexture.wrapV = BABYLON.Texture.MIRROR_ADDRESSMODE;
+						
 			cylinder.material = atomMat;
 			cylinder.isPickable = false;
 			cylinder.setEnabled(false);
@@ -85,7 +74,7 @@ module Molvwr.Renderer {
 					var key = b.atomA.kind.symbol + "#" + b.atomB.kind.symbol;
 					var mesh = this.meshes[key];
 					var cylinder = mesh.createInstance("bond" + index);
-					this.alignCylinderToBinding(b, cylinder);
+					this.alignCylinderToBinding(b.atomA, b.atomB, b.d, cylinder);
 				});
 				
 				if (items.length < size){
@@ -97,37 +86,41 @@ module Molvwr.Renderer {
 			},5);
 		}
 
-		alignCylinderToBinding(b, cylinder) {
-			var pointA = new BABYLON.Vector3(b.atomA.x, b.atomA.y, b.atomA.z);
-			var pointB = new BABYLON.Vector3(b.atomB.x, b.atomB.y, b.atomB.z);
-            
-            // First of all we have to set the pivot not in the center of the cylinder:
-            cylinder.setPivotMatrix(BABYLON.Matrix.Translation(0, -b.d / 2, 0));
-         
-            // Then move the cylinder to red sphere
-            cylinder.position = pointB;
-        
-            // Then find the vector between spheres
+		alignCylinderToBinding(atomA, atomB, distance, cylinder) {
+			var pointA = new BABYLON.Vector3(atomA.x, atomA.y, atomA.z);
+			var pointB = new BABYLON.Vector3(atomB.x, atomB.y, atomB.z);
+			
             var v1 = pointB.subtract(pointA);
 			v1.normalize();
 			var v2 = new BABYLON.Vector3(0, 1, 0);
             
-            // Using cross we will have a vector perpendicular to both vectors
-            var axis = BABYLON.Vector3.Cross(v2, v1);
-            axis.normalize();
-			
-            // Angle between vectors
-            var angle = BABYLON.Vector3.Dot(v1, v2);
-			angle = Math.acos(angle);
-            
-            // Then using axis rotation the result is obvious
-            cylinder.rotationQuaternion = BABYLON.Quaternion.RotationAxis(axis, angle);
-
 			if (this.vectorEqualsCloseEnough(v1, v2.negate())) {
-				cylinder.position = pointA;
+				console.log("must invert...")
+				var v2 = new BABYLON.Vector3(1, 0, 0);
+				
+				var axis = BABYLON.Vector3.Cross(v2, v1);
+				axis.normalize();				
+				var angle = BABYLON.Vector3.Dot(v1, v2);
+				angle = Math.acos(angle) + (Math.PI/2);
+				
+				cylinder.setPivotMatrix(BABYLON.Matrix.Translation(0, -distance / 2, 0));         
+            	cylinder.position = pointB;
+				
+				var quaternion = BABYLON.Quaternion.RotationAxis(axis, angle);
+				quaternion.w = -quaternion.w;
+				cylinder.rotationQuaternion = quaternion;
+				console.log(cylinder.rotationQuaternion);
+			}else{
+				var axis = BABYLON.Vector3.Cross(v2, v1);
+				axis.normalize();
+				var angle = BABYLON.Vector3.Dot(v1, v2);
+				angle = Math.acos(angle);
+			
+				cylinder.setPivotMatrix(BABYLON.Matrix.Translation(0, -distance / 2, 0));         
+	            cylinder.position = pointB;
+        	
+				cylinder.rotationQuaternion = BABYLON.Quaternion.RotationAxis(axis, angle);
 			}
-
-            return cylinder;
 		}
 
 		vectorEqualsCloseEnough(v1, v2, tolerance: number = 0.00002) {
