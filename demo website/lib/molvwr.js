@@ -141,6 +141,9 @@ var Molvwr;
                 else if (view == "ballsandsticks") {
                     options = Molvwr.Config.ballsAndSticks();
                 }
+                else if (view == "sticks") {
+                    options = Molvwr.Config.sticks();
+                }
                 if (moleculeUrl && format) {
                     var viewer = new Viewer(e, options);
                     viewer.loadContentFromUrl(moleculeUrl, format);
