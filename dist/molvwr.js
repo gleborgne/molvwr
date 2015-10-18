@@ -99,7 +99,7 @@ var Molvwr;
 (function (Molvwr) {
     function process() {
         if (!__global.BABYLON) {
-            console.error("Babylon.js is not present, please add a reference to Babylon.js script");
+            console.error("Babylon.js is not available, please add a reference to Babylon.js script");
             return;
         }
         var elements;
@@ -155,7 +155,7 @@ var Molvwr;
     var Viewer = (function () {
         function Viewer(element, config, viewmode) {
             if (!__global.BABYLON) {
-                throw new Error("Babylon.js is not present, please add a reference to Babylon.js script");
+                throw new Error("Babylon.js is not available, please add a reference to Babylon.js script");
             }
             if (!element)
                 throw new Error("you must provide an element to host the viewer");
@@ -180,53 +180,50 @@ var Molvwr;
             this.canvas = null;
             this.element.innerHTML = "";
         };
-        Viewer.prototype._loadContentFromString = function (content, contentFormat, completedcallback) {
-            var parser = Molvwr.Parser[contentFormat];
-            if (parser) {
-                var molecule = parser.parse(content);
-                if (molecule) {
-                    this._postProcessMolecule(molecule);
-                    this._renderMolecule(molecule, completedcallback);
+        Viewer.prototype._loadContentFromString = function (content, contentFormat) {
+            var _this = this;
+            return new Molvwr.Utils.Promise(function (complete, error) {
+                var parser = Molvwr.Parser[contentFormat];
+                if (parser) {
+                    var molecule = parser.parse(content);
+                    if (molecule) {
+                        _this._postProcessMolecule(molecule).then(function () {
+                            return _this._renderMolecule(molecule);
+                        }).then(complete, error);
+                    }
+                    else {
+                        console.warn("no molecule from parser " + contentFormat);
+                        complete();
+                    }
                 }
                 else {
-                    console.warn("no molecule from parser " + contentFormat);
+                    console.warn("no parser for " + contentFormat);
+                    complete();
                 }
-            }
-            else {
-                console.warn("no parser for " + contentFormat);
-            }
+            });
         };
-        Viewer.prototype._renderMolecule = function (molecule, completedcallback) {
+        Viewer.prototype._renderMolecule = function (molecule) {
             var _this = this;
             this.molecule = molecule;
             this._createContext();
-            setTimeout(function () {
+            return new Molvwr.Utils.Promise(function (complete, error) {
                 if (_this.config.renderers) {
                     var completedCount = 0;
                     var nbrenderers = _this.config.renderers.length;
-                    var incCompleted = function () {
-                        completedCount++;
-                        if (completedCount == nbrenderers) {
-                            console.log("render complete");
-                            if (completedcallback)
-                                completedcallback();
-                        }
-                    };
+                    var p = [];
                     _this.config.renderers.forEach(function (rendererName) {
                         var rendererClass = Molvwr.Renderer[rendererName];
                         if (rendererClass) {
                             var renderer = new rendererClass(_this, _this.context, _this.config);
-                            renderer.render(_this.molecule, function () {
-                                incCompleted();
-                            });
-                        }
-                        else {
-                            incCompleted();
-                            console.warn("no renderer for " + rendererName);
+                            p.push(renderer.render(_this.molecule));
                         }
                     });
+                    Molvwr.Utils.Promise.all(p).then(complete, error);
                 }
-            }, 50);
+                else {
+                    complete();
+                }
+            });
         };
         Viewer.prototype.setOptions = function (options, completedcallback) {
             this.config = options;
@@ -241,7 +238,7 @@ var Molvwr;
         };
         Viewer.prototype.refresh = function (completedcallback) {
             if (this.molecule) {
-                this._renderMolecule(this.molecule, completedcallback);
+                this._renderMolecule(this.molecule).then(completedcallback, completedcallback);
             }
             else {
                 if (completedcallback)
@@ -273,7 +270,7 @@ var Molvwr;
         };
         Viewer.prototype.loadContentFromString = function (content, contentFormat, completedcallback) {
             this._createContext();
-            this._loadContentFromString(content, contentFormat, completedcallback);
+            this._loadContentFromString(content, contentFormat).then(completedcallback, completedcallback);
         };
         Viewer.prototype.loadContentFromUrl = function (url, contentFormat, completedcallback) {
             var _this = this;
@@ -289,7 +286,7 @@ var Molvwr;
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == 4) {
                         if (xhr.status == 200) {
-                            _this._loadContentFromString(xhr.responseText, contentFormat, completedcallback);
+                            _this._loadContentFromString(xhr.responseText, contentFormat).then(completedcallback, completedcallback);
                         }
                         else {
                             console.warn("cannot get content from " + url + " " + xhr.status + " " + xhr.statusText);
@@ -306,20 +303,24 @@ var Molvwr;
             }
         };
         Viewer.prototype._postProcessMolecule = function (molecule) {
+            var _this = this;
             console.time("post process");
+            molecule.kinds = molecule.kinds || {};
+            molecule.bondkinds = molecule.bondkinds || {};
             molecule.batchSize = Math.min(50, (molecule.atoms.length / 4) >> 0);
-            molecule.batchSize = Math.max(10, molecule.batchSize);
-            this._center(molecule);
-            this._calculateAtomsBonds(molecule);
-            console.timeEnd("post process");
+            molecule.batchSize = Math.max(20, molecule.batchSize);
+            return this._center(molecule).then(function () {
+                return _this._calculateAtomsBondsAsync(molecule);
+            }).then(function () {
+                console.timeEnd("post process");
+            });
         };
-        Viewer.prototype._calculateAtomsBonds = function (molecule) {
+        Viewer.prototype._calculateAtomsBondsAsync = function (molecule) {
             console.time("check bounds");
             var bonds = [];
             var nbatoms = molecule.atoms.length;
-            molecule.kinds = molecule.kinds || {};
-            molecule.bondkinds = molecule.bondkinds || {};
-            molecule.atoms.forEach(function (atom, index) {
+            return Molvwr.Utils.runBatch(0, 200, molecule.atoms, function (atom, batchindex, index) {
+                //console.log("check " + atom.kind.symbol + " " + index + " " + bonds.length);
                 if (!molecule.kinds[atom.kind.symbol]) {
                     molecule.kinds[atom.kind.symbol] = { kind: atom.kind };
                 }
@@ -340,10 +341,11 @@ var Molvwr;
                         });
                     }
                 }
+            }, "checkbounds").then(function () {
+                molecule.bonds = bonds;
+                console.timeEnd("check bounds");
+                console.log("found " + bonds.length + " bonds");
             });
-            molecule.bonds = bonds;
-            console.timeEnd("check bounds");
-            console.log("found " + bonds.length + " bonds");
         };
         Viewer.prototype._getCentroid = function (molecule) {
             var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity, minZ = Infinity, maxZ = -Infinity;
@@ -368,13 +370,15 @@ var Molvwr;
             };
         };
         Viewer.prototype._center = function (molecule) {
+            console.time("recenter atoms");
             var shift = this._getCentroid(molecule);
             molecule.atoms.forEach(function (atom) {
                 atom.x -= shift.x;
                 atom.y -= shift.y;
                 atom.z -= shift.z;
-                //console.log(atom.kind.symbol + " " + atom.x + "," + atom.y + "," + atom.z);
             });
+            console.timeEnd("recenter atoms");
+            return Molvwr.Utils.Promise.resolve();
         };
         return Viewer;
     })();
@@ -690,6 +694,213 @@ var Molvwr;
     })(Parser = Molvwr.Parser || (Molvwr.Parser = {}));
 })(Molvwr || (Molvwr = {}));
 
+var __global = this;
+var Molvwr;
+(function (Molvwr) {
+    var Utils;
+    (function (Utils) {
+        // Use polyfill for setImmediate for performance gains
+        var asap = (typeof setImmediate === 'function' && setImmediate) || function (fn) { setTimeout(fn, 1); };
+        var isArray = Array.isArray || function (value) { return Object.prototype.toString.call(value) === "[object Array]"; };
+        function runBatch(offset, size, itemslist, itemcallback, batchname) {
+            if (batchname)
+                console.log(batchname + " " + offset + "/" + itemslist.length);
+            return new Promise(function (complete, error) {
+                asap(function () {
+                    var items = itemslist.slice(offset, offset + size);
+                    items.forEach(function (item, index) {
+                        itemcallback(item, index, index + offset);
+                    });
+                    if (items.length < size) {
+                        complete();
+                    }
+                    else {
+                        asap(function () {
+                            runBatch(offset + size, size, itemslist, itemcallback, batchname).then(complete, error);
+                        });
+                    }
+                });
+            });
+        }
+        Utils.runBatch = runBatch;
+        var Promise = (function () {
+            function Promise(fn) {
+                if (typeof this !== 'object')
+                    throw new TypeError('Promises must be constructed via new');
+                if (typeof fn !== 'function')
+                    throw new TypeError('not a function');
+                this._state = null;
+                this._value = null;
+                this._deferreds = [];
+                doResolve(fn, resolve.bind(this), reject.bind(this));
+            }
+            Promise.prototype.catch = function (onRejected) {
+                return this.then(null, onRejected);
+            };
+            Promise.prototype.then = function (onFulfilled, onRejected) {
+                var me = this;
+                return new Promise(function (resolve, reject) {
+                    handle.call(me, new Handler(onFulfilled, onRejected, resolve, reject));
+                });
+            };
+            Promise.timeout = function (timeoutTime) {
+                var me = this;
+                return new Promise(function (resolve, reject) {
+                    setTimeout(function () {
+                        resolve();
+                    }, timeoutTime);
+                });
+            };
+            Promise.all = function (fake) {
+                var args = Array.prototype.slice.call(arguments.length === 1 && isArray(arguments[0]) ? arguments[0] : arguments);
+                return new Promise(function (resolve, reject) {
+                    if (args.length === 0)
+                        return resolve([]);
+                    var remaining = args.length;
+                    function res(i, val) {
+                        try {
+                            if (val && (typeof val === 'object' || typeof val === 'function')) {
+                                var then = val.then;
+                                if (typeof then === 'function') {
+                                    then.call(val, function (val) { res(i, val); }, reject);
+                                    return;
+                                }
+                            }
+                            args[i] = val;
+                            if (--remaining === 0) {
+                                resolve(args);
+                            }
+                        }
+                        catch (ex) {
+                            reject(ex);
+                        }
+                    }
+                    for (var i = 0; i < args.length; i++) {
+                        res(i, args[i]);
+                    }
+                });
+            };
+            Promise.resolve = function (value) {
+                if (value && typeof value === 'object' && value.constructor === Promise) {
+                    return value;
+                }
+                return new Promise(function (resolve) {
+                    resolve(value);
+                });
+            };
+            Promise.reject = function (value) {
+                return new Promise(function (resolveCallback, rejectCallback) {
+                    rejectCallback(value);
+                });
+            };
+            Promise.race = function (values) {
+                return new Promise(function (resolveCallback, rejectCallback) {
+                    for (var i = 0, len = values.length; i < len; i++) {
+                        values[i].then(resolveCallback, rejectCallback);
+                    }
+                });
+            };
+            /**
+            * Set the immediate function to execute callbacks
+            * @param fn {function} Function to execute
+            * @private
+            */
+            Promise._setImmediateFn = function (fn) {
+                asap = fn;
+            };
+            return Promise;
+        })();
+        Utils.Promise = Promise;
+        function handle(deferred) {
+            var me = this;
+            if (this._state === null) {
+                this._deferreds.push(deferred);
+                return;
+            }
+            asap(function () {
+                var cb = me._state ? deferred.onFulfilled : deferred.onRejected;
+                if (cb === null) {
+                    (me._state ? deferred.resolve : deferred.reject)(me._value);
+                    return;
+                }
+                var ret;
+                try {
+                    ret = cb(me._value);
+                }
+                catch (e) {
+                    deferred.reject(e);
+                    return;
+                }
+                deferred.resolve(ret);
+            });
+        }
+        function resolve(newValue) {
+            try {
+                if (newValue === this)
+                    throw new TypeError('A promise cannot be resolved with itself.');
+                if (newValue && (typeof newValue === 'object' || typeof newValue === 'function')) {
+                    var then = newValue.then;
+                    if (typeof then === 'function') {
+                        doResolve(then.bind(newValue), resolve.bind(this), reject.bind(this));
+                        return;
+                    }
+                }
+                this._state = true;
+                this._value = newValue;
+                finale.call(this);
+            }
+            catch (e) {
+                reject.call(this, e);
+            }
+        }
+        function reject(newValue) {
+            this._state = false;
+            this._value = newValue;
+            finale.call(this);
+        }
+        function finale() {
+            for (var i = 0, len = this._deferreds.length; i < len; i++) {
+                handle.call(this, this._deferreds[i]);
+            }
+            this._deferreds = null;
+        }
+        function Handler(onFulfilled, onRejected, resolve, reject) {
+            this.onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : null;
+            this.onRejected = typeof onRejected === 'function' ? onRejected : null;
+            this.resolve = resolve;
+            this.reject = reject;
+        }
+        /**
+         * Take a potentially misbehaving resolver function and make sure
+         * onFulfilled and onRejected are only called once.
+         *
+         * Makes no guarantees about asynchrony.
+         */
+        function doResolve(fn, onFulfilled, onRejected) {
+            var done = false;
+            try {
+                fn(function (value) {
+                    if (done)
+                        return;
+                    done = true;
+                    onFulfilled(value);
+                }, function (reason) {
+                    if (done)
+                        return;
+                    done = true;
+                    onRejected(reason);
+                });
+            }
+            catch (ex) {
+                if (done)
+                    return;
+                done = true;
+                onRejected(ex);
+            }
+        }
+    })(Utils = Molvwr.Utils || (Molvwr.Utils = {}));
+})(Molvwr || (Molvwr = {}));
+
 var Molvwr;
 (function (Molvwr) {
     var Renderer;
@@ -701,19 +912,41 @@ var Molvwr;
                 this.config = config;
                 this.viewer = viewer;
             }
-            BondsCylinder.prototype.render = function (molecule, completedCallback) {
+            BondsCylinder.prototype.render = function (molecule) {
+                var _this = this;
                 var cfg = this.config;
                 var meshes = [];
                 var diameter = Molvwr.Elements.MIN_ATOM_RADIUS * this.config.cylinderScale * this.config.atomScaleFactor;
                 var nbbonds = molecule.bonds.length;
                 //console.log("rendering " + nbbonds + " bonds as cylinder");
-                this.prepareBonds(molecule, diameter);
-                this.runBatch(0, molecule.batchSize, molecule, diameter, completedCallback);
+                return this.prepareBonds(molecule, diameter).then(function () {
+                    console.time("cylinder rendering");
+                    return Molvwr.Utils.runBatch(0, molecule.batchSize, molecule.bonds, function (b, index) {
+                        var key = b.atomA.kind.symbol + "#" + b.atomB.kind.symbol;
+                        var mesh = _this.meshes[key];
+                        var cylinder = mesh.createInstance("bond" + index);
+                        _this.alignCylinderToBinding(b.atomA, b.atomB, b.d, cylinder);
+                    }, "cylinder rendering").then(function () {
+                        console.timeEnd("cylinder rendering");
+                    });
+                });
             };
             BondsCylinder.prototype.prepareBonds = function (molecule, diameter) {
+                var _this = this;
+                console.time("prepare bonds as cylinder");
+                var bondkinds = [];
                 for (var n in molecule.bondkinds) {
-                    this.meshes[n] = this.createMesh(molecule.bondkinds[n], diameter);
+                    bondkinds.push(molecule.bondkinds[n]);
                 }
+                var batchSize = 60;
+                if (this.config.cylinderLOD) {
+                    batchSize = (batchSize / this.config.cylinderLOD.length) >> 0;
+                }
+                return Molvwr.Utils.runBatch(0, batchSize, bondkinds, function (bondkind, index) {
+                    _this.meshes[bondkind.key] = _this.createMesh(bondkind, diameter);
+                }, "prepare cylinder").then(function () {
+                    console.timeEnd("prepare bonds as cylinder");
+                });
             };
             BondsCylinder.prototype.createMesh = function (binding, diameter) {
                 //console.log("create bind mesh " + binding.key);
@@ -768,27 +1001,6 @@ var Molvwr;
                 cylinder.isPickable = false;
                 cylinder.setEnabled(false);
                 return cylinder;
-            };
-            BondsCylinder.prototype.runBatch = function (offset, size, molecule, diameter, completedCallback) {
-                var _this = this;
-                setTimeout(function () {
-                    console.log("batch rendering bonds " + offset + "/" + molecule.bonds.length);
-                    var items = molecule.bonds.slice(offset, offset + size);
-                    items.forEach(function (b, index) {
-                        var key = b.atomA.kind.symbol + "#" + b.atomB.kind.symbol;
-                        var mesh = _this.meshes[key];
-                        var cylinder = mesh.createInstance("bond" + index);
-                        _this.alignCylinderToBinding(b.atomA, b.atomB, b.d, cylinder);
-                    });
-                    if (items.length < size) {
-                        console.log("batch end " + items.length);
-                        if (completedCallback)
-                            completedCallback();
-                    }
-                    else {
-                        _this.runBatch(offset + size, size, molecule, diameter, completedCallback);
-                    }
-                }, 5);
             };
             BondsCylinder.prototype.alignCylinderToBinding = function (atomA, atomB, distance, cylinder) {
                 var pointA = new BABYLON.Vector3(atomA.x, atomA.y, atomA.z);
@@ -856,7 +1068,7 @@ var Molvwr;
                 this.config = config;
                 this.viewer = viewer;
             }
-            BondsLines.prototype.render = function (molecule, completedCallback) {
+            BondsLines.prototype.render = function (molecule) {
                 var _this = this;
                 var cfg = this.config;
                 var meshes = [];
@@ -869,8 +1081,7 @@ var Molvwr;
                     line.color = new BABYLON.Color3(0.5, 0.5, 0.5);
                     meshes.push(line);
                 });
-                if (completedCallback)
-                    completedCallback();
+                return Molvwr.Utils.Promise.resolve();
             };
             return BondsLines;
         })();
@@ -889,15 +1100,27 @@ var Molvwr;
                 this.config = config;
                 this.viewer = viewer;
             }
-            Sphere.prototype.render = function (molecule, completedCallback) {
-                this.prepareMeshes(molecule);
-                console.log("sphere rendering");
-                this.runBatch(0, molecule.batchSize, molecule, completedCallback);
+            Sphere.prototype.render = function (molecule) {
+                var _this = this;
+                return this.prepareMeshes(molecule).then(function () {
+                    console.time("sphere rendering");
+                    return Molvwr.Utils.runBatch(0, molecule.batchSize, molecule.atoms, _this.renderAtom.bind(_this), "sphere rendering").then(function () {
+                        console.timeEnd("sphere rendering");
+                    });
+                });
             };
             Sphere.prototype.prepareMeshes = function (molecule) {
+                var _this = this;
+                console.time("prepare spheres");
+                var kinds = [];
                 for (var n in molecule.kinds) {
-                    this.meshes[n] = this.createMesh(molecule.kinds[n].kind);
+                    kinds.push(molecule.kinds[n]);
                 }
+                return Molvwr.Utils.runBatch(0, 60, kinds, function (atomkind, index) {
+                    _this.meshes[atomkind.kind.symbol] = _this.createMesh(atomkind.kind);
+                }, "prepare spheres").then(function () {
+                    console.timeEnd("prepare spheres");
+                });
             };
             Sphere.prototype.createMesh = function (atomkind) {
                 if (this.config.sphereLOD) {
@@ -921,7 +1144,7 @@ var Molvwr;
                 }
             };
             Sphere.prototype.createSphere = function (atomkind, segments, useEffects, overridecolor) {
-                var sphere = BABYLON.Mesh.CreateSphere("spheretemplate", segments, atomkind.radius * this.config.atomScaleFactor, this.ctx.scene, true);
+                var sphere = BABYLON.Mesh.CreateSphere("spheretemplate", segments, atomkind.radius * this.config.atomScaleFactor, this.ctx.scene, false);
                 sphere.setEnabled(false);
                 sphere.isPickable = false;
                 var atomMat = new BABYLON.StandardMaterial('materialFor' + atomkind.symbol, this.ctx.scene);
@@ -930,22 +1153,6 @@ var Molvwr;
                 this.ctx.sphereMaterial(sphere, atomMat, useEffects);
                 sphere.material = atomMat;
                 return sphere;
-            };
-            Sphere.prototype.runBatch = function (offset, size, molecule, completedCallback) {
-                var _this = this;
-                setTimeout(function () {
-                    var items = molecule.atoms.slice(offset, offset + size);
-                    items.forEach(function (atom, index) {
-                        _this.renderAtom(atom, index);
-                    });
-                    if (items.length < size) {
-                        if (completedCallback)
-                            completedCallback();
-                    }
-                    else {
-                        _this.runBatch(offset + size, size, molecule, completedCallback);
-                    }
-                }, 5);
             };
             Sphere.prototype.renderAtom = function (atom, index) {
                 var cfg = this.config;
@@ -979,19 +1186,40 @@ var Molvwr;
                 this.config = config;
                 this.viewer = viewer;
             }
-            Sticks.prototype.render = function (molecule, completedCallback) {
+            Sticks.prototype.render = function (molecule) {
+                var _this = this;
                 var cfg = this.config;
                 var meshes = [];
                 var diameter = Molvwr.Elements.MIN_ATOM_RADIUS * this.config.cylinderScale * this.config.atomScaleFactor;
                 var nbbonds = molecule.bonds.length;
-                this.prepareBonds(molecule, diameter);
-                //var capsule = this.meshes["C#H"].createInstance("test");			
-                this.runBatch(0, molecule.batchSize, molecule, diameter, completedCallback);
+                return this.prepareBonds(molecule, diameter).then(function () {
+                    console.time("sticks rendering");
+                    return Molvwr.Utils.runBatch(0, molecule.batchSize, molecule.bonds, function (b, index) {
+                        var key = b.atomA.kind.symbol + "#" + b.atomB.kind.symbol;
+                        var mesh = _this.meshes[key];
+                        var cylinder = mesh.createInstance("bond" + index);
+                        _this.alignCylinderToBinding(b.atomA, b.atomB, b.d, cylinder);
+                    }).then(function () {
+                        console.timeEnd("sticks rendering");
+                    });
+                });
             };
             Sticks.prototype.prepareBonds = function (molecule, diameter) {
+                var _this = this;
+                console.time("prepare bonds as sticks");
+                var bondkinds = [];
                 for (var n in molecule.bondkinds) {
-                    this.meshes[n] = this.createMesh(molecule.bondkinds[n], diameter);
+                    bondkinds.push(molecule.bondkinds[n]);
                 }
+                var batchSize = 20;
+                if (this.config.cylinderLOD) {
+                    batchSize = (batchSize / this.config.cylinderLOD.length) >> 0;
+                }
+                return Molvwr.Utils.runBatch(0, batchSize, bondkinds, function (bondkind, index) {
+                    _this.meshes[bondkind.key] = _this.createMesh(bondkind, diameter);
+                }, "prepare sticks").then(function () {
+                    console.timeEnd("prepare bonds as sticks");
+                });
             };
             Sticks.prototype.createMesh = function (binding, diameter) {
                 var processor = this.createStickMergemesh;
@@ -1013,40 +1241,6 @@ var Molvwr;
                 else {
                     return processor.apply(this, [binding, diameter, 0, this.config.cylinderSegments, true, true, null]);
                 }
-            };
-            Sticks.prototype.createStickCylinder = function (binding, diameter, lodIndex, segments, texture, useeffects, coloroverride) {
-                console.log("create mesh template " + binding.key + " cylinder " + lodIndex);
-                //console.log("render cyl " + segments);
-                var radius = diameter / 2;
-                var cylinderSize = binding.d; // - diameter;
-                var halfCylinderSize = cylinderSize / 2;
-                var capsule = BABYLON.Mesh.CreateCylinder("bondtemplate" + binding.key + "-" + lodIndex, cylinderSize, diameter, diameter, segments, 2, this.ctx.scene, false);
-                var atomAMat = new BABYLON.StandardMaterial('materialFor' + binding.key + binding.kindA.symbol + "-" + lodIndex, this.ctx.scene);
-                var atomAColor = coloroverride || binding.kindA.color;
-                atomAMat.diffuseColor = new BABYLON.Color3(atomAColor[0], atomAColor[1], atomAColor[2]);
-                atomAMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
-                atomAMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-                this.ctx.cylinderMaterial(null, atomAMat, useeffects);
-                var atomBMat = new BABYLON.StandardMaterial('materialFor' + binding.key + binding.kindB.symbol + "-" + lodIndex, this.ctx.scene);
-                var atomBColor = coloroverride || binding.kindB.color;
-                atomBMat.diffuseColor = new BABYLON.Color3(atomBColor[0], atomBColor[1], atomBColor[2]);
-                atomBMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
-                atomBMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-                this.ctx.cylinderMaterial(null, atomBMat, useeffects);
-                var rootMat = new BABYLON.MultiMaterial('materialFor' + binding.key + "-" + lodIndex, this.ctx.scene);
-                rootMat.subMaterials.push(atomAMat);
-                rootMat.subMaterials.push(atomBMat);
-                var verticesCount = capsule.getTotalVertices();
-                var indices = capsule.getIndices();
-                console.log("has submeshes ? " + capsule.subMeshes.length + " indices " + indices.length);
-                capsule.subMeshes = [];
-                var halfindices = (indices.length / 2) >> 0;
-                capsule.subMeshes.push(new BABYLON.SubMesh(0, 0, verticesCount, 0, halfindices, capsule));
-                capsule.subMeshes.push(new BABYLON.SubMesh(1, 0, verticesCount, halfindices, halfindices, capsule));
-                capsule.material = rootMat;
-                capsule.isPickable = false;
-                capsule.setEnabled(false);
-                return capsule;
             };
             Sticks.prototype.createStickMergemesh = function (binding, diameter, lodIndex, segments, texture, useeffects, coloroverride) {
                 console.log("create mesh template " + binding.key + " mergemesh " + lodIndex);
@@ -1084,79 +1278,73 @@ var Molvwr;
                 capsule.setEnabled(false);
                 return capsule;
             };
-            Sticks.prototype.createStickCSG = function (binding, diameter, lodIndex, segments, texture, useeffects, coloroverride) {
-                console.log("create mesh template " + binding.key + " csg " + lodIndex);
-                var atomAMat = new BABYLON.StandardMaterial('materialFor' + binding.key + binding.kindA.symbol + "-" + lodIndex, this.ctx.scene);
-                var atomAColor = coloroverride || binding.kindA.color;
-                //atomAMat.diffuseColor = new BABYLON.Color3(atomAColor[0], atomAColor[1], atomAColor[2]);
-                atomAMat.diffuseColor = new BABYLON.Color3(1, 0, 0);
-                atomAMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
-                atomAMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-                this.ctx.cylinderMaterial(null, atomAMat, useeffects);
-                var atomBMat = new BABYLON.StandardMaterial('materialFor' + binding.key + binding.kindB.symbol + "-" + lodIndex, this.ctx.scene);
-                var atomBColor = coloroverride || binding.kindB.color;
-                //atomBMat.diffuseColor = new BABYLON.Color3(atomBColor[0], atomBColor[1], atomBColor[2]);
-                atomBMat.diffuseColor = new BABYLON.Color3(0, 1, 0);
-                atomBMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
-                atomBMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-                this.ctx.cylinderMaterial(null, atomBMat, useeffects);
-                var rootMat = new BABYLON.MultiMaterial('materialFor' + binding.key + "-" + lodIndex, this.ctx.scene);
-                rootMat.subMaterials.push(atomAMat);
-                rootMat.subMaterials.push(atomBMat);
-                var radius = diameter / 2;
-                var cylinderSize = binding.d;
-                var halfCylinderSize = cylinderSize / 2;
-                var sphereA = BABYLON.Mesh.CreateSphere("sphereA" + binding.key + "-" + lodIndex, segments * 0.5, diameter, this.ctx.scene, false);
-                sphereA.position.y = -halfCylinderSize;
-                sphereA.material = atomAMat;
-                var cylinderA = BABYLON.Mesh.CreateCylinder("cylinderAtemplate" + binding.key + "-" + lodIndex, cylinderSize / 2, diameter, diameter, segments, 2, this.ctx.scene, false);
-                cylinderA.position.y = -cylinderSize / 4;
-                cylinderA.material = atomAMat;
-                var cylinderB = BABYLON.Mesh.CreateCylinder("cylinderAtemplate" + binding.key + "-" + lodIndex, cylinderSize / 2, diameter, diameter, segments, 2, this.ctx.scene, false);
-                cylinderB.position.y = cylinderSize / 4;
-                cylinderB.material = atomBMat;
-                var sphereB = BABYLON.Mesh.CreateSphere("sphereB" + binding.key + "-" + lodIndex, segments * 0.5, diameter, this.ctx.scene, false);
-                sphereB.position.y = halfCylinderSize;
-                sphereB.material = atomBMat;
-                var sphereACSG = BABYLON.CSG.FromMesh(sphereA);
-                var cylinderACSG = BABYLON.CSG.FromMesh(cylinderA);
-                var cylinderBCSG = BABYLON.CSG.FromMesh(cylinderB);
-                var sphereBCSG = BABYLON.CSG.FromMesh(sphereB);
-                var atomACSG = sphereACSG.union(cylinderACSG);
-                var atomBCSG = sphereBCSG.union(cylinderBCSG);
-                var resCSG = atomACSG.union(atomBCSG);
-                var capsule = resCSG.toMesh("bondtemplate" + binding.key + "-" + lodIndex, rootMat, this.ctx.scene, false);
-                capsule.setPivotMatrix(BABYLON.Matrix.Translation(0, -binding.d / 4, 0));
-                capsule.isPickable = false;
-                capsule.setEnabled(false);
-                cylinderA.setEnabled(false);
-                cylinderB.setEnabled(false);
-                sphereA.setEnabled(false);
-                sphereB.setEnabled(false);
-                return capsule;
-            };
-            Sticks.prototype.runBatch = function (offset, size, molecule, diameter, completedCallback) {
-                var _this = this;
-                setTimeout(function () {
-                    var items = molecule.bonds.slice(offset, offset + size);
-                    console.log("batch rendering bonds " + offset + "/" + molecule.bonds.length);
-                    items.forEach(function (b, index) {
-                        var key = b.atomA.kind.symbol + "#" + b.atomB.kind.symbol;
-                        var mesh = _this.meshes[key];
-                        var cylinder = mesh.createInstance("bond" + index);
-                        //console.log("create bond " + index);
-                        _this.alignCylinderToBinding(b.atomA, b.atomB, b.d, cylinder);
-                    });
-                    if (items.length < size) {
-                        console.log("batch end " + items.length);
-                        if (completedCallback)
-                            completedCallback();
-                    }
-                    else {
-                        _this.runBatch(offset + size, size, molecule, diameter, completedCallback);
-                    }
-                }, 5);
-            };
+            // 		createStickCSG(binding, diameter, lodIndex, segments, texture, useeffects, coloroverride) {
+            // 			console.log("create mesh template " + binding.key + " csg " + lodIndex);
+            // 			var atomAMat = new BABYLON.StandardMaterial('materialFor' + binding.key + binding.kindA.symbol + "-" + lodIndex, this.ctx.scene);
+            // 			var atomAColor = coloroverride || binding.kindA.color;
+            // 			//atomAMat.diffuseColor = new BABYLON.Color3(atomAColor[0], atomAColor[1], atomAColor[2]);
+            // 			atomAMat.diffuseColor = new BABYLON.Color3(1, 0, 0);
+            // 
+            // 			atomAMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
+            // 			atomAMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+            // 			this.ctx.cylinderMaterial(null, atomAMat, useeffects);
+            // 
+            // 			var atomBMat = new BABYLON.StandardMaterial('materialFor' + binding.key + binding.kindB.symbol + "-" + lodIndex, this.ctx.scene);
+            // 			var atomBColor = coloroverride || binding.kindB.color;
+            // 			//atomBMat.diffuseColor = new BABYLON.Color3(atomBColor[0], atomBColor[1], atomBColor[2]);
+            // 			atomBMat.diffuseColor = new BABYLON.Color3(0, 1, 0);
+            // 			atomBMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
+            // 			atomBMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+            // 			this.ctx.cylinderMaterial(null, atomBMat, useeffects);
+            // 
+            // 			var rootMat = new BABYLON.MultiMaterial('materialFor' + binding.key + "-" + lodIndex, this.ctx.scene);
+            // 			rootMat.subMaterials.push(atomAMat);
+            // 			rootMat.subMaterials.push(atomBMat);
+            // 
+            // 			var radius = diameter / 2;
+            // 			var cylinderSize = binding.d;
+            // 			var halfCylinderSize = cylinderSize / 2;
+            // 
+            // 			var sphereA = BABYLON.Mesh.CreateSphere("sphereA" + binding.key + "-" + lodIndex, segments * 0.5, diameter, this.ctx.scene, false);
+            // 			sphereA.position.y = -halfCylinderSize;
+            // 			sphereA.material = atomAMat;
+            // 
+            // 			var cylinderA = BABYLON.Mesh.CreateCylinder("cylinderAtemplate" + binding.key + "-" + lodIndex, cylinderSize / 2, diameter, diameter, segments, 2, this.ctx.scene, false);
+            // 			cylinderA.position.y = -cylinderSize / 4;
+            // 			cylinderA.material = atomAMat;
+            // 
+            // 			var cylinderB = BABYLON.Mesh.CreateCylinder("cylinderAtemplate" + binding.key + "-" + lodIndex, cylinderSize / 2, diameter, diameter, segments, 2, this.ctx.scene, false);
+            // 			cylinderB.position.y = cylinderSize / 4;
+            // 			cylinderB.material = atomBMat;
+            // 
+            // 			var sphereB = BABYLON.Mesh.CreateSphere("sphereB" + binding.key + "-" + lodIndex, segments * 0.5, diameter, this.ctx.scene, false);
+            // 			sphereB.position.y = halfCylinderSize;
+            // 			sphereB.material = atomBMat;
+            // 
+            // 			var sphereACSG = BABYLON.CSG.FromMesh(sphereA);
+            // 			var cylinderACSG = BABYLON.CSG.FromMesh(cylinderA);
+            // 			var cylinderBCSG = BABYLON.CSG.FromMesh(cylinderB);
+            // 			var sphereBCSG = BABYLON.CSG.FromMesh(sphereB);
+            // 
+            // 			var atomACSG = sphereACSG.union(cylinderACSG);
+            // 			var atomBCSG = sphereBCSG.union(cylinderBCSG);
+            // 
+            // 			var resCSG = atomACSG.union(atomBCSG);
+            // 
+            // 			var capsule = resCSG.toMesh("bondtemplate" + binding.key + "-" + lodIndex, rootMat, this.ctx.scene, false);
+            // 
+            // 			capsule.setPivotMatrix(BABYLON.Matrix.Translation(0, -binding.d / 4, 0));
+            // 
+            // 			capsule.isPickable = false;
+            // 			capsule.setEnabled(false);
+            // 
+            // 			cylinderA.setEnabled(false);
+            // 			cylinderB.setEnabled(false);
+            // 			sphereA.setEnabled(false);
+            // 			sphereB.setEnabled(false);
+            // 
+            // 			return capsule;
+            // 		}		
             Sticks.prototype.alignCylinderToBinding = function (atomA, atomB, distance, cylinder) {
                 //console.log("position items to " + atomB.x + "/" + atomB.y  + "/" +  atomB.z)
                 var pointA = new BABYLON.Vector3(atomA.x, atomA.y, atomA.z);
@@ -1316,52 +1504,6 @@ var Molvwr;
             return Standard;
         })();
         ViewModes.Standard = Standard;
-    })(ViewModes = Molvwr.ViewModes || (Molvwr.ViewModes = {}));
-})(Molvwr || (Molvwr = {}));
-
-var Molvwr;
-(function (Molvwr) {
-    var ViewModes;
-    (function (ViewModes) {
-        var Toon = (function () {
-            function Toon(viewoptions) {
-                if (viewoptions === void 0) { viewoptions = { texture: false, bias: 0.3, power: 1 }; }
-                this.options = viewoptions;
-                this.emisivefresnel = new BABYLON.FresnelParameters();
-                this.emisivefresnel.bias = this.options.bias;
-                this.emisivefresnel.power = this.options.power;
-                this.emisivefresnel.leftColor = BABYLON.Color3.Black();
-                this.emisivefresnel.rightColor = BABYLON.Color3.White();
-            }
-            Toon.prototype.createScene = function (context) {
-                context.scene.clearColor = new BABYLON.Color3(0.95, 0.95, 1);
-                context.scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
-                context.scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
-                context.scene.fogDensity = 0.01;
-                var camera = new BABYLON.ArcRotateCamera('Camera', 1, .8, 28, new BABYLON.Vector3(0, 0, 0), context.scene);
-                camera.wheelPrecision = 10;
-                camera.pinchPrecision = 7;
-                camera.panningSensibility = 70;
-                camera.setTarget(BABYLON.Vector3.Zero());
-                camera.attachControl(context.canvas, false);
-                context.camera = camera;
-                //var light = new BABYLON.Light("simplelight", scene);
-                var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), context.scene);
-                light.intensity = 0.7;
-                light.groundColor = new BABYLON.Color3(0.4, 0.4, 0.4);
-                light.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
-            };
-            Toon.prototype.sphereMaterial = function (context, mesh, material, useEffects) {
-                if (useEffects)
-                    material.emissiveFresnelParameters = this.emisivefresnel;
-                material.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
-                material.emissiveColor = new BABYLON.Color3(0.3, 0.3, 0.3);
-            };
-            Toon.prototype.cylinderMaterial = function (context, mesh, material, useEffects) {
-            };
-            return Toon;
-        })();
-        ViewModes.Toon = Toon;
     })(ViewModes = Molvwr.ViewModes || (Molvwr.ViewModes = {}));
 })(Molvwr || (Molvwr = {}));
 

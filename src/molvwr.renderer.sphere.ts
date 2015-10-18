@@ -11,16 +11,27 @@ module Molvwr.Renderer {
 			this.viewer = viewer;
 		}	
 		
-		render(molecule, completedCallback){
-			this.prepareMeshes(molecule);
-			console.log("sphere rendering");
-			this.runBatch(0, molecule.batchSize,molecule, completedCallback);
+		render(molecule : IMolecule) : Molvwr.Utils.Promise {
+			return this.prepareMeshes(molecule).then(() => {
+				console.time("sphere rendering");
+				return Molvwr.Utils.runBatch(0, molecule.batchSize, molecule.atoms, this.renderAtom.bind(this), "sphere rendering").then(() => {
+					console.timeEnd("sphere rendering");
+				});	
+			});			
 		}
 		
-		prepareMeshes(molecule){
-			for (var n in molecule.kinds){				
-				this.meshes[n] = this.createMesh(molecule.kinds[n].kind);
-			}			
+		prepareMeshes(molecule : IMolecule) : Molvwr.Utils.Promise {
+			console.time("prepare spheres");
+			var kinds = [];
+			for (var n in molecule.kinds){		
+				kinds.push(molecule.kinds[n]);
+			}		
+			
+			return Molvwr.Utils.runBatch(0, 60, kinds, (atomkind, index) =>{
+				this.meshes[atomkind.kind.symbol] = this.createMesh(atomkind.kind);
+			}, "prepare spheres").then(function(){
+				console.timeEnd("prepare spheres");
+			});
 		}
 		
 		createMesh(atomkind){			
@@ -36,7 +47,7 @@ module Molvwr.Renderer {
 					} else{
 						rootMesh.addLODLevel(conf.depth, null);
 					}
-				}
+				}				
 				return rootMesh;
 			}else{
 				return this.createSphere(atomkind, this.config.sphereSegments, true, null);
@@ -44,7 +55,7 @@ module Molvwr.Renderer {
 		}
 		
 		createSphere(atomkind, segments, useEffects, overridecolor){
-			var sphere = BABYLON.Mesh.CreateSphere("spheretemplate", segments, atomkind.radius * this.config.atomScaleFactor, this.ctx.scene, true);
+			var sphere = BABYLON.Mesh.CreateSphere("spheretemplate", segments, atomkind.radius * this.config.atomScaleFactor, this.ctx.scene, false);
 			sphere.setEnabled(false);
 			sphere.isPickable = false;
 			
@@ -57,22 +68,6 @@ module Molvwr.Renderer {
 			sphere.material = atomMat;
 			
 			return sphere;
-		}
-		
-		runBatch(offset, size, molecule, completedCallback){
-			setTimeout(()=>{
-				var items = molecule.atoms.slice(offset, offset + size);
-								
-				items.forEach((atom, index) => {
-					this.renderAtom(atom, index);
-				});
-				
-				if (items.length < size){
-					if (completedCallback) completedCallback();
-				}else{
-					this.runBatch(offset+size, size, molecule, completedCallback);
-				}
-			},5);
 		}
 		
 		renderAtom(atom, index){

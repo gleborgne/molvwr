@@ -38,6 +38,28 @@ declare module Molvwr.Config {
 
 declare var __global: any;
 declare module Molvwr {
+    interface IAtom {
+        kind: Elements.IPeriodicElement;
+        x: number;
+        y: number;
+        z: number;
+    }
+    interface IAtomBinding {
+        key: string;
+        d: number;
+        atomA: IAtom;
+        atomB: IAtom;
+    }
+    interface IMolecule {
+        atoms: IAtom[];
+        bonds: IAtomBinding[];
+        kinds: any;
+        bondkinds: any;
+        batchSize: number;
+    }
+    interface IMoleculeRenderer {
+        render(molecule: any): Molvwr.Utils.Promise;
+    }
     function process(): void;
     class Viewer {
         element: HTMLElement;
@@ -45,11 +67,11 @@ declare module Molvwr {
         config: Molvwr.Config.IMolvwrConfig;
         viewmode: IViewMode;
         context: BabylonContext;
-        molecule: any;
+        molecule: IMolecule;
         constructor(element: HTMLElement, config?: Molvwr.Config.IMolvwrConfig, viewmode?: IViewMode);
         dispose(): void;
-        private _loadContentFromString(content, contentFormat, completedcallback);
-        private _renderMolecule(molecule, completedcallback);
+        private _loadContentFromString(content, contentFormat);
+        private _renderMolecule(molecule);
         setOptions(options: any, completedcallback?: any): void;
         setViewMode(viewmode: IViewMode, completedcallback?: any): void;
         refresh(completedcallback: any): void;
@@ -60,14 +82,14 @@ declare module Molvwr {
         loadContentFromString(content: string, contentFormat: string, completedcallback?: any): void;
         loadContentFromUrl(url: string, contentFormat?: string, completedcallback?: any): void;
         private _postProcessMolecule(molecule);
-        private _calculateAtomsBonds(molecule);
+        private _calculateAtomsBondsAsync(molecule);
         private _getCentroid(molecule);
         private _center(molecule);
     }
 }
 
 declare module Molvwr.Elements {
-    interface PeriodicElement {
+    interface IPeriodicElement {
         symbol: string;
         name: string;
         mass: number;
@@ -75,7 +97,7 @@ declare module Molvwr.Elements {
         color: number[];
         number: number;
     }
-    var elements: PeriodicElement[];
+    var elements: IPeriodicElement[];
     var elementsBySymbol: {};
     var elementsByNumber: {};
     var MIN_ATOM_RADIUS: number;
@@ -110,6 +132,30 @@ declare module Molvwr.Parser {
     };
 }
 
+declare var __global: any;
+declare module Molvwr.Utils {
+    function runBatch(offset: any, size: any, itemslist: any, itemcallback: any, batchname?: string): Promise;
+    class Promise {
+        private _state;
+        private _value;
+        private _deferreds;
+        constructor(fn: any);
+        catch(onRejected: any): Promise;
+        then(onFulfilled: any, onRejected?: any): Promise;
+        static timeout(timeoutTime: number): Promise;
+        static all(fake: any): Promise;
+        static resolve(value?: any): Promise;
+        static reject(value?: any): Promise;
+        static race(values: any): Promise;
+        /**
+        * Set the immediate function to execute callbacks
+        * @param fn {function} Function to execute
+        * @private
+        */
+        private static _setImmediateFn(fn);
+    }
+}
+
 declare module Molvwr.Renderer {
     class BondsCylinder {
         ctx: Molvwr.BabylonContext;
@@ -117,11 +163,10 @@ declare module Molvwr.Renderer {
         viewer: Molvwr.Viewer;
         meshes: any;
         constructor(viewer: Molvwr.Viewer, ctx: Molvwr.BabylonContext, config: Molvwr.Config.IMolvwrConfig);
-        render(molecule: any, completedCallback: any): void;
-        prepareBonds(molecule: any, diameter: any): void;
+        render(molecule: IMolecule): Molvwr.Utils.Promise;
+        prepareBonds(molecule: IMolecule, diameter: number): Utils.Promise;
         createMesh(binding: any, diameter: any): BABYLON.Mesh;
         createCylinder(binding: any, diameter: number, lodIndex: number, segments: any, useeffects: any, coloroverride: any): BABYLON.Mesh;
-        runBatch(offset: any, size: any, molecule: any, diameter: any, completedCallback: any): void;
         alignCylinderToBinding(atomA: any, atomB: any, distance: any, cylinder: any): void;
         vectorEqualsCloseEnough(v1: any, v2: any, tolerance?: number): boolean;
     }
@@ -134,7 +179,7 @@ declare module Molvwr.Renderer {
         viewer: Molvwr.Viewer;
         meshes: any;
         constructor(viewer: Molvwr.Viewer, ctx: Molvwr.BabylonContext, config: Molvwr.Config.IMolvwrConfig);
-        render(molecule: any, completedCallback: any): void;
+        render(molecule: IMolecule): Molvwr.Utils.Promise;
     }
 }
 
@@ -145,11 +190,10 @@ declare module Molvwr.Renderer {
         viewer: Molvwr.Viewer;
         meshes: any;
         constructor(viewer: Molvwr.Viewer, ctx: Molvwr.BabylonContext, config: Molvwr.Config.IMolvwrConfig);
-        render(molecule: any, completedCallback: any): void;
-        prepareMeshes(molecule: any): void;
+        render(molecule: IMolecule): Molvwr.Utils.Promise;
+        prepareMeshes(molecule: IMolecule): Molvwr.Utils.Promise;
         createMesh(atomkind: any): BABYLON.Mesh;
         createSphere(atomkind: any, segments: any, useEffects: any, overridecolor: any): BABYLON.Mesh;
-        runBatch(offset: any, size: any, molecule: any, completedCallback: any): void;
         renderAtom(atom: any, index: any): any;
     }
 }
@@ -161,13 +205,10 @@ declare module Molvwr.Renderer {
         viewer: Molvwr.Viewer;
         meshes: any;
         constructor(viewer: Molvwr.Viewer, ctx: Molvwr.BabylonContext, config: Molvwr.Config.IMolvwrConfig);
-        render(molecule: any, completedCallback: any): void;
-        prepareBonds(molecule: any, diameter: any): void;
-        createMesh(binding: any, diameter: any): any;
-        createStickCylinder(binding: any, diameter: any, lodIndex: any, segments: any, texture: any, useeffects: any, coloroverride: any): BABYLON.Mesh;
+        render(molecule: IMolecule): Molvwr.Utils.Promise;
+        prepareBonds(molecule: IMolecule, diameter: number): Utils.Promise;
+        createMesh(binding: any, diameter: number): any;
         createStickMergemesh(binding: any, diameter: any, lodIndex: any, segments: any, texture: any, useeffects: any, coloroverride: any): BABYLON.Mesh;
-        createStickCSG(binding: any, diameter: any, lodIndex: any, segments: any, texture: any, useeffects: any, coloroverride: any): BABYLON.Mesh;
-        runBatch(offset: any, size: any, molecule: any, diameter: any, completedCallback: any): void;
         alignCylinderToBinding(atomA: any, atomB: any, distance: any, cylinder: any): void;
         vectorEqualsCloseEnough(v1: any, v2: any, tolerance?: number): boolean;
     }
@@ -206,22 +247,6 @@ declare module Molvwr.ViewModes {
         getColor(config: any, defaultColor: any): BABYLON.Color3;
         createScene(context: BabylonContext): void;
         applyTexture(context: BabylonContext, material: BABYLON.StandardMaterial, texture: any): void;
-        sphereMaterial(context: BabylonContext, mesh: BABYLON.Mesh, material: BABYLON.StandardMaterial, useEffects: boolean): void;
-        cylinderMaterial(context: BabylonContext, mesh: BABYLON.Mesh, material: BABYLON.StandardMaterial, useEffects: boolean): void;
-    }
-}
-
-declare module Molvwr.ViewModes {
-    interface ToonViewModeOptions {
-        texture: boolean;
-        bias: number;
-        power: number;
-    }
-    class Toon implements Molvwr.IViewMode {
-        options: ToonViewModeOptions;
-        emisivefresnel: BABYLON.FresnelParameters;
-        constructor(viewoptions?: ToonViewModeOptions);
-        createScene(context: BabylonContext): void;
         sphereMaterial(context: BabylonContext, mesh: BABYLON.Mesh, material: BABYLON.StandardMaterial, useEffects: boolean): void;
         cylinderMaterial(context: BabylonContext, mesh: BABYLON.Mesh, material: BABYLON.StandardMaterial, useEffects: boolean): void;
     }

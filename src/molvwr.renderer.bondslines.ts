@@ -11,7 +11,7 @@ module Molvwr.Renderer {
 			this.viewer = viewer;
 		}
 
-		render(molecule, completedCallback) {
+		render(molecule: IMolecule) : Molvwr.Utils.Promise {
 			var cfg = this.config;
 			var meshes = [];
 			console.log("rendering bonds as lines");
@@ -24,8 +24,7 @@ module Molvwr.Renderer {
 				meshes.push(line);
 			});
 			
-			if (completedCallback)
-					completedCallback();
+			return Molvwr.Utils.Promise.resolve();
 		}
 	}
 }

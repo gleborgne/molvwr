@@ -1,5 +1,5 @@
 module Molvwr.Elements {
-	export interface PeriodicElement{
+	export interface IPeriodicElement{
 		symbol: string;
 		name: string;
 		mass: number;
@@ -8,7 +8,7 @@ module Molvwr.Elements {
 		number: number;
 	}
 		
-	export var elements: PeriodicElement[] = [
+	export var elements: IPeriodicElement[] = [
 		{ 'symbol': 'Xx', 'name': 'unknown', 'mass': 1.00000000, 'radius': 1.0000, 'color': [1.000, 0.078, 0.576], 'number': 0 },
 		{ 'symbol': 'H', 'name': 'hydrogen', 'mass': 1.00794000, 'radius': 0.3100, 'color': [1.000, 1.000, 1.000], 'number': 1 },
 		{ 'symbol': 'He', 'name': 'helium', 'mass': 4.00260200, 'radius': 0.2800, 'color': [0.851, 1.000, 1.000], 'number': 2 },
