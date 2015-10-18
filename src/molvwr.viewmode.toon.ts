@@ -40,7 +40,7 @@ module Molvwr.ViewModes {
 			light.specular = new BABYLON.Color3(0.5,0.5,0.5);
 		}
 		
-		sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects : boolean){
+		sphereMaterial(context: BabylonContext, mesh : BABYLON.Mesh, material: BABYLON.StandardMaterial, useEffects : boolean){
 			if (useEffects)
 				material.emissiveFresnelParameters = this.emisivefresnel;
 				
@@ -48,7 +48,7 @@ module Molvwr.ViewModes {
 			material.emissiveColor = new BABYLON.Color3(0.3,0.3,0.3);			
 		}
 		
-		cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects : boolean){
+		cylinderMaterial(context: BabylonContext, mesh : BABYLON.Mesh, material: BABYLON.StandardMaterial, useEffects : boolean){
 			
 		}
 	}

@@ -16,14 +16,14 @@
         BabylonContext.prototype.dispose = function () {
             this.engine.dispose();
         };
-        BabylonContext.prototype.sphereMaterial = function (atomMat, useEffects) {
+        BabylonContext.prototype.sphereMaterial = function (mesh, atomMat, useEffects) {
             if (this.viewmode) {
-                this.viewmode.sphereMaterial(this, atomMat, useEffects);
+                this.viewmode.sphereMaterial(this, mesh, atomMat, useEffects);
             }
         };
-        BabylonContext.prototype.cylinderMaterial = function (atomMat, useEffects) {
+        BabylonContext.prototype.cylinderMaterial = function (mesh, atomMat, useEffects) {
             if (this.viewmode) {
-                this.viewmode.cylinderMaterial(this, atomMat, useEffects);
+                this.viewmode.cylinderMaterial(this, mesh, atomMat, useEffects);
             }
         };
         BabylonContext.prototype.createScene = function () {
@@ -234,6 +234,9 @@ var Molvwr;
         };
         Viewer.prototype.setViewMode = function (viewmode, completedcallback) {
             this.viewmode = viewmode;
+            if (!this.viewmode) {
+                this.viewmode = new Molvwr.ViewModes.Standard();
+            }
             this.refresh(completedcallback);
         };
         Viewer.prototype.refresh = function (completedcallback) {
@@ -740,7 +743,7 @@ var Molvwr;
                 var rootMat = new BABYLON.StandardMaterial('materialFor' + binding.key + lodIndex, this.ctx.scene);
                 var atomAColor = coloroverride || binding.kindA.color;
                 rootMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
-                this.ctx.cylinderMaterial(rootMat, useeffects);
+                this.ctx.cylinderMaterial(cylinder, rootMat, useeffects);
                 // var atomAMat = new BABYLON.StandardMaterial('materialFor' + binding.key + binding.kindA.symbol+ "-" + lodIndex, this.ctx.scene);
                 // var atomAColor = coloroverride || binding.kindA.color;
                 // atomAMat.diffuseColor = new BABYLON.Color3(atomAColor[0], atomAColor[1], atomAColor[2]);
@@ -918,26 +921,24 @@ var Molvwr;
                 }
             };
             Sphere.prototype.createSphere = function (atomkind, segments, useEffects, overridecolor) {
-                var sphere = BABYLON.Mesh.CreateSphere("spheretemplate", segments, atomkind.radius * this.config.atomScaleFactor, this.ctx.scene);
+                var sphere = BABYLON.Mesh.CreateSphere("spheretemplate", segments, atomkind.radius * this.config.atomScaleFactor, this.ctx.scene, true);
                 sphere.setEnabled(false);
                 sphere.isPickable = false;
                 var atomMat = new BABYLON.StandardMaterial('materialFor' + atomkind.symbol, this.ctx.scene);
                 var color = overridecolor || atomkind.color;
                 atomMat.diffuseColor = new BABYLON.Color3(color[0], color[1], color[2]);
-                this.ctx.sphereMaterial(atomMat, useEffects);
+                this.ctx.sphereMaterial(sphere, atomMat, useEffects);
                 sphere.material = atomMat;
                 return sphere;
             };
             Sphere.prototype.runBatch = function (offset, size, molecule, completedCallback) {
                 var _this = this;
                 setTimeout(function () {
-                    //				console.log("batch rendering bonds " + offset + "/" + molecule.bonds.length);
                     var items = molecule.atoms.slice(offset, offset + size);
                     items.forEach(function (atom, index) {
                         _this.renderAtom(atom, index);
                     });
                     if (items.length < size) {
-                        //					console.log("batch end " + items.length);
                         if (completedCallback)
                             completedCallback();
                     }
@@ -1025,13 +1026,13 @@ var Molvwr;
                 atomAMat.diffuseColor = new BABYLON.Color3(atomAColor[0], atomAColor[1], atomAColor[2]);
                 atomAMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
                 atomAMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-                this.ctx.cylinderMaterial(atomAMat, useeffects);
+                this.ctx.cylinderMaterial(null, atomAMat, useeffects);
                 var atomBMat = new BABYLON.StandardMaterial('materialFor' + binding.key + binding.kindB.symbol + "-" + lodIndex, this.ctx.scene);
                 var atomBColor = coloroverride || binding.kindB.color;
                 atomBMat.diffuseColor = new BABYLON.Color3(atomBColor[0], atomBColor[1], atomBColor[2]);
                 atomBMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
                 atomBMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-                this.ctx.cylinderMaterial(atomBMat, useeffects);
+                this.ctx.cylinderMaterial(null, atomBMat, useeffects);
                 var rootMat = new BABYLON.MultiMaterial('materialFor' + binding.key + "-" + lodIndex, this.ctx.scene);
                 rootMat.subMaterials.push(atomAMat);
                 rootMat.subMaterials.push(atomBMat);
@@ -1062,11 +1063,11 @@ var Molvwr;
                 var atomAMat = new BABYLON.StandardMaterial('materialFor' + binding.key + binding.kindA.symbol + "-" + lodIndex, this.ctx.scene);
                 var atomAColor = coloroverride || binding.kindA.color;
                 atomAMat.diffuseColor = new BABYLON.Color3(atomAColor[0], atomAColor[1], atomAColor[2]);
-                this.ctx.cylinderMaterial(atomAMat, useeffects);
+                this.ctx.cylinderMaterial(null, atomAMat, useeffects);
                 var atomBMat = new BABYLON.StandardMaterial('materialFor' + binding.key + binding.kindB.symbol + "-" + lodIndex, this.ctx.scene);
                 var atomBColor = coloroverride || binding.kindB.color;
                 atomBMat.diffuseColor = new BABYLON.Color3(atomBColor[0], atomBColor[1], atomBColor[2]);
-                this.ctx.cylinderMaterial(atomBMat, useeffects);
+                this.ctx.cylinderMaterial(null, atomBMat, useeffects);
                 var rootMat = new BABYLON.MultiMaterial('materialFor' + binding.key + "-" + lodIndex, this.ctx.scene);
                 rootMat.subMaterials.push(atomAMat);
                 rootMat.subMaterials.push(atomBMat);
@@ -1091,14 +1092,14 @@ var Molvwr;
                 atomAMat.diffuseColor = new BABYLON.Color3(1, 0, 0);
                 atomAMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
                 atomAMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-                this.ctx.cylinderMaterial(atomAMat, useeffects);
+                this.ctx.cylinderMaterial(null, atomAMat, useeffects);
                 var atomBMat = new BABYLON.StandardMaterial('materialFor' + binding.key + binding.kindB.symbol + "-" + lodIndex, this.ctx.scene);
                 var atomBColor = coloroverride || binding.kindB.color;
                 //atomBMat.diffuseColor = new BABYLON.Color3(atomBColor[0], atomBColor[1], atomBColor[2]);
                 atomBMat.diffuseColor = new BABYLON.Color3(0, 1, 0);
                 atomBMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
                 atomBMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-                this.ctx.cylinderMaterial(atomBMat, useeffects);
+                this.ctx.cylinderMaterial(null, atomBMat, useeffects);
                 var rootMat = new BABYLON.MultiMaterial('materialFor' + binding.key + "-" + lodIndex, this.ctx.scene);
                 rootMat.subMaterials.push(atomAMat);
                 rootMat.subMaterials.push(atomBMat);
@@ -1268,6 +1269,13 @@ var Molvwr;
                 light.specular = this.getColor(this.options.specular, [0.5, 0.5, 0.5]);
             };
             Standard.prototype.applyTexture = function (context, material, texture) {
+                if (texture.diffuseTexture) {
+                    material.diffuseTexture = new BABYLON.Texture(texture.diffuseTexture, context.scene);
+                    // (<any>material.diffuseTexture).alpha = 0.3;
+                    // material.diffuseTexture.hasAlpha = true;
+                    material.diffuseTexture.uScale = texture.textureScale || 1;
+                    material.diffuseTexture.vScale = texture.textureScale || 1;
+                }
                 if (texture.specularTexture) {
                     material.specularTexture = new BABYLON.Texture(texture.specularTexture, context.scene);
                     material.specularTexture.uScale = texture.textureScale || 1;
@@ -1279,7 +1287,7 @@ var Molvwr;
                     material.bumpTexture.vScale = texture.textureScale || 1;
                 }
             };
-            Standard.prototype.sphereMaterial = function (context, material, useEffects) {
+            Standard.prototype.sphereMaterial = function (context, mesh, material, useEffects) {
                 material.ambientColor = new BABYLON.Color3(0, 0, 1);
                 material.specularColor = new BABYLON.Color3(0.1, 0.1, 0.1);
                 material.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
@@ -1292,7 +1300,7 @@ var Molvwr;
                     }
                 }
             };
-            Standard.prototype.cylinderMaterial = function (context, material, useEffects) {
+            Standard.prototype.cylinderMaterial = function (context, mesh, material, useEffects) {
                 material.ambientColor = new BABYLON.Color3(0, 0, 1);
                 material.specularColor = new BABYLON.Color3(0.2, 0.2, 0.2);
                 material.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
@@ -1343,13 +1351,13 @@ var Molvwr;
                 light.groundColor = new BABYLON.Color3(0.4, 0.4, 0.4);
                 light.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
             };
-            Toon.prototype.sphereMaterial = function (context, material, useEffects) {
+            Toon.prototype.sphereMaterial = function (context, mesh, material, useEffects) {
                 if (useEffects)
                     material.emissiveFresnelParameters = this.emisivefresnel;
                 material.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
                 material.emissiveColor = new BABYLON.Color3(0.3, 0.3, 0.3);
             };
-            Toon.prototype.cylinderMaterial = function (context, material, useEffects) {
+            Toon.prototype.cylinderMaterial = function (context, mesh, material, useEffects) {
             };
             return Toon;
         })();
@@ -1385,9 +1393,9 @@ var Molvwr;
                 //this.useHDR();
                 //this.useLensEffect();
             };
-            Experiments.prototype.sphereMaterial = function (context, material, useEffects) {
+            Experiments.prototype.sphereMaterial = function (context, mesh, material, useEffects) {
             };
-            Experiments.prototype.cylinderMaterial = function (context, material, useEffects) {
+            Experiments.prototype.cylinderMaterial = function (context, mesh, material, useEffects) {
             };
             Experiments.prototype.useAmbientOcclusion = function (context) {
                 var ssao = new BABYLON.SSAORenderingPipeline('ssaopipeline', context.scene, 0.75);

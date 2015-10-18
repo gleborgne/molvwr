@@ -213,12 +213,19 @@ html, body{
 			cursor : pointer;
 			touch-action:manipulation;
 
-			&.container{
-				text-transform : uppercase;
-				&:before{
-					content : '> ';
+			&.container, &.inline-container {
+				> .title { 
+					text-transform : uppercase;
+					&:before{
+						content : '> ';
+					}
 				}
-			}
+
+				> .child-items{
+					padding-left : 20px;
+					box-sizing: border-box;
+				}	
+			}			
 		}
 	}
 }

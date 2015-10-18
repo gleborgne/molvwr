@@ -30,11 +30,11 @@ module Molvwr.ViewModes {
 			//this.useLensEffect();
 		}
 		
-		sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects : boolean){
+		sphereMaterial(context: BabylonContext, mesh : BABYLON.Mesh, material: BABYLON.StandardMaterial, useEffects : boolean){
 			
 		}
 		
-		cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects : boolean){
+		cylinderMaterial(context: BabylonContext, mesh : BABYLON.Mesh, material: BABYLON.StandardMaterial, useEffects : boolean){
 			
 		}
 		

@@ -156,6 +156,9 @@ module Molvwr {
 		
 		setViewMode(viewmode : IViewMode, completedcallback?) {
 			this.viewmode = viewmode;
+			if (!this.viewmode){
+				this.viewmode = new Molvwr.ViewModes.Standard();
+			}
 			this.refresh(completedcallback);
 		}
 		

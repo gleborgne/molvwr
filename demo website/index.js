@@ -130,11 +130,38 @@
 		
 	];
 
+
+	var Rendering = {
+		Toon : function(){
+			return null;
+		},
+		
+		Rocks : function(){
+			var viewmodeOptions = Molvwr.ViewModes.Standard.defaultConfig();
+			viewmodeOptions.sphere.bumpTexture = "textures/15_NORMAL.jpg";
+			//viewmodeOptions.sphere.diffuseTexture = "textures/03_DIFFUSE.jpg",
+			viewmodeOptions.sphere.specularTexture = "textures/15_DIFFUSE.jpg",
+			viewmodeOptions.sphere.textureScale = 1;
+			viewmodeOptions.cylinder.bumpTexture = "textures/15_NORMAL.jpg";
+			viewmodeOptions.cylinder.specularTexture = "textures/15_DIFFUSE.jpg",
+			viewmodeOptions.cylinder.textureScale = 1;
+			viewmodeOptions.emisivefresnel.bias = 0.4;
+			return new Molvwr.ViewModes.Standard(viewmodeOptions);
+		},
+	};
+
 	var viewmodes = [
-		{ name : 'Spheres', id:"spheres", cfg : Molvwr.Config.spheres},
-		{ name : 'Balls and sticks', id:"ballsandsticks", cfg : Molvwr.Config.ballsAndSticks},
-		{ name : 'Sticks', id:"sticks", cfg : Molvwr.Config.sticks},
+		{ name : "View type", id:"viewtype", inline: true, childs: [
+			{ name : 'Spheres', id:"spheres", type:"viewtype", cfg : Molvwr.Config.spheres},
+			{ name : 'Balls and sticks', id:"ballsandsticks", type:"viewtype", cfg : Molvwr.Config.ballsAndSticks},
+			{ name : 'Sticks', id:"sticks", type:"viewtype", cfg : Molvwr.Config.sticks},
+			]},
+		{ name : "Texture", id:"rendering", type:"rendering", inline: true, childs: [
+			{ name : 'Flat', id:"flat", type:"rendering", cfg : Rendering.Toon },
+			{ name : 'Rocks', id:"rocks", type:"rendering", cfg : Rendering.Rocks},
+		]}
 	];
+
 
 	function hideAllPanels(){
 		var panels = document.querySelectorAll(".panel");
@@ -188,14 +215,22 @@
 		items.forEach(function(item){
 			var sampleitem = document.createElement("DIV");
 			sampleitem.className = "choice-item noselect";
-			sampleitem.innerHTML = item.name;
+			sampleitem.innerHTML = '<span class="title">' + item.name + '</span>';
 			sampleitem.setAttribute("unselectable", "on");
 			parent.appendChild(sampleitem);
 
 			if (item.childs){
-				sampleitem.classList.add("container");
-				sampleitem.onclick = function(){
-					ctrl.openDetail(item.childs, item.name);
+				if (item.inline){
+					sampleitem.classList.add("inline-container");
+					var container = document.createElement("DIV");
+					container.className = "child-items";
+					sampleitem.appendChild(container);
+					ctrl.renderItems(item.childs, container);
+				}else{
+					sampleitem.classList.add("container");
+					sampleitem.onclick = function(){
+						ctrl.openDetail(item.childs, item.name);
+					}
 				}
 			}else{
 				sampleitem.onclick = function(){
@@ -307,9 +342,15 @@
 
 	var viewpanelctrl = new ChoicePanel(viewmodepanel, viewmodetitle, viewer, viewmodes, function(ctrl, item){
 		loadingstate.classList.add("visible");
-		ctrl.viewer.setOptions(item.cfg(), function(){
-			loadingstate.classList.remove("visible");
-		});
+		if (item.type == "viewtype"){
+			ctrl.viewer.setOptions(item.cfg(), function(){
+				loadingstate.classList.remove("visible");
+			});
+		}else if(item.type == "rendering"){
+			ctrl.viewer.setViewMode(item.cfg(), function(){
+				loadingstate.classList.remove("visible");
+			});			
+		}
 	});
 	viewpanelctrl.dontSetTitleText = true;
 	viewpanelctrl.setSelected("ballsandsticks");

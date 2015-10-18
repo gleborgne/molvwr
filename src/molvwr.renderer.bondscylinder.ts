@@ -57,7 +57,7 @@ module Molvwr.Renderer {
 			var rootMat = new BABYLON.StandardMaterial('materialFor' + binding.key + lodIndex, this.ctx.scene);
 			var atomAColor = coloroverride || binding.kindA.color;
 			rootMat.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3);
-			this.ctx.cylinderMaterial(rootMat, useeffects);
+			this.ctx.cylinderMaterial(cylinder, rootMat, useeffects);
 			
         	// var atomAMat = new BABYLON.StandardMaterial('materialFor' + binding.key + binding.kindA.symbol+ "-" + lodIndex, this.ctx.scene);
 			// var atomAColor = coloroverride || binding.kindA.color;

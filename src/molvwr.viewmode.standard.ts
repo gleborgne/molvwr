@@ -12,11 +12,13 @@ module Molvwr.ViewModes {
 		panningSensibility? : number;
 		emisivefresnel?: BABYLON.FresnelParameters
 		sphere?: {
+			diffuseTexture? : string;
 			specularTexture?: string;
 			bumpTexture?: string;
 			textureScale?: number;
 		};
 		cylinder?: {
+			diffuseTexture?: string;
 			specularTexture?: string;
 			bumpTexture?: string;
 			textureScale?: number;
@@ -42,8 +44,11 @@ module Molvwr.ViewModes {
 			var res = <StandardViewModeOptions>{
 					texture : false,
 					emisivefresnel : new BABYLON.FresnelParameters(),
-					cylinder: {},
-					sphere : {}	
+					cylinder: {
+						
+					},
+					sphere : {						
+					}	
 			};
 			res.emisivefresnel.bias = 0.3;
 			res.emisivefresnel.power = 1;
@@ -83,6 +88,15 @@ module Molvwr.ViewModes {
 		}
 
 		applyTexture(context: BabylonContext, material: BABYLON.StandardMaterial, texture) {
+			if (texture.diffuseTexture) {
+				material.diffuseTexture = new BABYLON.Texture(texture.diffuseTexture, context.scene);
+				// (<any>material.diffuseTexture).alpha = 0.3;
+				// material.diffuseTexture.hasAlpha = true;
+				
+				(<any>material.diffuseTexture).uScale = texture.textureScale || 1;
+				(<any>material.diffuseTexture).vScale = texture.textureScale || 1;
+			}
+			
 			if (texture.specularTexture) {
 				material.specularTexture = new BABYLON.Texture(texture.specularTexture, context.scene);
 				(<any>material.specularTexture).uScale = texture.textureScale || 1;
@@ -96,7 +110,7 @@ module Molvwr.ViewModes {
 			}
 		}
 
-		sphereMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects: boolean) {
+		sphereMaterial(context: BabylonContext, mesh : BABYLON.Mesh, material: BABYLON.StandardMaterial, useEffects: boolean) {
 			material.ambientColor = new BABYLON.Color3(0, 0, 1);
 			material.specularColor = new BABYLON.Color3(0.1,0.1,0.1);
 			material.emissiveColor = new BABYLON.Color3(0.2,0.2,0.2);
@@ -112,7 +126,7 @@ module Molvwr.ViewModes {
 			}
 		}
 
-		cylinderMaterial(context: BabylonContext, material: BABYLON.StandardMaterial, useEffects: boolean) {
+		cylinderMaterial(context: BabylonContext, mesh : BABYLON.Mesh, material: BABYLON.StandardMaterial, useEffects: boolean) {
 			material.ambientColor = new BABYLON.Color3(0, 0, 1);
 			material.specularColor = new BABYLON.Color3(0.2,0.2,0.2);
 			material.emissiveColor = new BABYLON.Color3(0.2,0.2,0.2);

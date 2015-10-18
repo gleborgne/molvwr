@@ -44,7 +44,7 @@ module Molvwr.Renderer {
 		}
 		
 		createSphere(atomkind, segments, useEffects, overridecolor){
-			var sphere = BABYLON.Mesh.CreateSphere("spheretemplate", segments, atomkind.radius * this.config.atomScaleFactor, this.ctx.scene);
+			var sphere = BABYLON.Mesh.CreateSphere("spheretemplate", segments, atomkind.radius * this.config.atomScaleFactor, this.ctx.scene, true);
 			sphere.setEnabled(false);
 			sphere.isPickable = false;
 			
@@ -52,7 +52,7 @@ module Molvwr.Renderer {
 			var color = overridecolor || atomkind.color;
 			atomMat.diffuseColor = new BABYLON.Color3(color[0], color[1], color[2]);			
 			
-			this.ctx.sphereMaterial(atomMat, useEffects);
+			this.ctx.sphereMaterial(sphere, atomMat, useEffects);
 			
 			sphere.material = atomMat;
 			
@@ -61,7 +61,6 @@ module Molvwr.Renderer {
 		
 		runBatch(offset, size, molecule, completedCallback){
 			setTimeout(()=>{
-//				console.log("batch rendering bonds " + offset + "/" + molecule.bonds.length);
 				var items = molecule.atoms.slice(offset, offset + size);
 								
 				items.forEach((atom, index) => {
@@ -69,7 +68,6 @@ module Molvwr.Renderer {
 				});
 				
 				if (items.length < size){
-//					console.log("batch end " + items.length);
 					if (completedCallback) completedCallback();
 				}else{
 					this.runBatch(offset+size, size, molecule, completedCallback);

@@ -62,14 +62,14 @@ module Molvwr.Renderer {
 			atomAMat.diffuseColor = new BABYLON.Color3(atomAColor[0], atomAColor[1], atomAColor[2]);
 			atomAMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
 			atomAMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-			this.ctx.cylinderMaterial(atomAMat, useeffects);
+			this.ctx.cylinderMaterial(null, atomAMat, useeffects);
 			
 			var atomBMat = new BABYLON.StandardMaterial('materialFor' + binding.key + binding.kindB.symbol + "-" + lodIndex, this.ctx.scene);
 			var atomBColor = coloroverride || binding.kindB.color;
 			atomBMat.diffuseColor = new BABYLON.Color3(atomBColor[0], atomBColor[1], atomBColor[2]);
 			atomBMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
 			atomBMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-			this.ctx.cylinderMaterial(atomBMat, useeffects);
+			this.ctx.cylinderMaterial(null, atomBMat, useeffects);
 			
 			var rootMat = new BABYLON.MultiMaterial('materialFor' + binding.key + "-" + lodIndex, this.ctx.scene);
 			rootMat.subMaterials.push(atomAMat);
@@ -108,12 +108,12 @@ module Molvwr.Renderer {
         	var atomAMat = new BABYLON.StandardMaterial('materialFor' + binding.key + binding.kindA.symbol+ "-" + lodIndex, this.ctx.scene);
 			var atomAColor = coloroverride || binding.kindA.color;
 			atomAMat.diffuseColor = new BABYLON.Color3(atomAColor[0], atomAColor[1], atomAColor[2]);
-			this.ctx.cylinderMaterial(atomAMat, useeffects);
+			this.ctx.cylinderMaterial(null, atomAMat, useeffects);
 			
 			var atomBMat = new BABYLON.StandardMaterial('materialFor' + binding.key + binding.kindB.symbol+ "-" + lodIndex, this.ctx.scene);
 			var atomBColor = coloroverride || binding.kindB.color;
 			atomBMat.diffuseColor = new BABYLON.Color3(atomBColor[0], atomBColor[1], atomBColor[2]);
-			this.ctx.cylinderMaterial(atomBMat, useeffects);
+			this.ctx.cylinderMaterial(null, atomBMat, useeffects);
 			
 			var rootMat = new BABYLON.MultiMaterial('materialFor' + binding.key+ "-" + lodIndex, this.ctx.scene);
 			rootMat.subMaterials.push(atomAMat);
@@ -145,7 +145,7 @@ module Molvwr.Renderer {
 			
 			atomAMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
 			atomAMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-			this.ctx.cylinderMaterial(atomAMat, useeffects);
+			this.ctx.cylinderMaterial(null, atomAMat, useeffects);
 			
 			var atomBMat = new BABYLON.StandardMaterial('materialFor' + binding.key + binding.kindB.symbol+ "-" + lodIndex, this.ctx.scene);
 			var atomBColor = coloroverride || binding.kindB.color;
@@ -153,7 +153,7 @@ module Molvwr.Renderer {
 			atomBMat.diffuseColor = new BABYLON.Color3(0, 1, 0);
 			atomBMat.specularColor = new BABYLON.Color3(0.4, 0.4, 0.4);
 			atomBMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
-			this.ctx.cylinderMaterial(atomBMat, useeffects);
+			this.ctx.cylinderMaterial(null, atomBMat, useeffects);
 			
 			var rootMat = new BABYLON.MultiMaterial('materialFor' + binding.key+ "-" + lodIndex, this.ctx.scene);
 			rootMat.subMaterials.push(atomAMat);

@@ -184,11 +184,18 @@ body {
   cursor: pointer;
   touch-action: manipulation;
 }
-.leftitemspanel .items .choice-item.container {
+.leftitemspanel .items .choice-item.container > .title,
+.leftitemspanel .items .choice-item.inline-container > .title {
   text-transform: uppercase;
 }
-.leftitemspanel .items .choice-item.container:before {
+.leftitemspanel .items .choice-item.container > .title:before,
+.leftitemspanel .items .choice-item.inline-container > .title:before {
   content: '> ';
+}
+.leftitemspanel .items .choice-item.container > .child-items,
+.leftitemspanel .items .choice-item.inline-container > .child-items {
+  padding-left: 20px;
+  box-sizing: border-box;
 }
 .rightitemspanel {
   position: absolute;
