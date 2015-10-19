@@ -329,11 +329,46 @@
 	var overlay = document.getElementById("overlay");
 	var root = document.getElementById("molvwr-container");
 	var moleculeinfo = document.getElementById("moleculeinfo");
+	var formula = document.getElementById("formula");
 	var descriptionpanel = document.getElementById("description-panel");
+	var atomslegend = document.getElementById("atomslegend");
+	var moleculedesc = document.getElementById("moleculedesc");
 	var loadingstate = document.getElementById("loadingstate");
 	var savepic = document.getElementById("savepic");
 	var screencapturepanel = document.getElementById("screencapture-panel");
 	var screencaptureImg = document.getElementById("screencapture");
+
+	function renderAtomLegend(atomkind, parentFormulaElt, parentElt){
+		var node = document.createElement("span");
+		node.className= "atomformula";
+		node.innerHTML = '<span class="atomsymbol">' + atomkind.kind.symbol + '</span><span class="atomcount">' + (atomkind.count > 1 ? atomkind.count : "") + '</span>';
+		parentFormulaElt.appendChild(node);
+
+		var node = document.createElement("DIV");
+		node.className= "atomlegend";
+		node.innerHTML = '<div class="dot atom-' + atomkind.kind.symbol + '" style="background-color:rgb(' + ((255*atomkind.kind.color[0])>>0) + ',' + ((255*atomkind.kind.color[1])>>0) + ',' + ((255*atomkind.kind.color[2])>>0) + ')">' + atomkind.kind.symbol + '</div><div class="name">' + atomkind.kind.name + '</div>';
+		parentElt.appendChild(node);
+	}
+
+	function renderSelectedMoleculeInfo(item, molecule){
+		atomslegend.innerHTML = "";
+		moleculedesc.innerHTML = "";
+		formula.innerHTML = "";
+
+		var kinds = [];
+		console.log("render molecule info", molecule);
+		for (var n in molecule.kinds){
+			kinds.push(molecule.kinds[n]);			
+		}
+
+		kinds.sort(function(a,b){
+			return a.kind.symbol.localeCompare(b.kind.symbol);
+		});
+
+		kinds.forEach(function(k){
+			renderAtomLegend(k, formula, atomslegend);
+		})
+	}
 
 	var viewer = new Molvwr.Viewer(root);
 	Molvwr.ViewModes.sphereBumpTexture = 'textures/174_norm.jpg';
@@ -357,8 +392,11 @@
 		
 	var samplespanelctrl = new ChoicePanel(samplespanel, titleelement, viewer, samples, function(ctrl, item){
 		loadingstate.classList.add("visible");
-		ctrl.viewer.loadContentFromUrl(item.url, item.format, function(){
+		moleculeinfo.classList.remove("visible");
+		ctrl.viewer.loadContentFromUrl(item.url, item.format, function(molecule){
 			loadingstate.classList.remove("visible");
+			moleculeinfo.classList.add("visible");
+			renderSelectedMoleculeInfo(item, molecule);			
 		});		
 		window.location.hash = item.id;
 		//moleculeinfo.classList.add("visible");

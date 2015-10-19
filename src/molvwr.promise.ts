@@ -82,6 +82,7 @@ module Molvwr.Utils {
 							resolve(args);
 						}
 					} catch (ex) {
+						console.error(ex);
 						reject(ex);
 					}
 				}
@@ -142,6 +143,7 @@ module Molvwr.Utils {
 				ret = cb(me._value);
 			}
 			catch (e) {
+				console.error(e);
 				deferred.reject(e);
 				return;
 			}
@@ -162,7 +164,10 @@ module Molvwr.Utils {
 			this._state = true;
 			this._value = newValue;
 			finale.call(this);
-		} catch (e) { reject.call(this, e); }
+		} catch (e) { 
+			console.error(e);
+			reject.call(this, e); 
+		}
 	}
 
 	function reject(newValue) {
@@ -204,6 +209,7 @@ module Molvwr.Utils {
 				onRejected(reason);
 			})
 		} catch (ex) {
+			console.error(ex);
 			if (done) return;
 			done = true;
 			onRejected(ex);

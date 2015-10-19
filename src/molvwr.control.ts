@@ -132,6 +132,8 @@ module Molvwr {
 					if (molecule) {
 						this._postProcessMolecule(molecule).then(() => {
 							return this._renderMolecule(molecule);
+						}).then(function(){
+							return molecule;
 						}).then(complete, error);
 					} else {
 						console.warn("no molecule from parser " + contentFormat);
@@ -162,9 +164,9 @@ module Molvwr {
 						}
 					});
 
-					Molvwr.Utils.Promise.all(p).then(complete, error);
+					Molvwr.Utils.Promise.all(p).then(complete, error)
 				} else {
-					complete();
+					complete(molecule);
 				}
 			});
 		}
@@ -277,7 +279,9 @@ module Molvwr {
 			return Molvwr.Utils.runBatch(0, 300, molecule.atoms, (atom, batchindex, index) => {
 				//console.log("check " + atom.kind.symbol + " " + index + " " + bonds.length);
 				if (!molecule.kinds[atom.kind.symbol]) {
-					molecule.kinds[atom.kind.symbol] = { kind: atom.kind };
+					molecule.kinds[atom.kind.symbol] = { kind: atom.kind, count : 1 };
+				}else{
+					molecule.kinds[atom.kind.symbol].count++;
 				}
 
 				for (var i = index + 1; i < nbatoms; i++) {
@@ -288,7 +292,9 @@ module Molvwr {
 
 					if (d < 1.3 * (atom.kind.radius + siblingAtom.kind.radius)) {
 						if (!molecule.bondkinds[atom.kind.symbol + "#" + siblingAtom.kind.symbol]) {
-							molecule.bondkinds[atom.kind.symbol + "#" + siblingAtom.kind.symbol] = { d: d, key: atom.kind.symbol + "#" + siblingAtom.kind.symbol, kindA: atom.kind, kindB: siblingAtom.kind };
+							molecule.bondkinds[atom.kind.symbol + "#" + siblingAtom.kind.symbol] = { d: d, key: atom.kind.symbol + "#" + siblingAtom.kind.symbol, kindA: atom.kind, kindB: siblingAtom.kind, count: 1 };
+						}else{
+							molecule.bondkinds[atom.kind.symbol + "#" + siblingAtom.kind.symbol].count++;
 						}
 
 						bonds.push({

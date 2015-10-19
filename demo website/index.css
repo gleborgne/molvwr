@@ -108,6 +108,44 @@ body {
   -webkit-filter: blur(5px);
   filter: blur(5px);
 }
+#description-panel {
+  padding: 20px 40px;
+  box-sizing: border-box;
+}
+#description-panel #formula .atomformula {
+  font-size: 1.5em;
+}
+#description-panel #formula .atomformula .atomcount {
+  font-size: 0.5em;
+  color: #CCC;
+}
+#description-panel #formularemark {
+  margin-bottom: 20px;
+  font-size: 0.7em;
+  color: #999;
+}
+#description-panel #atomslegend {
+  margin-bottom: 10px;
+}
+#description-panel #atomslegend .atomlegend {
+  display: -webkit-flex;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  margin-bottom: 10px;
+}
+#description-panel #atomslegend .atomlegend .dot {
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+#description-panel #atomslegend .atomlegend .dot.atom-H,
+#description-panel #atomslegend .atomlegend .dot.atom-S {
+  color: black;
+}
 .leftitemspanel {
   position: absolute;
   left: 0;
@@ -116,6 +154,7 @@ body {
   width: 400px;
   max-width: 80%;
   overflow: hidden;
+  color: white;
   background-color: rgba(0, 0, 0, 0.8);
   -webkit-transform: translate3d(-100%, 0, 0);
   -moz-transform: translate3d(-100%, 0, 0);
