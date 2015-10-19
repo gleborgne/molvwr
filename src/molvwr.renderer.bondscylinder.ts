@@ -37,7 +37,7 @@ module Molvwr.Renderer {
 				bondkinds.push(molecule.bondkinds[n]);
 			}	
 			
-			var batchSize = 60;
+			var batchSize = 50;
 			if (this.config.cylinderLOD){
 				batchSize = (batchSize / this.config.cylinderLOD.length) >> 0;
 			}

@@ -19,9 +19,9 @@ module Molvwr.Utils {
 				if (items.length < size){
 					complete();
 				}else{
-					asap(()=>{					
+					//asap(()=>{					
 						runBatch(offset+size, size, itemslist, itemcallback, batchname).then(complete, error);
-					});
+					//});
 				}
 			});
 		});

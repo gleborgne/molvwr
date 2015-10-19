@@ -55,9 +55,15 @@ body {
   cursor: pointer;
   touch-action: manipulation;
 }
+#pagetitle #pageactions {
+  display: -webkit-flex;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  flex: 1;
+}
 #pagetitle .iconbtn {
   display: inline-block;
-  font-size: 14pt;
   color: #777;
   cursor: pointer;
   touch-action: manipulation;
@@ -66,7 +72,10 @@ body {
   width: 40px;
   line-height: 1px;
   margin: 0;
-  margin-left: 10px;
+  margin-right: 10px;
+}
+#pagetitle .iconbtn:last-child {
+  margin-right: 0;
 }
 #pagetitle .space {
   flex: 1;
@@ -258,19 +267,27 @@ body {
 @media screen and (max-width: 800px) {
   #pagetitle {
     padding: 0 20px;
-    height: 40px;
+    height: 70px;
+    display: block;
   }
-  #pagetitle #about {
-    font-size: 9pt;
+  #pagetitle #moleculetitle {
+    width: 100%;
+    padding-top: 4px;
+    font-size: 16pt;
+    line-height: 1.2em;
   }
-  #pagetitle #titleribbon #moleculetitle {
-    font-size: 12pt;
+  #pagetitle .iconbtn {
+    margin-left: 0;
+    font-size: 26pt;
+    height: 32px;
+    width: 32px;
+    line-height: 1px;
   }
-  #pagetitle #titleribbon #viewmodetitle {
-    font-size: 10pt;
+  #pagetitle .iconbtn:first-child {
+    margin-left: -10px;
   }
   #pagecontent {
-    top: 40px;
+    top: 70px;
   }
   #molecule-choice-panel .items .sample-item {
     font-size: 12pt;

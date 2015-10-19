@@ -319,7 +319,7 @@ var Molvwr;
             console.time("check bounds");
             var bonds = [];
             var nbatoms = molecule.atoms.length;
-            return Molvwr.Utils.runBatch(0, 200, molecule.atoms, function (atom, batchindex, index) {
+            return Molvwr.Utils.runBatch(0, 300, molecule.atoms, function (atom, batchindex, index) {
                 //console.log("check " + atom.kind.symbol + " " + index + " " + bonds.length);
                 if (!molecule.kinds[atom.kind.symbol]) {
                     molecule.kinds[atom.kind.symbol] = { kind: atom.kind };
@@ -715,9 +715,8 @@ var Molvwr;
                         complete();
                     }
                     else {
-                        asap(function () {
-                            runBatch(offset + size, size, itemslist, itemcallback, batchname).then(complete, error);
-                        });
+                        //asap(()=>{					
+                        runBatch(offset + size, size, itemslist, itemcallback, batchname).then(complete, error);
                     }
                 });
             });
@@ -938,7 +937,7 @@ var Molvwr;
                 for (var n in molecule.bondkinds) {
                     bondkinds.push(molecule.bondkinds[n]);
                 }
-                var batchSize = 60;
+                var batchSize = 50;
                 if (this.config.cylinderLOD) {
                     batchSize = (batchSize / this.config.cylinderLOD.length) >> 0;
                 }
@@ -1116,7 +1115,7 @@ var Molvwr;
                 for (var n in molecule.kinds) {
                     kinds.push(molecule.kinds[n]);
                 }
-                return Molvwr.Utils.runBatch(0, 60, kinds, function (atomkind, index) {
+                return Molvwr.Utils.runBatch(0, 50, kinds, function (atomkind, index) {
                     _this.meshes[atomkind.kind.symbol] = _this.createMesh(atomkind.kind);
                 }, "prepare spheres").then(function () {
                     console.timeEnd("prepare spheres");
@@ -1243,7 +1242,7 @@ var Molvwr;
                 }
             };
             Sticks.prototype.createStickMergemesh = function (binding, diameter, lodIndex, segments, texture, useeffects, coloroverride) {
-                console.log("create mesh template " + binding.key + " mergemesh " + lodIndex);
+                //console.log("create mesh template " + binding.key + " mergemesh " + lodIndex);
                 var radius = diameter / 2;
                 var cylinderSize = binding.d - (radius / 2.5);
                 var halfCylinderSize = cylinderSize / 2;

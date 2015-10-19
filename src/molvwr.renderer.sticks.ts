@@ -69,7 +69,7 @@ module Molvwr.Renderer {
 		}
 
 		createStickMergemesh(binding, diameter, lodIndex, segments, texture, useeffects, coloroverride) {
-			console.log("create mesh template " + binding.key + " mergemesh " + lodIndex);
+			//console.log("create mesh template " + binding.key + " mergemesh " + lodIndex);
 			var radius = diameter / 2;
 			var cylinderSize = binding.d - (radius / 2.5);
 			var halfCylinderSize = cylinderSize / 2;

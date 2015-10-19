@@ -27,7 +27,7 @@ module Molvwr.Renderer {
 				kinds.push(molecule.kinds[n]);
 			}		
 			
-			return Molvwr.Utils.runBatch(0, 60, kinds, (atomkind, index) =>{
+			return Molvwr.Utils.runBatch(0, 50, kinds, (atomkind, index) =>{
 				this.meshes[atomkind.kind.symbol] = this.createMesh(atomkind.kind);
 			}, "prepare spheres").then(function(){
 				console.timeEnd("prepare spheres");

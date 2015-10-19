@@ -274,7 +274,7 @@ module Molvwr {
 			console.time("check bounds");
 			var bonds = [];
 			var nbatoms = molecule.atoms.length;
-			return Molvwr.Utils.runBatch(0, 200, molecule.atoms, (atom, batchindex, index) => {
+			return Molvwr.Utils.runBatch(0, 300, molecule.atoms, (atom, batchindex, index) => {
 				//console.log("check " + atom.kind.symbol + " " + index + " " + bonds.length);
 				if (!molecule.kinds[atom.kind.symbol]) {
 					molecule.kinds[atom.kind.symbol] = { kind: atom.kind };
