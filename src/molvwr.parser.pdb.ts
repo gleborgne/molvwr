@@ -34,7 +34,7 @@ module Molvwr.Parser {
 			if (isNaN(symbol[0]) === false){
 				symbol = symbol.substr(1);
 			}
-			var atomKind = Molvwr.Elements.elementsBySymbol[symbol];
+			var atomKind = Molvwr.Elements.elementsBySymbol[symbol.toUpperCase()];
 			if (atomKind) {
 				var x = parseFloat(line.substr(30, 8).trim());
 				var y = parseFloat(line.substr(38, 8).trim());

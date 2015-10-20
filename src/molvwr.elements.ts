@@ -133,7 +133,7 @@ module Molvwr.Elements {
 	export var elementsBySymbol= {};
 	
 	elements.forEach(function(e){
-		elementsBySymbol[e.symbol] = e;
+		elementsBySymbol[e.symbol.toUpperCase()] = e;
 	});
 	
 	export var elementsByNumber= {};

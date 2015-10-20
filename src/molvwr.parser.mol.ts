@@ -35,7 +35,7 @@ module Molvwr.Parser {
 						var y = getFloat(lineElements[1]);
 						var z = getFloat(lineElements[2]);
 
-						var atomKind = Molvwr.Elements.elementsBySymbol[symbol];
+						var atomKind = Molvwr.Elements.elementsBySymbol[symbol.toUpperCase()];
 						if (atomKind) {
 							//console.log("found atom " + atomKind.name + " " + x + "," + y + "," + z);
 							molecule.atoms.push({

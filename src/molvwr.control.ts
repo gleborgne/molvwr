@@ -128,7 +128,9 @@ module Molvwr {
 			return new Molvwr.Utils.Promise((complete, error) => {
 				var parser = Molvwr.Parser[contentFormat];
 				if (parser) {
+					console.time("parsing " + contentFormat);
 					var molecule = parser.parse(content);
+					console.timeEnd("parsing " + contentFormat);
 					if (molecule) {
 						this._postProcessMolecule(molecule).then(() => {
 							dataReadyCallback(molecule);
@@ -152,6 +154,7 @@ module Molvwr {
 			this._createContext();
 
 			return new Molvwr.Utils.Promise((complete, error) => {
+				console.time("rendering...");
 				if (this.config.renderers) {
 					var completedCount = 0;
 					var nbrenderers = this.config.renderers.length;
@@ -165,7 +168,9 @@ module Molvwr {
 						}
 					});
 
-					Molvwr.Utils.Promise.all(p).then(complete, error)
+					Molvwr.Utils.Promise.all(p).then(function(){
+						console.timeEnd("rendering...");
+					}).then(complete, error)
 				} else {
 					complete(molecule);
 				}
@@ -263,8 +268,8 @@ module Molvwr {
 			molecule.kinds = molecule.kinds || {};
 			molecule.bondkinds = molecule.bondkinds || {};
 			
-			molecule.batchSize = Math.min(50, (molecule.atoms.length / 4) >> 0);
-			molecule.batchSize = Math.max(20, molecule.batchSize);
+			molecule.batchSize = Math.min(120, (molecule.atoms.length / 4) >> 0);
+			molecule.batchSize = Math.max(40, molecule.batchSize);
 			
 			return this._center(molecule).then(()=>{
 				return this._calculateAtomsBondsAsync(molecule);
