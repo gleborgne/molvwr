@@ -124,13 +124,14 @@ module Molvwr {
 			this.element.innerHTML = "";
 		}
 
-		private _loadContentFromString(content: string, contentFormat: string) : Molvwr.Utils.Promise {
+		private _loadContentFromString(content: string, contentFormat: string, dataReadyCallback) : Molvwr.Utils.Promise {
 			return new Molvwr.Utils.Promise((complete, error) => {
 				var parser = Molvwr.Parser[contentFormat];
 				if (parser) {
 					var molecule = parser.parse(content);
 					if (molecule) {
 						this._postProcessMolecule(molecule).then(() => {
+							dataReadyCallback(molecule);
 							return this._renderMolecule(molecule);
 						}).then(function(){
 							return molecule;
@@ -219,12 +220,12 @@ module Molvwr {
 			return null;
 		}
 
-		loadContentFromString(content: string, contentFormat: string, completedcallback?) {
+		loadContentFromString(content: string, contentFormat: string, datareadycallback?, completedcallback?) {
 			this._createContext();
-			this._loadContentFromString(content, contentFormat).then(completedcallback, completedcallback);
+			this._loadContentFromString(content, contentFormat, datareadycallback).then(completedcallback, completedcallback);
 		}
 
-		loadContentFromUrl(url: string, contentFormat?: string, completedcallback?) {
+		loadContentFromUrl(url: string, contentFormat?: string, datareadycallback?, completedcallback?) {
 			if (!contentFormat) {
 				contentFormat = Viewer.getMoleculeFileFormat(url);
 			}
@@ -239,7 +240,7 @@ module Molvwr {
                 xhr.onreadystatechange = () => {
                     if (xhr.readyState == 4) {
                         if (xhr.status == 200) {
-                            this._loadContentFromString(xhr.responseText, contentFormat).then(completedcallback, completedcallback);
+                            this._loadContentFromString(xhr.responseText, contentFormat, datareadycallback).then(completedcallback, completedcallback);
                         }
                         else {
 							console.warn("cannot get content from " + url + " " + xhr.status + " " + xhr.statusText);

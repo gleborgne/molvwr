@@ -70,7 +70,7 @@ declare module Molvwr {
         molecule: IMolecule;
         constructor(element: HTMLElement, config?: Molvwr.Config.IMolvwrConfig, viewmode?: IViewMode);
         dispose(): void;
-        private _loadContentFromString(content, contentFormat);
+        private _loadContentFromString(content, contentFormat, dataReadyCallback);
         private _renderMolecule(molecule);
         setOptions(options: any, completedcallback?: any): void;
         setViewMode(viewmode: IViewMode, completedcallback?: any): void;
@@ -79,8 +79,8 @@ declare module Molvwr {
         exportScreenshot(): string;
         static endsWith(str: any, suffix: any): boolean;
         static getMoleculeFileFormat(filename: string): string;
-        loadContentFromString(content: string, contentFormat: string, completedcallback?: any): void;
-        loadContentFromUrl(url: string, contentFormat?: string, completedcallback?: any): void;
+        loadContentFromString(content: string, contentFormat: string, datareadycallback?: any, completedcallback?: any): void;
+        loadContentFromUrl(url: string, contentFormat?: string, datareadycallback?: any, completedcallback?: any): void;
         private _postProcessMolecule(molecule);
         private _calculateAtomsBondsAsync(molecule);
         private _getCentroid(molecule);

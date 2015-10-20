@@ -111,6 +111,8 @@ body {
 #description-panel {
   padding: 20px 40px;
   box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 #description-panel #formula .atomformula {
   font-size: 1.5em;
@@ -179,11 +181,11 @@ body {
   right: 0;
   top: 0;
   bottom: 0;
+  display: -webkit-flex;
+  display: flex;
+  flex-flow: column nowrap;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  padding: 20px 40px;
-  overflow-x: hidden;
-  overflow-y: auto;
   -webkit-transition: transform 120ms ease-out;
   -moz-transition: transform 120ms ease-out;
   transition: transform 120ms ease-out;
@@ -201,30 +203,43 @@ body {
   -moz-transform: translate3d(100%, 0, 0);
   transform: translate3d(100%, 0, 0);
 }
-.leftitemspanel .items {
-  width: 100%;
-  color: white;
-  position: relative;
+.leftitemspanel .panelheader {
+  padding: 20px 40px 0 40px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
-.leftitemspanel .items.hasClose {
-  padding-top: 32px;
+.leftitemspanel .panelheader .panelheadercontent {
+  display: -webkit-flex;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  border-bottom: 1px solid #999;
 }
-.leftitemspanel .items > .title {
+.leftitemspanel .panelheader .panelheadercontent .title {
   font-weight: 700;
   font-size: 1.2em;
   text-transform: uppercase;
-  border-bottom: 1px solid #999;
+  flex: 1;
 }
-.leftitemspanel .items .btnclose {
-  position: absolute;
-  top: 0;
-  right: 0;
+.leftitemspanel .panelheader .panelheadercontent .btnclose {
   min-width: 32px;
-  padding: 6px 0;
   text-align: center;
   cursor: pointer;
   touch-action: manipulation;
   color: #999;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+.leftitemspanel .items {
+  flex: 1;
+  width: 100%;
+  color: white;
+  position: relative;
+  padding: 20px 40px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 .leftitemspanel .items .choice-item {
   padding: 6px 0;
@@ -311,7 +326,8 @@ body {
   }
   #pagetitle #moleculetitle {
     width: 100%;
-    padding-top: 4px;
+    padding-top: 8px;
+    margin-bottom: 4px;
     font-size: 16pt;
     line-height: 1.2em;
   }

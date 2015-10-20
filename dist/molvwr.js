@@ -180,7 +180,7 @@ var Molvwr;
             this.canvas = null;
             this.element.innerHTML = "";
         };
-        Viewer.prototype._loadContentFromString = function (content, contentFormat) {
+        Viewer.prototype._loadContentFromString = function (content, contentFormat, dataReadyCallback) {
             var _this = this;
             return new Molvwr.Utils.Promise(function (complete, error) {
                 var parser = Molvwr.Parser[contentFormat];
@@ -188,6 +188,7 @@ var Molvwr;
                     var molecule = parser.parse(content);
                     if (molecule) {
                         _this._postProcessMolecule(molecule).then(function () {
+                            dataReadyCallback(molecule);
                             return _this._renderMolecule(molecule);
                         }).then(function () {
                             return molecule;
@@ -270,11 +271,11 @@ var Molvwr;
                 return "xyz";
             return null;
         };
-        Viewer.prototype.loadContentFromString = function (content, contentFormat, completedcallback) {
+        Viewer.prototype.loadContentFromString = function (content, contentFormat, datareadycallback, completedcallback) {
             this._createContext();
-            this._loadContentFromString(content, contentFormat).then(completedcallback, completedcallback);
+            this._loadContentFromString(content, contentFormat, datareadycallback).then(completedcallback, completedcallback);
         };
-        Viewer.prototype.loadContentFromUrl = function (url, contentFormat, completedcallback) {
+        Viewer.prototype.loadContentFromUrl = function (url, contentFormat, datareadycallback, completedcallback) {
             var _this = this;
             if (!contentFormat) {
                 contentFormat = Viewer.getMoleculeFileFormat(url);
@@ -288,7 +289,7 @@ var Molvwr;
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == 4) {
                         if (xhr.status == 200) {
-                            _this._loadContentFromString(xhr.responseText, contentFormat).then(completedcallback, completedcallback);
+                            _this._loadContentFromString(xhr.responseText, contentFormat, datareadycallback).then(completedcallback, completedcallback);
                         }
                         else {
                             console.warn("cannot get content from " + url + " " + xhr.status + " " + xhr.statusText);
@@ -949,7 +950,7 @@ var Molvwr;
                 for (var n in molecule.bondkinds) {
                     bondkinds.push(molecule.bondkinds[n]);
                 }
-                var batchSize = 50;
+                var batchSize = 100;
                 if (this.config.cylinderLOD) {
                     batchSize = (batchSize / this.config.cylinderLOD.length) >> 0;
                 }
@@ -1127,7 +1128,7 @@ var Molvwr;
                 for (var n in molecule.kinds) {
                     kinds.push(molecule.kinds[n]);
                 }
-                return Molvwr.Utils.runBatch(0, 50, kinds, function (atomkind, index) {
+                return Molvwr.Utils.runBatch(0, 100, kinds, function (atomkind, index) {
                     _this.meshes[atomkind.kind.symbol] = _this.createMesh(atomkind.kind);
                 }, "prepare spheres").then(function () {
                     console.timeEnd("prepare spheres");
@@ -1222,7 +1223,7 @@ var Molvwr;
                 for (var n in molecule.bondkinds) {
                     bondkinds.push(molecule.bondkinds[n]);
                 }
-                var batchSize = 20;
+                var batchSize = 50;
                 if (this.config.cylinderLOD) {
                     batchSize = (batchSize / this.config.cylinderLOD.length) >> 0;
                 }

@@ -127,7 +127,9 @@ html, body{
 #description-panel{
 	padding : 20px 40px;
 	box-sizing : border-box;
-	
+	overflow-x : hidden;
+	overflow-y : auto;
+
 	#formula{
 		
 		.atomformula{
@@ -217,11 +219,13 @@ html, body{
 			top: 0;
 			bottom : 0;			
 
+			display : -webkit-flex;
+			display : flex;
+			flex-flow : column nowrap;
+
 			-webkit-box-sizing: border-box;
 			box-sizing: border-box;
-			padding : 20px 40px;
-			overflow-x: hidden;	
-			overflow-y: auto;		
+				
 
 			-webkit-transition: transform 120ms ease-out;
 			-moz-transition: transform 120ms ease-out;
@@ -245,33 +249,49 @@ html, body{
 		}
 	}
 
+	.panelheader{
+		padding : 20px 40px 0 40px;
+		-webkit-box-sizing: border-box;
+		box-sizing: border-box;
+		
+
+		.panelheadercontent{
+			display : -webkit-flex;
+			display : flex;
+			flex-flow : row nowrap;
+			align-items : center;
+			border-bottom : 1px solid #999;
+
+			.title{
+				font-weight : 700;
+				font-size : 1.2em;
+				text-transform : uppercase;
+				
+				flex: 1;
+			}
+
+			.btnclose{
+				min-width: 32px;
+				text-align: center;
+				cursor : pointer;
+				touch-action:manipulation;
+				color : #999;
+				margin-left : 10px;
+				flex-shrink : 0;
+			}
+		}
+	}
+	
 	.items{
+		flex: 1;
 		width: 100%;
 		color: white;
 		position :relative;
-
-		&.hasClose{
-			padding-top : 32px;
-		}
-
-		>.title{
-			font-weight : 700;
-			font-size : 1.2em;
-			text-transform : uppercase;
-			border-bottom : 1px solid #999;
-		}
-
-		.btnclose{
-			position : absolute;
-			top: 0;
-			right : 0;
-			min-width: 32px;
-			padding : 6px 0;
-			text-align: center;
-			cursor : pointer;
-			touch-action:manipulation;
-			color : #999;
-		}
+		padding : 20px 40px;
+		-webkit-box-sizing: border-box;
+		box-sizing: border-box;
+		overflow-x: hidden;	
+		overflow-y: auto;	
 		
 		.choice-item{
 			padding : 6px 0;
@@ -371,7 +391,8 @@ html, body{
 
 		#moleculetitle{
 			width: 100%;
-			padding-top : 4px;
+			padding-top : 8px;
+			margin-bottom : 4px;
 			font-size : 16pt;
 			line-height : 1.2em;
 		}

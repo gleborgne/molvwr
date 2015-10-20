@@ -250,26 +250,30 @@
 
 		var itemspanel = document.createElement("DIV");
 		itemspanel.className = "paneldetail";
-		ctrl.contentPanel.appendChild(itemspanel);
-
-		var itemsElt = document.createElement("DIV");
-		itemsElt.className = "items"
-		itemspanel.appendChild(itemsElt);
-
+		ctrl.contentPanel.appendChild(itemspanel);		
+		
 		if (hasPanels){
-			itemsElt.classList.add("hasClose");
+			var panelHeader = document.createElement("DIV");
+			panelHeader.className = "panelheader";
+			itemspanel.appendChild(panelHeader);
+			
+			var panelHeaderContent = document.createElement("DIV");
+			panelHeaderContent.className = "panelheadercontent";
+			panelHeader.appendChild(panelHeaderContent);
 
-			if (title){
-				var titleElt = document.createElement("DIV");
-				titleElt.className = "title";
-				titleElt.innerHTML = title;
-				itemsElt.appendChild(titleElt);
-			}
+
+			itemspanel.classList.add("hasClose");
+
+			var titleElt = document.createElement("DIV");
+			titleElt.className = "title";
+			titleElt.innerHTML = title;
+			panelHeaderContent.appendChild(titleElt);
 
 			var btnClose = document.createElement("DIV");
 			btnClose.className = "btnclose";
 			btnClose.innerHTML = '<i class="oi-chevron-left"></i> back';
-			itemsElt.appendChild(btnClose);
+			panelHeaderContent.appendChild(btnClose);
+
 			btnClose.onclick = function(){
 				itemspanel.classList.remove("visible");
 				ctrl.contentPanel.children[ctrl.contentPanel.children.length-2].classList.remove("away");
@@ -279,6 +283,11 @@
 				}, 150);
 			}
 		}
+
+		var itemsElt = document.createElement("DIV");
+		itemsElt.className = "items"
+		itemspanel.appendChild(itemsElt);
+
 
 		ctrl.renderItems(items, itemsElt);
 		setTimeout(function(){
@@ -394,9 +403,10 @@
 		loadingstate.classList.add("visible");
 		moleculeinfo.classList.remove("visible");
 		ctrl.viewer.loadContentFromUrl(item.url, item.format, function(molecule){
-			loadingstate.classList.remove("visible");
 			moleculeinfo.classList.add("visible");
 			renderSelectedMoleculeInfo(item, molecule);			
+		}, function(molecule){
+			loadingstate.classList.remove("visible");			
 		});		
 		window.location.hash = item.id;
 		//moleculeinfo.classList.add("visible");
