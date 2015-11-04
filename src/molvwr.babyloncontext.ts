@@ -11,6 +11,7 @@ module Molvwr {
 		camera: BABYLON.Camera;
 		canvas: HTMLCanvasElement;
 		viewmode : IViewMode;
+		bindedResize: any;
 		
 		constructor(canvas) {
 			this.canvas = canvas;
@@ -18,7 +19,13 @@ module Molvwr {
 			this.engine.runRenderLoop(() => {
 				if (this.scene)
 					this.scene.render();
-			});						
+			});		
+			this.bindedResize = this.resize.bind(this);
+			window.addEventListener("resize", this.bindedResize);			
+		}
+
+		resize(){
+			this.engine.resize();
 		}
 
 		exportScreenshot() {
@@ -27,6 +34,7 @@ module Molvwr {
 
 		dispose() {
 			this.engine.dispose();
+			window.removeEventListener("resize", this.bindedResize);	
 		}
 
 		sphereMaterial(mesh : BABYLON.Mesh, atomMat: BABYLON.StandardMaterial, useEffects : boolean) {

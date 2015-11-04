@@ -9,12 +9,18 @@ var Molvwr;
                 if (_this.scene)
                     _this.scene.render();
             });
+            this.bindedResize = this.resize.bind(this);
+            window.addEventListener("resize", this.bindedResize);
         }
+        BabylonContext.prototype.resize = function () {
+            this.engine.resize();
+        };
         BabylonContext.prototype.exportScreenshot = function () {
             return this.canvas.toDataURL("image/png");
         };
         BabylonContext.prototype.dispose = function () {
             this.engine.dispose();
+            window.removeEventListener("resize", this.bindedResize);
         };
         BabylonContext.prototype.sphereMaterial = function (mesh, atomMat, useEffects) {
             if (this.viewmode) {

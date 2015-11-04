@@ -10,7 +10,9 @@
         camera: BABYLON.Camera;
         canvas: HTMLCanvasElement;
         viewmode: IViewMode;
+        bindedResize: any;
         constructor(canvas: any);
+        resize(): void;
         exportScreenshot(): string;
         dispose(): void;
         sphereMaterial(mesh: BABYLON.Mesh, atomMat: BABYLON.StandardMaterial, useEffects: boolean): void;
